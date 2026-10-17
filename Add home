@@ -586,7 +586,7 @@ render();
     <a href="#kota-menu" style="color:white;margin:8px;">Menu</a>
     <a href="#seller-info" style="color:white;margin:8px;">Sell on Kota Connect</a>
   </nav>
-</header>
+</header> Home
 
 <section id="seller-info" style="font-family:Arial,sans-serif;max-width:650px;margin:16px auto;padding:16px;">
   <h2>Are you a Kota Seller?</h2>
