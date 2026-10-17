@@ -83,4 +83,89 @@ window.location.href="https://wa.me/?text="+encodeURIComponent(message);
 render();
 </script>
 </body>
+  </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kota Connect | Newcastle</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fffaf2;color:#252525}
+header{background:#167447;color:white;padding:20px 16px}
+header h1{margin:0;font-size:27px}
+header p{margin:7px 0 0}
+main{padding:16px;max-width:650px;margin:auto}
+.hero{background:#ffe0a3;padding:22px;border-radius:16px}
+.hero h2{font-size:25px;margin-top:0}
+input,select,button{font:inherit;padding:12px;border-radius:9px}
+input,select{border:1px solid #ccc;width:100%;margin:7px 0}
+button{border:0;background:#167447;color:white;font-weight:bold;cursor:pointer}
+.shop{background:white;border:1px solid #eee;padding:14px;margin:12px 0;border-radius:12px}
+.shop h3{margin:0 0 8px}
+.price{color:#167447;font-weight:bold}
+.small{font-size:13px;color:#555}
+footer{text-align:center;padding:25px;color:#666}
+</style>
+</head>
+<body>
+<header>
+<h1>🍔 Kota Connect</h1>
+<p>Newcastle's local kota marketplace</p>
+</header>
+<main>
+<section class="hero">
+<h2>Local kotas. Easy ordering.</h2>
+<p>Discover kota sellers in your community.</p>
+<p><strong>Support local. Eat lekker!</strong></p>
+</section>
+
+<h2>Find your kota</h2>
+<input id="search" placeholder="Search kota or seller..." oninput="render()">
+<div id="shops"></div>
+
+<h2>🛒 Your order</h2>
+<div id="cart">No items selected yet.</div>
+<label for="customer">Your name</label>
+<input id="customer" placeholder="Enter your name">
+<label for="phone">Phone number</label>
+<input id="phone" type="tel" placeholder="e.g. 0712345678">
+<label for="address">Pickup or delivery address</label>
+<input id="address" placeholder="Enter your address">
+<label for="method">Order method</label>
+<select id="method">
+<option>Pickup</option>
+<option>Delivery (arranged with seller)</option>
+</select>
+<button onclick="sendOrder()">Send order on WhatsApp</button>
+<p class="small">Demo version: orders open WhatsApp. Sellers and delivery are not connected automatically yet.</p>
+</main>
+<footer>Kota Connect · Newcastle, KwaZulu-Natal</footer>
+
+<script>
+const products=[
+{name:"Classic Kota",seller:"Demo Kota Seller 1",price:30},
+{name:"Russian Kota",seller:"Demo Kota Seller 2",price:40},
+{name:"Cheese & Chips Kota",seller:"Demo Kota Seller 3",price:35},
+{name:"Full House Kota",seller:"Demo Kota Seller 4",price:50}
+];
+let cart=[];
+function render(){
+const q=document.getElementById("search").value.toLowerCase();
+document.getElementById("shops").innerHTML=products.filter(p=>(p.name+" "+p.seller).toLowerCase().includes(q)).map((p,i)=>`<div class="shop"><h3>🍔 ${p.name}</h3><p>${p.seller}</p><p class="price">R${p.price.toFixed(2)}</p><button onclick="add(${products.indexOf(p)})">Add to order</button></div>`).join("")||"No matching kotas found.";
+}
+function add(i){cart.push(products[i]);document.getElementById("cart").innerHTML=cart.map((p,i)=>`${i+1}. ${p.name} — R${p.price.toFixed(2)}`).join("<br>")+`<p><strong>Total: R${cart.reduce((s,p)=>s+p.price,0).toFixed(2)}</strong></p>`;}
+function sendOrder(){
+if(!cart.length){alert("Please add a kota first.");return}
+const name=document.getElementById("customer").value.trim();
+const phone=document.getElementById("phone").value.trim();
+const address=document.getElementById("address").value.trim();
+if(!name||!phone||!address){alert("Please fill in your name, phone number and address.");return}
+const message=`Kota Connect order\nName: ${name}\nCustomer phone: ${phone}\nAddress: ${address}\nMethod: ${document.getElementById("method").value}\nItems:\n${cart.map(p=>p.name+" - R"+p.price.toFixed(2)+" ("+p.seller+")").join("\n")}\nTotal: R${cart.reduce((s,p)=>s+p.price,0).toFixed(2)}\nPlease confirm availability and payment.`;
+window.location.href="https://wa.me/?text="+encodeURIComponent(message);
+}
+render();
+</script>
+</body>
 </html>
