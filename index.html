@@ -193,25 +193,83 @@
     This page does not process payments or store orders in a shared database.</p>
   </section>
 
-  <section id="register">
-    <h2>Register Your Kota Business</h2>
-    <p>Are you a kota shop owner? Join Kota Connect to help more
-    customers discover your business.</p>
-    <ul>
-      <li>Submit your shop registration using our Google Form.</li>
-      <li>Provide your menu, prices, location and contact details.</li>
-      <li>Include your operating schedule and pickup/delivery options.</li>
-      <li>Shop listings should be checked and approved before publication.</li>
-    </ul>
-    <a id="googleFormLink" class="button"
-       href="https://docs.google.com/forms/"
-       target="_blank" rel="noopener">
-       📝 Open Shop Registration Form
-    </a>
-    <p class="note">Replace this example link with your actual Google
-    registration form URL. This link alone does not upload or approve
-    registrations automatically.</p>
-  </section>
+<section id="register">
+  <h2>Register Your Kota Business</h2>
+  <p>Join Kota Connect and help more customers discover your business.</p>
+
+  <form id="shopRegistrationForm">
+    <label for="businessName">Business name *</label>
+    <input id="businessName" name="businessName" required
+      placeholder="Enter your shop name">
+
+    <label for="ownerName">Owner's full name *</label>
+    <input id="ownerName" name="ownerName" required
+      autocomplete="name" placeholder="Enter your full name">
+
+    <label for="businessPhone">Phone / WhatsApp number *</label>
+    <input id="businessPhone" name="businessPhone" type="tel"
+      required placeholder="e.g. 0821234567">
+
+    <label for="businessEmail">Email address</label>
+    <input id="businessEmail" name="businessEmail" type="email"
+      placeholder="Enter your email">
+
+    <label for="businessArea">Business location *</label>
+    <select id="businessArea" name="businessArea" required>
+      <option value="">Choose your area</option>
+      <option>Newcastle CBD</option>
+      <option>Madadeni Section 1</option>
+      <option>Madadeni Section 2</option>
+      <option>Madadeni Section 3</option>
+      <option>Madadeni Section 4</option>
+      <option>Madadeni Section 5</option>
+      <option>Madadeni Section 6</option>
+      <option>Madadeni Section 7</option>
+      <option>Osizweni</option>
+      <option>Other Newcastle area</option>
+    </select>
+
+    <label for="streetAddress">Street, stand or shop address *</label>
+    <input id="streetAddress" name="streetAddress" required
+      placeholder="Enter your business address">
+
+    <label for="menuDetails">Menu and prices *</label>
+    <textarea id="menuDetails" name="menuDetails" required rows="5"
+      placeholder="List each kota, chips, beverages and their prices"></textarea>
+
+    <label for="openingHours">Operating days and hours *</label>
+    <textarea id="openingHours" name="openingHours" required rows="2"
+      placeholder="e.g. Monday–Saturday, 08:00–18:00"></textarea>
+
+    <label>Services offered *</label>
+    <label><input type="checkbox" name="services"
+      value="Pickup"> Pickup</label>
+    <label><input type="checkbox" name="services"
+      value="Delivery"> Delivery</label>
+
+    <label for="deliveryFee">Delivery fee, if applicable (R)</label>
+    <input id="deliveryFee" name="deliveryFee" type="number"
+      min="0" step="0.50" placeholder="Enter delivery fee">
+
+    <label for="socialLinks">Social media links</label>
+    <textarea id="socialLinks" name="socialLinks" rows="2"
+      placeholder="Facebook, Instagram, TikTok"></textarea>
+
+    <label for="registrationNotes">Additional information</label>
+    <textarea id="registrationNotes" name="registrationNotes" rows="3"
+      placeholder="Anything else customers should know"></textarea>
+
+    <label>
+      <input type="checkbox" name="consent" required>
+      I confirm these details are accurate and agree to be contacted
+      about my business registration.
+    </label>
+
+    <button type="submit">Submit Shop Registration</button>
+    <p id="registrationMessage" aria-live="polite"></p>
+  </form>
+</section>
+
 
   <section>
     <h2>Shop Operating Schedules</h2>
