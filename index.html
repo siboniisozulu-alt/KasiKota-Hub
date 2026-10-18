@@ -422,5 +422,98 @@ renderShops();
   }
 </style>
 
+<!-- KOTA CONNECT CONTACT & SOCIAL LINKS -->
+<footer class="kc-footer">
+  <h2>Connect with Kota Connect</h2>
+  <p>Find your favourite local kota shops and get in touch.</p>
+
+  <div class="kc-socials">
+    <a href="https://wa.me/27YOURNUMBER"
+       target="_blank" rel="noopener"
+       class="kc-social whatsapp">
+      WhatsApp
+    </a>
+
+    <a href="https://facebook.com/YOURPAGE"
+       target="_blank" rel="noopener"
+       class="kc-social facebook">
+      Facebook
+    </a>
+
+    <a href="https://instagram.com/YOURPAGE"
+       target="_blank" rel="noopener"
+       class="kc-social instagram">
+      Instagram
+    </a>
+
+    <a href="https://tiktok.com/@YOURPAGE"
+       target="_blank" rel="noopener"
+       class="kc-social tiktok">
+      TikTok
+    </a>
+  </div>
+
+  <div class="kc-contact">
+    <h3>Contact Us</h3>
+    <p>📍 Serving Newcastle, Madadeni and Osizweni</p>
+    <p>📞 <a href="tel:+27YOURNUMBER">
+      Add your phone number
+    </a></p>
+    <p>✉️ <a href="mailto:YOUREMAIL@example.com">
+      Add your email address
+    </a></p>
+  </div>
+
+  <p class="kc-copy">
+    © <span id="kc-year"></span> Kota Connect.
+    Connecting local kota businesses with customers.
+  </p>
+</footer>
+
+<style>
+.kc-footer {
+  background: #172033;
+  color: white;
+  text-align: center;
+  padding: 30px 16px;
+  margin-top: 35px;
+  border-radius: 16px 16px 0 0;
+  font-family: Arial, sans-serif;
+}
+.kc-footer h2 { margin-bottom: 10px; }
+.kc-footer p { line-height: 1.7; }
+.kc-socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 22px 0;
+}
+.kc-social {
+  color: white;
+  padding: 12px 16px;
+  border-radius: 9px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.whatsapp { background: #25D366; }
+.facebook { background: #1877F2; }
+.instagram { background: #C13584; }
+.tiktok { background: #000000; }
+.kc-contact { margin-top: 25px; }
+.kc-contact a { color: #8ED8FF; }
+.kc-copy {
+  border-top: 1px solid #465066;
+  margin-top: 25px;
+  padding-top: 15px;
+  font-size: 13px;
+}
+</style>
+
+<script>
+document.getElementById("kc-year").textContent =
+  new Date().getFullYear();
+</script>
+
 </body>
 </html>
