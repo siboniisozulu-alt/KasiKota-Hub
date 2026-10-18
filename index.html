@@ -1,58 +1,4 @@
 
-
-<!DOCTYPE html>
-<html lang="en-ZA">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#10251b">
-<meta name="description" content="Kota Connect connects Newcastle customers with local kota shops.">
-<title>Kota Connect | Newcastle</title>
-<style>
-:root{--dark:#10251b;--lime:#d7ff65;--bg:#f5f7f2;--white:#fff;--muted:#68746b;--line:#e0e7df}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--dark);font-family:Arial,sans-serif}
-header{background:var(--dark);color:white;padding:17px}
-nav,main,footer{max-width:900px;margin:auto}
-nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.logo{font-weight:800;font-size:23px}.logo span{color:var(--lime)}
-nav a{color:white}
-main{padding:16px}
-.hero{background:#eaf3df;padding:24px;border-radius:17px}
-h1{font-size:clamp(28px,7vw,40px);margin:0 0 10px}
-h2{font-size:21px;margin-top:0}
-h3{font-size:17px}
-p{line-height:1.5}
-label{display:block;font-size:14px;font-weight:bold;margin:12px 0 6px}
-input,select,textarea,button{width:100%;font:inherit;padding:12px;border-radius:9px}
-input,select,textarea{border:1px solid #cbd5ca;background:white;color:var(--dark)}
-button{border:0;background:var(--dark);color:white;font-weight:bold;cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a5d63d;outline-offset:2px}
-.primary{background:var(--lime);color:var(--dark)}
-.light{background:white;color:var(--dark);border:1px solid var(--line)}
-.panel,.shop,.menu-card{background:white;border:1px solid var(--line);border-radius:13px;padding:16px;margin:13px 0}
-.section{margin-top:27px}
-.muted{color:var(--muted);font-size:13px}
-.row{display:flex;gap:10px;align-items:center}
-.row>*{min-width:0}
-.row button{width:auto}
-.shop-head,.line,.total{display:flex;justify-content:space-between;gap:12px;align-items:center}
-.line{padding:12px 0;border-bottom:1px solid var(--line)}
-.line button{width:auto}
-.total{padding:8px 0}
-.total strong:last-child{text-align:right}
-.grand{border-top:1px solid var(--line);font-size:18px;font-weight:bold;margin-top:8px;padding-top:14px}
-.tag{background:#edf5e7;padding:6px 9px;border-radius:20px;font-size:12px}
-.notice{padding:12px;background:#eff6ff;border-radius:9px;font-size:13px;line-height:1.5}
-.warning{padding:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:9px;font-size:13px;line-height:1.5}
-.hidden{display:none!important}
-details{background:white;border:1px solid var(--line);border-radius:10px;padding:13px;margin:9px 0}
-summary{font-weight:bold;cursor:pointer}
-footer{background:var(--dark);color:white;padding:24px 16px;margin-top:30px}
-footer .muted{color:#d5e4d8}
-@media(min-width:620px){main{padding:24px}.search-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hero{padding:32px}}
-</style>
-  
 <!-- KOTA CONNECT SELLER REGISTRATION -->
 <section id="seller-registration" class="seller-section">
   <div class="seller-container">
@@ -103,6 +49,195 @@ footer .muted{color:#d5e4d8}
       <textarea id="address" name="address"
         required maxlength="300" rows="3"
         placeholder="Help customers find your shop"></textarea>
+
+      <h3>2. Shop Details</h3>
+
+      <label for="description">Tell customers about your shop *</label>
+      <textarea id="description" name="description"
+        required maxlength="500" rows="3"
+        placeholder="Describe your kota shop and what makes it special"></textarea>
+
+      <label for="menu">Your kota menu (optional)</label>
+      <textarea id="menu" name="menu" rows="4"
+        maxlength="1500"
+        placeholder="Enter your kota names and prices. You can add or update your menu later."></textarea>
+
+      <label for="hours">Operating hours *</label>
+      <input id="hours" name="hours" type="text"
+        required maxlength="100"
+        placeholder="e.g. Monday–Saturday, 09:00–18:00">
+
+      <label for="fulfilment">How do customers get their orders? *</label>
+      <select id="fulfilment" name="fulfilment" required>
+        <option value="">Choose an option</option>
+        <option value="Collection">Collection at the shop</option>
+        <option value="Delivery">Delivery</option>
+        <option value="Both">Collection and delivery</option>
+      </select>
+
+      <h3>3. Registration Agreement</h3>
+
+      <label class="seller-check">
+        <input type="checkbox" id="permission" required>
+        I confirm that the information provided is accurate and
+        I am authorised to register this business.
+      </label>
+
+      <label class="seller-check">
+        <input type="checkbox" id="reviewConsent" required>
+        I understand that Kota Connect must review my registration
+        before my shop is listed.
+      </label>
+
+      <button type="submit" class="seller-submit">
+        Submit Seller Registration
+      </button>
+
+      <p id="sellerMessage" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .seller-section {
+    padding: 28px 14px;
+    background: #f6f6f6;
+    color: #222;
+    font-family: Arial, sans-serif;
+  }
+
+  .seller-container {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 22px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 14px rgba(0,0,0,.08);
+  }
+
+  .seller-container h2 {
+    margin-top: 0;
+    color: #b77900;
+    font-size: 26px;
+  }
+
+  .seller-intro {
+    line-height: 1.6;
+    color: #555;
+  }
+
+  .seller-container h3 {
+    margin-top: 26px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .seller-container label:not(.seller-check) {
+    display: block;
+    margin: 16px 0 6px;
+    font-weight: 600;
+  }
+
+  .seller-container input:not([type="checkbox"]),
+  .seller-container select,
+  .seller-container textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    color: #222;
+    font: inherit;
+  }
+
+  .seller-container textarea {
+    resize: vertical;
+  }
+
+  .seller-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 18px 0;
+    line-height: 1.5;
+  }
+
+  .seller-check input {
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .seller-submit {
+    width: 100%;
+    padding: 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #171717;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .seller-submit:hover {
+    background: #333;
+  }
+
+  #sellerMessage {
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 480px) {
+    .seller-container {
+      padding: 16px;
+    }
+  }
+</style>
+
+<script>
+  document.getElementById("sellerForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    if (!form.reportValidity()) return;
+
+    const registration = {
+      businessName: form.businessName.value.trim(),
+      ownerName: form.ownerName.value.trim(),
+      phone: form.phone.value.trim(),
+      email: form.email.value.trim(),
+      area: form.area.value,
+      address: form.address.value.trim(),
+      description: form.description.value.trim(),
+      menu: form.menu.value.trim(),
+      hours: form.hours.value.trim(),
+      fulfilment: form.fulfilment.value,
+      status: "Pending review",
+      submittedAt: new Date().toISOString()
+    };
+
+    try {
+      const storageKey = "kota_connect_seller_registrations";
+      const registrations = JSON.parse(
+        localStorage.getItem(storageKey) || "[]"
+      );
+
+      registrations.push(registration);
+      localStorage.setItem(storageKey, JSON.stringify(registrations));
+
+      document.getElementById("sellerMessage").textContent =
+        "This registration was saved on this device only. It has NOT been sent to Kota Connect yet. Please contact the Kota Connect administrator to complete registration.";
+
+      form.reset();
+    } catch (error) {
+      document.getElementById("sellerMessage").textContent =
+        "Registration could not be saved in this browser. Please try again.";
+    }
+  });
+</script>
+<!-- END KOTA CONNECT SELLER REGISTRATION -->
 
       <h3>2. Shop Details</h3>
 
