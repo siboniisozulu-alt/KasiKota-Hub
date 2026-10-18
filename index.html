@@ -1,818 +1,562 @@
-<header id="home" style="font-family:Arial,sans-serif;background:#171717;color:white;padding:24px 16px;text-align:center;border-radius:12px;margin:12px auto;max-width:650px;">
-  <h1 style="margin:0 0 8px;color:#FFD700;">🍔 Kota Connect</h1>
-  <p style="margin:0 0 16px;">Your local kota, connected.</p>
-  <p style="margin:0 0 18px;">Discover kota sellers in Newcastle, KwaZulu-Natal.</p>
-  <a href="#kota-menu" style="display:inline-block;background:#FFD700;color:#171717;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:bold;">Browse Kota Menu</a>
-  <nav style="margin-top:20px;">
-    <a href="#home" style="color:white;margin:8px;">Home</a>
-    <a href="#kota-menu" style="color:white;margin:8px;">Menu</a>
-    <a href="#seller-info" style="color:white;margin:8px;">Sell on Kota Connect</a>
-  </nav>
-</header> Home
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kota Connect | Newcastle</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#fffaf2;color:#222}
-header{background:#167447;color:white;padding:20px 16px}
-header h1{margin:0;font-size:27px}
-main{max-width:700px;margin:auto;padding:16px}
-.hero{background:#ffe0a3;padding:20px;border-radius:15px;margin-bottom:18px}
-h2{font-size:21px}
-label{display:block;font-weight:bold;margin-top:12px}
-input,select{width:100%;padding:12px;margin-top:6px;border:1px solid #ccc;border-radius:9px;background:white;font-size:16px}
-button{padding:11px 14px;border:0;border-radius:9px;background:#167447;color:white;font-weight:bold;font-size:15px;cursor:pointer}
-.shop{background:white;border:1px solid #e6e1d8;border-radius:14px;padding:15px;margin:13px 0}
-.shop h3{margin:0 0 7px}
-.tag{display:inline-block;background:#e5f4e9;color:#12643b;border-radius:20px;padding:5px 9px;font-size:12px;margin:3px 3px 8px 0}
-.muted{color:#666;font-size:14px}
-.menuitem{border-top:1px solid #eee;padding:12px 0}
-.menuitem strong{display:block;margin-bottom:5px}
-.menuitem button{float:right}
-.menuitem:after{content:"";display:block;clear:both}
-.cart{background:white;border:1px solid #ddd;border-radius:13px;padding:15px;margin-top:20px}
-#message{white-space:pre-wrap;overflow-wrap:anywhere}
-footer{text-align:center;padding:25px;color:#666;font-size:13px}
-</style>
-
-
-<section style="background:#e5f4e9;padding:18px;border-radius:14px;margin:18px 0;">
-  <h2>🏪 Own a Kota Shop?</h2>
-  <p>Join Kota Connect and help more customers discover your business in Newcastle.</p>
-  <p>Seller registration is free during our launch phase. All applications are reviewed manually.</p>
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSfDmN5bI90aWHj5BbBv0ynDmkef7PAoE7qVk8OIazGIJ-wm4g/viewform"
-     target="_blank"
-     rel="noopener noreferrer"
-     style="display:block;text-align:center;background:#167447;color:white;padding:14px;border-radius:9px;text-decoration:none;font-weight:bold;">
-    Register Your Kota Shop
-  </a>
-</section>
-
-<h2>📍 Find shops near you</h2>
-<label for="area">Choose your area</label>
-<select id="area" onchange="render()">
-<option>Newcastle CBD</option>
-<option>Madadeni</option>
-<option>Section 7</option>
-<option>Section 2</option>
-<option>Osizweni</option>
-<option>Other Newcastle areas</option>
-</select>
-
-<label for="method">How would you like your order?</label>
-<select id="method" onchange="render()">
-<option value="Both">Pickup or delivery</option>
-<option value="Pickup">Pickup only</option>
-<option value="Delivery">Delivery only</option>
-</select>
-
-<label for="search">Search shops or kotas</label>
-<input id="search" placeholder="Try Russian, cheese, or shop name" oninput="render()">
-
-<p class="muted">Demo listings below are examples, not verified real businesses.</p>
-<div id="shops"></div>
-
-<section class="cart">
-<h2>🛒 Your order</h2>
-<div id="cart">Choose a kota from a shop to begin.</div>
-<label for="customer">Your name</label>
-<input id="customer" placeholder="Your name">
-<label for="phone">Your phone number</label>
-<input id="phone" type="tel" placeholder="e.g. 0712345678">
-<label for="address">Pickup details or delivery address</label>
-<input id="address" placeholder="Enter your address or pickup note">
-<p class="muted">Delivery fees and availability must be confirmed with the seller.</p>
-<button onclick="sendOrder()">Prepare order on WhatsApp</button>
-<p id="message" class="muted"></p>
-</section>
-</main>
-<footer>Kota Connect · Newcastle, KwaZulu-Natal<br>Local sellers, one community.</footer>
-
-<script>
-const shops=[
-{
-  id: 7,
-  name: "APPROVED SHOP NAME",
-  area: "Newcastle CBD",
-  location: "APPROVED PUBLIC BUSINESS LOCATION",
-  phone: "",
-  methods: ["Pickup", "Delivery"],
-  items: [
-    {name: "Classic Kota", price: 30},
-    {name: "Russian Kota", price: 40}
-  ]
-},
-
-{id:1,name:"CBD Kota Kitchen (Demo)",area:"Newcastle CBD",location:"Example CBD location",phone:"",methods:["Pickup","Delivery"],items:[
-{name:"Classic Kota",price:30},
-{name:"Russian Kota",price:40},
-{name:"Cheese & Chips Kota",price:35}]},
-{id:2,name:"Golden Crust Kota (Demo)",area:"Newcastle CBD",location:"Example CBD location",phone:"",methods:["Pickup"],items:[
-{name:"Cheese Kota",price:35},
-{name:"Full House Kota",price:50},
-{name:"Polony Kota",price:25}]},
-{id:3,name:"Madadeni Kota Stop (Demo)",area:"Madadeni",location:"Example Madadeni location",phone:"",methods:["Pickup","Delivery"],items:[
-{name:"Russian & Chips Kota",price:40},
-{name:"Full House Kota",price:50}]},
-{id:4,name:"Section 7 Kota Corner (Demo)",area:"Section 7",location:"Example Section 7 location",phone:"",methods:["Pickup","Delivery"],items:[
-{name:"Classic Kota",price:30},
-{name:"Cheese Kota",price:35}]},
-{id:5,name:"Section 2 Kota Spot (Demo)",area:"Section 2",location:"Example Section 2 location",phone:"",methods:["Pickup"],items:[
-{name:"Russian Kota",price:40},
-{name:"Full House Kota",price:50}]},
-{id:6,name:"Osizweni Kota Hub (Demo)",area:"Osizweni",location:"Example Osizweni location",phone:"",methods:["Pickup","Delivery"],items:[
-{name:"Classic Kota",price:30},
-{name:"Russian & Chips Kota",price:40}]}
-];
-let cart=[];
-let selectedShop=null;
-
-function money(n){return "R"+n.toFixed(2)}
-
-function render(){
-const area=document.getElementById("area").value;
-const method=document.getElementById("method").value;
-const q=document.getElementById("search").value.toLowerCase().trim();
-const found=shops.filter(s=>
-s.area===area &&
-(method==="Both"||s.methods.includes(method)) &&
-(s.name+" "+s.items.map(i=>i.name).join(" ")).toLowerCase().includes(q)
-);
-document.getElementById("shops").innerHTML=found.length?found.map(s=>`
-<div class="shop">
-<h3>🍔 ${s.name}</h3>
-<div class="muted">📍 ${s.area}</div>
-<div class="muted">${s.location}</div>
-${s.methods.map(m=>`<span class="tag">${m}</span>`).join("")}
-${s.items.map((item,i)=>`
-<div class="menuitem">
-<button onclick="add(${s.id},${i})">Add</button>
-<strong>${item.name}</strong>
-<span>${money(item.price)}</span>
-</div>`).join("")}
-</div>`).join(""):"<p>No demo shops match this area and preference yet. Try another area or order method.</p>";
-}
-
-function add(shopId,itemIndex){
-const shop=shops.find(s=>s.id===shopId);
-const item=shop.items[itemIndex];
-if(selectedShop!==null&&selectedShop!==shopId){
-if(!confirm("Your cart has items from another shop. Clear it and order from "+shop.name+" instead?"))return;
-cart=[];
-}
-selectedShop=shopId;
-cart.push({shopId:shop.id,shop:shop.name,name:item.name,price:item.price});
-showCart();
-}
-
-function showCart(){
-const total=cart.reduce((sum,item)=>sum+item.price,0);
-document.getElementById("cart").innerHTML=cart.length?
-cart.map((item,i)=>`${i+1}. ${item.name} — ${money(item.price)} <button onclick="removeItem(${i})" style="padding:4px 8px;margin-left:5px">Remove</button>`).join("<br>")+
-`<p><strong>Total: ${money(total)}</strong></p><p class="muted">Shop: ${cart[0].shop}</p>`:
-"Choose a kota from a shop to begin.";
-}
-
-function removeItem(i){
-cart.splice(i,1);
-selectedShop=cart.length?cart[0].shopId:null;
-showCart();
-}
-
-function sendOrder(){
-if(!cart.length){alert("Please add a kota first.");return}
-const name=document.getElementById("customer").value.trim();
-const phone=document.getElementById("phone").value.trim();
-const address=document.getElementById("address").value.trim();
-if(!name||!phone||!address){alert("Please enter your name, phone number and pickup details or address.");return}
-const method=document.getElementById("method").value==="Both"?
-"Customer to confirm pickup or delivery":
-document.getElementById("method").value;
-const total=cart.reduce((sum,item)=>sum+item.price,0);
-const message=`KOTA CONNECT ORDER REQUEST\nShop: ${cart[0].shop}\nArea: ${document.getElementById("area").value}\nCustomer: ${name}\nCustomer phone: ${phone}\nPickup/delivery details: ${address}\nPreference: ${method}\nItems:\n${cart.map(i=>i.name+" - "+money(i.price)).join("\n")}\nFood total: ${money(total)}\nPlease confirm stock, final price and delivery fee.`;
-document.getElementById("message").textContent="Your order message is ready. Choose a WhatsApp contact on the next screen. The demo shop is not connected to a real seller yet.";
-window.location.href="https://wa.me/?text="+encodeURIComponent(message);
-}
-
-render();
-</script>
-</body>
-</html>
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kota Connect | Newcastle</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#fffaf2;color:#222}
-header{background:#167447;color:white;padding:20px 16px}
-header h1{margin:0;font-size:27px}
-main{max-width:700px;margin:auto;padding:16px}
-.hero{background:#ffe0a3;padding:20px;border-radius:15px;margin-bottom:18px}
-h2{font-size:21px}
-label{display:block;font-weight:bold;margin-top:12px}
-input,select{width:100%;padding:12px;margin-top:6px;border:1px solid #ccc;border-radius:9px;background:white;font-size:16px}
-button{padding:11px 14px;border:0;border-radius:9px;background:#167447;color:white;font-weight:bold;font-size:15px;cursor:pointer}
-.shop{background:white;border:1px solid #e6e1d8;border-radius:14px;padding:15px;margin:13px 0}
-.shop h3{margin:0 0 7px}
-.tag{display:inline-block;background:#e5f4e9;color:#12643b;border-radius:20px;padding:5px 9px;font-size:12px;margin:3px 3px 8px 0}
-.muted{color:#666;font-size:14px}
-.menuitem{border-top:1px solid #eee;padding:12px 0}
-.menuitem strong{display:block;margin-bottom:5px}
-.menuitem button{float:right}
-.menuitem:after{content:"";display:block;clear:both}
-.cart{background:white;border:1px solid #ddd;border-radius:13px;padding:15px;margin-top:20px}
-#message{white-space:pre-wrap;overflow-wrap:anywhere}
-footer{text-align:center;padding:25px;color:#666;font-size:13px}
-</style>
-</head>
-<body>
-<header>
-<h1>🍔 Kota Connect</h1>
-<p>Discover local kota shops in Newcastle</p>
-</header>
-<main>
-<section class="hero">
-<h2>Your area. Your kota shops.</h2>
-<p>Find a local seller, explore their menu and choose pickup or delivery.</p>
-<strong>Support local. Eat lekker!</strong>
-</section>
-
-<h2>📍 Find shops near you</h2>
-<label for="area">Choose your area</label>
-<select id="area" onchange="render()">
-<option>Newcastle CBD</option>
-<option>Madadeni</option>
-<option>Section 7</option>
-<option>Section 2</option>
-<option>Osizweni</option>
-<option>Other Newcastle areas</option>
-</select>
-
-<label for="method">How would you like your order?</label>
-<select id="method" onchange="render()">
-<option value="Both">Pickup or delivery</option>
-<option value="Pickup">Pickup only</option>
-<option value="Delivery">Delivery only</option>
-</select>
-
-<label for="search">Search shops or kotas</label>
-<input id="search" placeholder="Try Russian, cheese, or shop name" oninput="render()">
-
-<p class="muted">Demo listings below are examples, not verified real businesses.</p>
-<div id="shops"></div>
-
-<section class="cart">
-<h2>🛒 Your order</h2>
-<div id="cart">Choose a kota from a shop to begin.</div>
-<label for="customer">Your name</label>
-<input id="customer" placeholder="Your name">
-<label for="phone">Your phone number</label>
-<input id="phone" type="tel" placeholder="e.g. 0712345678">
-<label for="address">Pickup details or delivery address</label>
-<input id="address" placeholder="Enter your address or pickup note">
-<p class="muted">Delivery fees and availability must be confirmed with the seller.</p>
-<button onclick="sendOrder()">Prepare order on WhatsApp</button>
-<p id="message" class="muted"></p>
-</section>
-</main>
-<footer>Kota Connect · Newcastle, KwaZulu-Natal<br>Local sellers, one community.</footer>
-
-<script>
-const shops=[
-{id:1,name:"CBD Kota Kitchen (Demo)",area:"Newcastle CBD",location:"Example CBD location",phone:"",methods:["Pickup","Delivery"],items:[
-{name:"Classic Kota",price:30},
-{name:"Russian Kota",price:40},
-{name:"Cheese & Chips Kota",price:35}]},
-{id:2,name:"Golden Crust Kota (Demo)",area:"Newcastle CBD",location:"Example CBD location",phone:"",methods:["Pickup"],items:[
-{name:"Cheese Kota",price:35},
-{name:"Full House Kota",price:50},
-{name:"Polony Kota",price:25}]},
-{id:3,name:"Madadeni Kota Stop (Demo)",area:"Madadeni",location:"Example Madadeni location",phone:"",methods:["Pickup","Delivery"],items:[
-{name:"Russian & Chips Kota",price:40},
-{name:"Full House Kota",price:50}]},
-{id:4,name:"Section 7 Kota Corner (Demo)",area:"Section 7",location:"Example Section 7 location",phone:"",methods:["Pickup","Delivery"],items:[
-{name:"Classic Kota",price:30},
-{name:"Cheese Kota",price:35}]},
-{id:5,name:"Section 2 Kota Spot (Demo)",area:"Section 2",location:"Example Section 2 location",phone:"",methods:["Pickup"],items:[
-{name:"Russian Kota",price:40},
-{name:"Full House Kota",price:50}]},
-{id:6,name:"Osizweni Kota Hub (Demo)",area:"Osizweni",location:"Example Osizweni location",phone:"",methods:["Pickup","Delivery"],items:[
-{name:"Classic Kota",price:30},
-{name:"Russian & Chips Kota",price:40}]}
-];
-let cart=[];
-let selectedShop=null;
-
-function money(n){return "R"+n.toFixed(2)}
-
-function render(){
-const area=document.getElementById("area").value;
-const method=document.getElementById("method").value;
-const q=document.getElementById("search").value.toLowerCase().trim();
-const found=shops.filter(s=>
-s.area===area &&
-(method==="Both"||s.methods.includes(method)) &&
-(s.name+" "+s.items.map(i=>i.name).join(" ")).toLowerCase().includes(q)
-);
-document.getElementById("shops").innerHTML=found.length?found.map(s=>`
-<div class="shop">
-<h3>🍔 ${s.name}</h3>
-<div class="muted">📍 ${s.area}</div>
-<div class="muted">${s.location}</div>
-${s.methods.map(m=>`<span class="tag">${m}</span>`).join("")}
-${s.items.map((item,i)=>`
-<div class="menuitem">
-<button onclick="add(${s.id},${i})">Add</button>
-<strong>${item.name}</strong>
-<span>${money(item.price)}</span>
-</div>`).join("")}
-</div>`).join(""):"<p>No demo shops match this area and preference yet. Try another area or order method.</p>";
-}
-
-function add(shopId,itemIndex){
-const shop=shops.find(s=>s.id===shopId);
-const item=shop.items[itemIndex];
-if(selectedShop!==null&&selectedShop!==shopId){
-if(!confirm("Your cart has items from another shop. Clear it and order from "+shop.name+" instead?"))return;
-cart=[];
-}
-selectedShop=shopId;
-cart.push({shopId:shop.id,shop:shop.name,name:item.name,price:item.price});
-showCart();
-}
-
-function showCart(){
-const total=cart.reduce((sum,item)=>sum+item.price,0);
-document.getElementById("cart").innerHTML=cart.length?
-cart.map((item,i)=>`${i+1}. ${item.name} — ${money(item.price)} <button onclick="removeItem(${i})" style="padding:4px 8px;margin-left:5px">Remove</button>`).join("<br>")+
-`<p><strong>Total: ${money(total)}</strong></p><p class="muted">Shop: ${cart[0].shop}</p>`:
-"Choose a kota from a shop to begin.";
-}
-
-function removeItem(i){
-cart.splice(i,1);
-selectedShop=cart.length?cart[0].shopId:null;
-showCart();
-}
-
-function sendOrder(){
-if(!cart.length){alert("Please add a kota first.");return}
-const name=document.getElementById("customer").value.trim();
-const phone=document.getElementById("phone").value.trim();
-const address=document.getElementById("address").value.trim();
-if(!name||!phone||!address){alert("Please enter your name, phone number and pickup details or address.");return}
-const method=document.getElementById("method").value==="Both"?
-"Customer to confirm pickup or delivery":
-document.getElementById("method").value;
-const total=cart.reduce((sum,item)=>sum+item.price,0);
-const message=`KOTA CONNECT ORDER REQUEST\nShop: ${cart[0].shop}\nArea: ${document.getElementById("area").value}\nCustomer: ${name}\nCustomer phone: ${phone}\nPickup/delivery details: ${address}\nPreference: ${method}\nItems:\n${cart.map(i=>i.name+" - "+money(i.price)).join("\n")}\nFood total: ${money(total)}\nPlease confirm stock, final price and delivery fee.`;
-document.getElementById("message").textContent="Your order message is ready. Choose a WhatsApp contact on the next screen. The demo shop is not connected to a real seller yet.";
-window.location.href="https://wa.me/?text="+encodeURIComponent(message);
-}
-
-render();
-</script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
+<html lang="en-ZA">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kota Connect | Newcastle</title>
+<meta name="theme-color" content="#111827">
+<meta name="description" content="Find local kota shops and order in Newcastle, South Africa.">
+<title>Kota Connect</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#fffaf2;color:#252525}
-header{background:#167447;color:white;padding:20px 16px}
-header h1{margin:0;font-size:27px}
-header p{margin:7px 0 0}
-main{padding:16px;max-width:650px;margin:auto}
-.hero{background:#ffe0a3;padding:22px;border-radius:16px}
-.hero h2{font-size:25px;margin-top:0}
-input,select,button{font:inherit;padding:12px;border-radius:9px}
-input,select{border:1px solid #ccc;width:100%;margin:7px 0}
-button{border:0;background:#167447;color:white;font-weight:bold;cursor:pointer}
-.shop{background:white;border:1px solid #eee;padding:14px;margin:12px 0;border-radius:12px}
-.shop h3{margin:0 0 8px}
-.price{color:#167447;font-weight:bold}
-.small{font-size:13px;color:#555}
-footer{text-align:center;padding:25px;color:#666}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#172033}
+header{background:#111827;color:white;padding:18px}
+nav,main,footer{max-width:850px;margin:auto}
+nav{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logo{font-size:24px;font-weight:bold}
+.logo span{color:#fbbf24}
+main{padding:16px}
+.hero{background:#fff0c2;padding:22px;border-radius:16px}
+h1{font-size:29px;margin:0 0 10px}
+h2{font-size:21px}
+p{line-height:1.5}
+label{display:block;font-weight:bold;margin:13px 0 6px}
+input,select,textarea,button{width:100%;padding:12px;border-radius:9px;font:inherit}
+input,select,textarea{border:1px solid #cbd5e1;background:white}
+button{border:0;cursor:pointer;font-weight:bold}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #d97706;outline-offset:2px}
+.primary{background:#fbbf24;color:#172033}
+.dark{background:#111827;color:white}
+.light{background:white;border:1px solid #cbd5e1}
+.card{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:15px;margin:12px 0}
+.muted{color:#64748b;font-size:14px}
+.section{margin-top:25px}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{min-width:0}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #e2e8f0}
+.item button{width:auto}
+.item strong{overflow-wrap:anywhere}
+.total{display:flex;justify-content:space-between;gap:10px;margin:12px 0}
+.notice{background:#eff6ff;border-radius:9px;padding:12px;font-size:14px}
+.warning{background:#fff7ed;border:1px solid #fed7aa;border-radius:9px;padding:12px;font-size:14px}
+.hidden{display:none!important}
+footer{background:#111827;color:white;text-align:center;padding:22px;margin-top:25px}
+@media(min-width:600px){main{padding:24px}.hero{padding:30px}h1{font-size:36px}}
 </style>
 </head>
+
 <body>
 <header>
-<h1>🍔 Kota Connect</h1>
-<p>Newcastle's local kota marketplace</p>
+<nav>
+<div class="logo">Kota <span>Connect</span></div>
+<a href="#find" style="color:white">Find a shop</a>
+</nav>
 </header>
+
 <main>
-<section class="hero">
-<h2>Local kotas. Easy ordering.</h2>
-<p>Discover kota sellers in your community.</p>
-<p><strong>Support local. Eat lekker!</strong></p>
-</section>
+<section class="hero" id="find">
+<h1>Your kota, your choice.</h1>
+<p>Find local kota shops, explore their menus and order from your phone.</p>
 
-<script>
-const products=[
-{name:"Classic Kota",seller:"Demo Kota Seller 1",price:30},
-{name:"Russian Kota",seller:"Demo Kota Seller 2",price:40},
-{name:"Cheese & Chips Kota",seller:"Demo Kota Seller 3",price:35},
-{name:"Full House Kota",seller:"Demo Kota Seller 4",price:50}
-];
-let cart=[];
-function render(){
-const q=document.getElementById("search").value.toLowerCase();
-document.getElementById("shops").innerHTML=products.filter(p=>(p.name+" "+p.seller).toLowerCase().includes(q)).map((p,i)=>`<div class="shop"><h3>🍔 ${p.name}</h3><p>${p.seller}</p><p class="price">R${p.price.toFixed(2)}</p><button onclick="add(${products.indexOf(p)})">Add to order</button></div>`).join("")||"No matching kotas found.";
-}
-function add(i){cart.push(products[i]);document.getElementById("cart").innerHTML=cart.map((p,i)=>`${i+1}. ${p.name} — R${p.price.toFixed(2)}`).join("<br>")+`<p><strong>Total: R${cart.reduce((s,p)=>s+p.price,0).toFixed(2)}</strong></p>`;}
-function sendOrder(){
-if(!cart.length){alert("Please add a kota first.");return}
-const name=document.getElementById("customer").value.trim();
-const phone=document.getElementById("phone").value.trim();
-const address=document.getElementById("address").value.trim();
-if(!name||!phone||!address){alert("Please fill in your name, phone number and address.");return}
-const message=`Kota Connect order\nName: ${name}\nCustomer phone: ${phone}\nAddress: ${address}\nMethod: ${document.getElementById("method").value}\nItems:\n${cart.map(p=>p.name+" - R"+p.price.toFixed(2)+" ("+p.seller+")").join("\n")}\nTotal: R${cart.reduce((s,p)=>s+p.price,0).toFixed(2)}\nPlease confirm availability and payment.`;
-window.location.href="https://wa.me/?text="+encodeURIComponent(message);
-}
-render();
-</script>
-</body>
-  </html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kota Connect | Newcastle</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#fffaf2;color:#252525}
-header{background:#167447;color:white;padding:20px 16px}
-header h1{margin:0;font-size:27px}
-header p{margin:7px 0 0}
-main{padding:16px;max-width:650px;margin:auto}
-.hero{background:#ffe0a3;padding:22px;border-radius:16px}
-.hero h2{font-size:25px;margin-top:0}
-input,select,button{font:inherit;padding:12px;border-radius:9px}
-input,select{border:1px solid #ccc;width:100%;margin:7px 0}
-button{border:0;background:#167447;color:white;font-weight:bold;cursor:pointer}
-.shop{background:white;border:1px solid #eee;padding:14px;margin:12px 0;border-radius:12px}
-.shop h3{margin:0 0 8px}
-.price{color:#167447;font-weight:bold}
-.small{font-size:13px;color:#555}
-footer{text-align:center;padding:25px;color:#666}
-</style>
-</head>
-<body>
-<header>
-<h1>🍔 Kota Connect</h1>
-<p>Newcastle's local kota marketplace</p>
-</header>
-<main>
-<section class="hero">
-<h2>Local kotas. Easy ordering.</h2>
-<p>Discover kota sellers in your community.</p>
-<p><strong>Support local. Eat lekker!</strong></p>
-</section>
+<label for="search">Search for a shop or area</label>
+<input id="search" type="search"
+placeholder="Shop name, Newcastle CBD, Osizweni..."
+autocomplete="off">
 
-<h2>Find your kota</h2>
-<input id="search" placeholder="Search kota or seller..." oninput="render()">
-<div id="shops"></div>
-
-<h2>🛒 Your order</h2>
-<div id="cart">No items selected yet.</div>
-<label for="customer">Your name</label>
-<input id="customer" placeholder="Enter your name">
-<label for="phone">Phone number</label>
-<input id="phone" type="tel" placeholder="e.g. 0712345678">
-<label for="address">Pickup or delivery address</label>
-<input id="address" placeholder="Enter your address">
-<label for="method">Order method</label>
-<select id="method">
-<option>Pickup</option>
-<option>Delivery (arranged with seller)</option>
+<label for="area">Choose your area</label>
+<select id="area">
+<option value="">All areas</option>
+<option>Newcastle CBD</option>
+<option>Madadeni Section 1</option>
+<option>Madadeni Section 2</option>
+<option>Madadeni Section 3</option>
+<option>Madadeni Section 4</option>
+<option>Madadeni Section 5</option>
+<option>Madadeni Section 6</option>
+<option>Madadeni Section 7</option>
+<option>Osizweni</option>
+<option>Other Newcastle area</option>
 </select>
-<button onclick="sendOrder()">Send order on WhatsApp</button>
-<p class="small">Demo version: orders open WhatsApp. Sellers and delivery are not connected automatically yet.</p>
+
+<button class="primary" style="margin-top:12px" id="searchBtn">Find kota shops</button>
+</section>
+
+<section class="section" id="shopSection">
+<h2>Choose your kota shop</h2>
+<p class="muted">Available shop listings will appear here.</p>
+<div id="shops" aria-live="polite"></div>
+</section>
+
+<section class="section hidden" id="menuSection">
+<button class="light" id="backBtn">← Back to shops</button>
+<div id="shopInfo"></div>
+<h2>Shop menu</h2>
+<div id="menu"></div>
+</section>
+
+<section class="section hidden" id="cartSection">
+<h2>Your order</h2>
+<div class="card">
+<div id="cartItems"></div>
+<div class="total"><span>Food total</span><strong id="foodTotal">R0.00</strong></div>
+<div class="total"><span>Delivery fee</span><strong id="deliveryTotal">R0.00</strong></div>
+<hr>
+<div class="total"><strong>Total to pay</strong><strong id="grandTotal">R0.00</strong></div>
+</div>
+
+<h2>Checkout</h2>
+<form id="checkout">
+<label for="customer">Your name</label>
+<input id="customer" required maxlength="80" autocomplete="name">
+
+<label for="phone">Contact number</label>
+<input id="phone" type="tel" required maxlength="20" autocomplete="tel">
+
+<label for="fulfilment">Delivery or collection</label>
+<select id="fulfilment">
+<option value="delivery">Delivery — R15</option>
+<option value="collection">Collect from shop — R0 delivery fee</option>
+</select>
+
+<label for="customerArea">Your area</label>
+<input id="customerArea" required maxlength="100"
+placeholder="e.g. Madadeni Section 3">
+
+<label for="address">Delivery address or collection instructions</label>
+<textarea id="address" required maxlength="300"
+placeholder="Enter your delivery address or collection details"></textarea>
+
+<label for="payment">Payment method</label>
+<select id="payment" required>
+<option value="">Choose payment method</option>
+<option>Cash on delivery</option>
+<option>Cash on collection</option>
+<option>EFT by arrangement with the shop</option>
+<option>Card or electronic payment, if supported by the shop</option>
+</select>
+
+<label for="notes">Extra instructions (optional)</label>
+<textarea id="notes" maxlength="300"
+placeholder="Add any special instructions"></textarea>
+
+<p class="warning">Never enter your bank PIN, password or card details here. EFT and electronic payments must be handled through a trusted payment provider or agreed directly with the shop.</p>
+
+<button class="primary" type="submit">Prepare my order</button>
+</form>
+
+<div id="result" class="card hidden" aria-live="polite"></div>
+</section>
+
+<hr style="margin-top:30px">
+
+<section class="section">
+<h2>Are you a kota shop owner?</h2>
+<p>Register your shop and add your own menu items and prices.</p>
+<button class="dark" id="sellerToggle">Add a shop</button>
+
+<div class="card hidden" id="sellerPanel">
+<form id="sellerForm">
+<label for="shopName">Shop name</label>
+<input id="shopName" required maxlength="100">
+
+<label for="shopArea">Shop area</label>
+<input id="shopArea" required maxlength="120"
+list="areas" placeholder="Enter your location">
+<datalist id="areas">
+<option value="Newcastle CBD">
+<option value="Madadeni Section 1">
+<option value="Madadeni Section 2">
+<option value="Madadeni Section 3">
+<option value="Madadeni Section 4">
+<option value="Madadeni Section 5">
+<option value="Madadeni Section 6">
+<option value="Madadeni Section 7">
+<option value="Osizweni">
+<option value="Other Newcastle area">
+</datalist>
+
+<label for="sellerPhone">Shop contact number</label>
+<input id="sellerPhone" type="tel" required maxlength="20">
+
+<button class="primary" style="margin-top:15px" type="submit">Save shop on this device</button>
+</form>
+</div>
+
+<div class="card hidden" id="editor">
+<h3>Add menu items</h3>
+<form id="menuForm">
+<label for="foodName">Food item name</label>
+<input id="foodName" required maxlength="100" placeholder="Enter item name">
+
+<label for="foodDescription">Description (optional)</label>
+<input id="foodDescription" maxlength="160" placeholder="Ingredients or size">
+
+<label for="foodPrice">Actual selling price (R)</label>
+<input id="foodPrice" type="number" min="0.01" max="100000"
+step="0.01" required placeholder="Enter your price">
+
+<button class="primary" style="margin-top:12px" type="submit">Add menu item</button>
+</form>
+<div id="editorItems"></div>
+<button class="light" id="finishEditing" style="margin-top:12px">Finish editing</button>
+</div>
+</section>
 </main>
-<footer>Kota Connect · Newcastle, KwaZulu-Natal</footer>
+
+<footer>
+<strong>Kota Connect</strong>
+<p>Supporting local kota businesses in Newcastle.</p>
+<p class="muted" style="color:#cbd5e1">Shop listings and orders should be handled with care and respect for customer privacy.</p>
+</footer>
 
 <script>
-const products=[
-{name:"Classic Kota",seller:"Demo Kota Seller 1",price:30},
-{name:"Russian Kota",seller:"Demo Kota Seller 2",price:40},
-{name:"Cheese & Chips Kota",seller:"Demo Kota Seller 3",price:35},
-{name:"Full House Kota",seller:"Demo Kota Seller 4",price:50}
-];
-let cart=[];
-function render(){
-const q=document.getElementById("search").value.toLowerCase();
-document.getElementById("shops").innerHTML=products.filter(p=>(p.name+" "+p.seller).toLowerCase().includes(q)).map((p,i)=>`<div class="shop"><h3>🍔 ${p.name}</h3><p>${p.seller}</p><p class="price">R${p.price.toFixed(2)}</p><button onclick="add(${products.indexOf(p)})">Add to order</button></div>`).join("")||"No matching kotas found.";
+"use strict";
+
+const DELIVERY_FEE = 15;
+const STORAGE_KEY = "kota_connect_shops_v1";
+
+let shops = loadShops();
+let selectedShopId = null;
+let editingShopId = null;
+let cart = [];
+
+function loadShops() {
+  try {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
 }
-function add(i){cart.push(products[i]);document.getElementById("cart").innerHTML=cart.map((p,i)=>`${i+1}. ${p.name} — R${p.price.toFixed(2)}`).join("<br>")+`<p><strong>Total: R${cart.reduce((s,p)=>s+p.price,0).toFixed(2)}</strong></p>`;}
-function sendOrder(){
-if(!cart.length){alert("Please add a kota first.");return}
-const name=document.getElementById("customer").value.trim();
-const phone=document.getElementById("phone").value.trim();
-const address=document.getElementById("address").value.trim();
-if(!name||!phone||!address){alert("Please fill in your name, phone number and address.");return}
-const message=`Kota Connect order\nName: ${name}\nCustomer phone: ${phone}\nAddress: ${address}\nMethod: ${document.getElementById("method").value}\nItems:\n${cart.map(p=>p.name+" - R"+p.price.toFixed(2)+" ("+p.seller+")").join("\n")}\nTotal: R${cart.reduce((s,p)=>s+p.price,0).toFixed(2)}\nPlease confirm availability and payment.`;
-window.location.href="https://wa.me/?text="+encodeURIComponent(message);
+
+function saveShops() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(shops));
+    return true;
+  } catch {
+    alert("Unable to save on this device. Storage may be unavailable.");
+    return false;
+  }
 }
-render();
-</script>
-  
 
-<section id="seller-info" style="font-family:Arial,sans-serif;max-width:650px;margin:16px auto;padding:16px;">
-  <h2>Are you a Kota Seller?</h2>
-  <p>Join Kota Connect and help more customers discover your business in Newcastle.</p>
-  <p>Seller registration will be available here.</p>
-</section>
-
-<section id="kota-menu" style="padding:20px;font-family:Arial,sans-serif;max-width:600px;margin:auto;">
-  <h2>🍔 Order Your Kota</h2>
-  <p>Welcome to Kota Connect — supporting local kota businesses in Newcastle!</p>
-
-  <div style="border:1px solid #ddd;border-radius:10px;padding:15px;margin:12px 0;">
-    <h3>Classic Kota</h3>
-    <p>Chips, polony and sauce</p>
-    <strong>R30</strong><br><br>
-    <button onclick="orderKota('Classic Kota',30)">Order Now</button>
-  </div>
-
-  <div style="border:1px solid #ddd;border-radius:10px;padding:15px;margin:12px 0;">
-    <h3>Cheese Kota</h3>
-    <p>Chips, polony, cheese and sauce</p>
-    <strong>R40</strong><br><br>
-    <button onclick="orderKota('Cheese Kota',40)">Order Now</button>
-  </div>
-
-  <div style="border:1px solid #ddd;border-radius:10px;padding:15px;margin:12px 0;">
-    <h3>Full House Kota</h3>
-    <p>Chips, polony, cheese, russian and egg</p>
-    <strong>R50</strong><br><br>
-    <button onclick="orderKota('Full House Kota',50)">Order Now</button>
-  </div>
-
-  <p id="kota-order-message" aria-live="polite"></p>
-</section>
-
-<script>
-function orderKota(name, price) {
-  document.getElementById('kota-order-message').textContent =
-    name + ' selected. Price: R' + price +
-    '. Seller ordering and payment setup is coming next!';
+function money(n) {
+  return "R" + Number(n).toFixed(2);
 }
-</script>
 
-<!-- KOTA CONNECT PAYMENT METHODS -->
-<section id="payment-methods" style="max-width:600px;margin:24px auto;padding:20px;border-radius:16px;background:#fff4e6;color:#222;font-family:Arial,sans-serif;">
-  <h2>💳 Choose Your Payment Method</h2>
-  <p>Select how you would like to pay for your kota order.</p>
+function element(tag, text, className) {
+  const el = document.createElement(tag);
+  if (text !== undefined) el.textContent = text;
+  if (className) el.className = className;
+  return el;
+}
 
-  <form id="paymentForm">
-    <label style="display:block;padding:12px;margin:8px 0;background:white;border-radius:10px;">
-      <input type="radio" name="payment" value="Cash on collection" required>
-      💵 Cash on collection
-    </label>
+function getShop() {
+  return shops.find(s => s.id === selectedShopId);
+}
 
-    <label style="display:block;padding:12px;margin:8px 0;background:white;border-radius:10px;">
-      <input type="radio" name="payment" value="Cash on delivery">
-      🛵 Cash on delivery
-    </label>
+function renderShops() {
+  const query = document.getElementById("search").value.trim().toLowerCase();
+  const area = document.getElementById("area").value.toLowerCase();
+  const target = document.getElementById("shops");
+  target.replaceChildren();
 
-    <label style="display:block;padding:12px;margin:8px 0;background:white;border-radius:10px;">
-      <input type="radio" name="payment" value="EFT / bank transfer">
-      🏦 EFT / bank transfer
-    </label>
+  const matches = shops.filter(s =>
+    (!query || s.name.toLowerCase().includes(query) ||
+      s.area.toLowerCase().includes(query)) &&
+    (!area || s.area.toLowerCase() === area)
+  );
 
-    <label style="display:block;padding:12px;margin:8px 0;background:white;border-radius:10px;">
-      <input type="radio" name="payment" value="Pay online">
-      🔒 Pay online by secure payment link
-    </label>
-
-    <button type="submit" style="width:100%;padding:14px;background:#16803c;color:white;border:0;border-radius:10px;font-size:16px;font-weight:bold;">
-      Confirm Payment Choice
-    </button>
-  </form>
-
-  <p id="paymentMessage" role="status" aria-live="polite"></p>
-  <small>Never share your bank PIN or password. Online payments must be completed through a verified payment provider.</small>
-</section>
-
-<script>
-document.getElementById("paymentForm").addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  const selected = document.querySelector('input[name="payment"]:checked');
-  const message = document.getElementById("paymentMessage");
-
-  if (!selected) {
-    message.textContent = "Please select a payment method.";
+  if (!matches.length) {
+    target.appendChild(element("div",
+      shops.length
+        ? "No matching shops found. Try another search or area."
+        : "No shops have been registered yet. Shop owners can add their business below.",
+      "card"));
     return;
   }
 
-  if (selected.value === "Pay online") {
-    message.textContent =
-      "Online payment is not connected yet. Please choose another method for now.";
+  matches.forEach(shop => {
+    const card = element("div", undefined, "card");
+    card.appendChild(element("h3", shop.name));
+    card.appendChild(element("p", shop.area, "muted"));
+    card.appendChild(element("p",
+      (shop.menu || []).length + " menu items listed"));
+    const btn = element("button", "View menu", "primary");
+    btn.addEventListener("click", () => openShop(shop.id));
+    card.appendChild(btn);
+    target.appendChild(card);
+  });
+}
+
+function openShop(id) {
+  const shop = shops.find(s => s.id === id);
+  if (!shop) return;
+
+  if (selectedShopId !== id) cart = [];
+  selectedShopId = id;
+
+  document.getElementById("menuSection").classList.remove("hidden");
+  document.getElementById("cartSection").classList.remove("hidden");
+  document.getElementById("result").classList.add("hidden");
+
+  const info = document.getElementById("shopInfo");
+  info.replaceChildren(element("h2", shop.name), element("p", shop.area, "muted"));
+
+  renderMenu();
+  renderCart();
+  document.getElementById("menuSection").scrollIntoView({behavior:"smooth"});
+}
+
+function renderMenu() {
+  const shop = getShop();
+  const target = document.getElementById("menu");
+  target.replaceChildren();
+  if (!shop) return;
+
+  if (!shop.menu.length) {
+    target.appendChild(element("div", "This shop has not added menu items yet.", "card"));
     return;
   }
 
-  message.textContent =
-    "Selected: " + selected.value +
-    ". Your payment choice has been selected, but your order has not been submitted.";
-});
-</script>
+  shop.menu.forEach(item => {
+    const line = element("div", undefined, "item");
+    const details = document.createElement("div");
+    details.appendChild(element("strong", item.name));
+    if (item.description) details.appendChild(element("p", item.description, "muted"));
+    details.appendChild(element("div", money(item.price), "price"));
 
-<!-- KOTA CONNECT SHOPPING CART -->
-<section id="kota-cart" style="max-width:650px;margin:24px auto;padding:20px;background:#fff4e6;border-radius:16px;font-family:Arial,sans-serif;color:#222;">
-  <h2>🛒 Your Kota Cart</h2>
-  <p>Choose quantities and add your favourite kotas.</p>
-
-  <div id="kota-products"></div>
-
-  <hr>
-  <h3>Cart Items</h3>
-  <div id="kota-cart-items">Your cart is empty.</div>
-
-  <h3 id="kota-cart-total">Total: R0.00</h3>
-  <button type="button" id="kota-clear-cart"
-    style="padding:10px;background:#777;color:white;border:0;border-radius:8px;">
-    Clear Cart
-  </button>
-  <p id="kota-cart-message" role="status" aria-live="polite"></p>
-</section>
-
-<script>
-(function () {
-  // Change these example names and prices to match your real menu.
-  const products = [
-    { id: 1, name: "Basic Kota", price: 30 },
-    { id: 2, name: "Russian Kota", price: 40 },
-    { id: 3, name: "Special Kota", price: 50 },
-    { id: 4, name: "Full House Kota", price: 60 }
-  ];
-
-  const cart = {};
-  const productArea = document.getElementById("kota-products");
-  const cartArea = document.getElementById("kota-cart-items");
-  const totalArea = document.getElementById("kota-cart-total");
-  const messageArea = document.getElementById("kota-cart-message");
-
-  function money(amount) {
-    return "R" + amount.toFixed(2);
-  }
-
-  function renderProducts() {
-    productArea.innerHTML = "";
-
-    products.forEach(function (product) {
-      const row = document.createElement("div");
-      row.style.cssText =
-        "background:white;padding:12px;margin:10px 0;border-radius:10px;";
-
-      const title = document.createElement("strong");
-      title.textContent = product.name + " — " + money(product.price);
-      row.appendChild(title);
-
-      const line = document.createElement("div");
-      line.style.marginTop = "10px";
-
-      const quantity = document.createElement("input");
-      quantity.type = "number";
-      quantity.min = "1";
-      quantity.max = "99";
-      quantity.step = "1";
-      quantity.value = "1";
-      quantity.setAttribute("aria-label", "Quantity for " + product.name);
-      quantity.style.cssText = "width:65px;padding:8px;margin-right:8px;";
-
-      const addButton = document.createElement("button");
-      addButton.type = "button";
-      addButton.textContent = "Add to Cart";
-      addButton.style.cssText =
-        "padding:10px;background:#16803c;color:white;border:0;border-radius:8px;";
-
-      addButton.addEventListener("click", function () {
-        const qty = Number(quantity.value);
-
-        if (!Number.isInteger(qty) || qty < 1 || qty > 99) {
-          messageArea.textContent = "Choose a quantity from 1 to 99.";
-          return;
-        }
-
-        const currentQty = cart[product.id] || 0;
-        if (currentQty + qty > 99) {
-          messageArea.textContent = "Maximum quantity per item is 99.";
-          return;
-        }
-
-        cart[product.id] = currentQty + qty;
-        messageArea.textContent = product.name + " added to your cart.";
-        renderCart();
-      });
-
-      line.appendChild(quantity);
-      line.appendChild(addButton);
-      row.appendChild(line);
-      productArea.appendChild(row);
-    });
-  }
-
-  function renderCart() {
-    cartArea.innerHTML = "";
-    let total = 0;
-    let count = 0;
-    let hasItems = false;
-
-    products.forEach(function (product) {
-      const qty = cart[product.id] || 0;
-      if (qty === 0) return;
-
-      hasItems = true;
-      count += qty;
-      total += qty * product.price;
-
-      const row = document.createElement("div");
-      row.style.cssText =
-        "padding:10px 0;border-bottom:1px solid #ddd;";
-
-      const description = document.createElement("p");
-      description.textContent =
-        product.name + " × " + qty + " = " +
-        money(product.price * qty);
-      row.appendChild(description);
-
-      const minus = document.createElement("button");
-      minus.type = "button";
-      minus.textContent = "−";
-      minus.setAttribute("aria-label", "Remove one " + product.name);
-      minus.style.marginRight = "8px";
-
-      minus.addEventListener("click", function () {
-        cart[product.id]--;
-        if (cart[product.id] <= 0) delete cart[product.id];
-        renderCart();
-      });
-
-      const plus = document.createElement("button");
-      plus.type = "button";
-      plus.textContent = "+";
-      plus.setAttribute("aria-label", "Add one " + product.name);
-      plus.style.marginRight = "8px";
-
-      plus.addEventListener("click", function () {
-        if ((cart[product.id] || 0) < 99) {
-          cart[product.id]++;
-          renderCart();
-        } else {
-          messageArea.textContent = "Maximum quantity per item is 99.";
-        }
-      });
-
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.textContent = "Remove";
-      remove.addEventListener("click", function () {
-        delete cart[product.id];
-        renderCart();
-      });
-
-      row.appendChild(minus);
-      row.appendChild(plus);
-      row.appendChild(remove);
-      cartArea.appendChild(row);
+    const add = element("button", "Add +", "primary");
+    add.addEventListener("click", () => {
+      const existing = cart.find(c => c.id === item.id);
+      if (existing) existing.quantity++;
+      else cart.push({...item, quantity:1});
+      renderCart();
     });
 
-    if (!hasItems) {
-      cartArea.textContent = "Your cart is empty.";
-    }
+    line.append(details, add);
+    target.appendChild(line);
+  });
+}
 
-    totalArea.textContent =
-      "Total: " + money(total) + " (" + count + " item(s))";
-  }
+function renderCart() {
+  const target = document.getElementById("cartItems");
+  target.replaceChildren();
 
-  document.getElementById("kota-clear-cart").addEventListener("click", function () {
-    Object.keys(cart).forEach(function (id) {
-      delete cart[id];
+  cart = cart.filter(c => c.quantity > 0);
+  cart.forEach(item => {
+    const line = element("div", undefined, "item");
+    const detail = element("div",
+      item.name + " × " + item.quantity + " — " +
+      money(item.price * item.quantity));
+    const controls = element("div");
+    controls.className = "row";
+
+    const minus = element("button", "−", "light");
+    minus.style.width = "44px";
+    minus.addEventListener("click", () => {
+      item.quantity--;
+      renderCart();
     });
-    messageArea.textContent = "Cart cleared.";
-    renderCart();
+
+    const plus = element("button", "+", "light");
+    plus.style.width = "44px";
+    plus.addEventListener("click", () => {
+      item.quantity++;
+      renderCart();
+    });
+
+    controls.append(minus, plus);
+    line.append(detail, controls);
+    target.appendChild(line);
   });
 
-  renderProducts();
-  renderCart();
-})();
+  if (!cart.length) target.appendChild(element("p", "Your cart is empty."));
+  updateTotals();
+}
+
+function foodSubtotal() {
+  return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
+function updateTotals() {
+  const delivery = document.getElementById("fulfilment").value === "delivery"
+    && cart.length ? DELIVERY_FEE : 0;
+  document.getElementById("foodTotal").textContent = money(foodSubtotal());
+  document.getElementById("deliveryTotal").textContent = money(delivery);
+  document.getElementById("grandTotal").textContent = money(foodSubtotal() + delivery);
+}
+
+document.getElementById("searchBtn").addEventListener("click", renderShops);
+document.getElementById("search").addEventListener("input", renderShops);
+document.getElementById("area").addEventListener("change", renderShops);
+document.getElementById("fulfilment").addEventListener("change", updateTotals);
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  document.getElementById("menuSection").classList.add("hidden");
+  document.getElementById("cartSection").classList.add("hidden");
+  document.getElementById("shopSection").scrollIntoView({behavior:"smooth"});
+});
+
+document.getElementById("sellerToggle").addEventListener("click", () => {
+  document.getElementById("sellerPanel").classList.toggle("hidden");
+});
+
+document.getElementById("sellerForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const name = document.getElementById("shopName").value.trim();
+  const area = document.getElementById("shopArea").value.trim();
+  const phone = document.getElementById("sellerPhone").value.trim();
+  if (!name || !area || !phone) return;
+
+  const shop = {
+    id: "shop-" + Date.now() + "-" + Math.random().toString(36).slice(2,7),
+    name, area, phone, menu: []
+  };
+  shops.push(shop);
+  if (!saveShops()) {
+    shops = shops.filter(s => s.id !== shop.id);
+    return;
+  }
+
+  editingShopId = shop.id;
+  selectedShopId = shop.id;
+  document.getElementById("sellerForm").reset();
+  document.getElementById("sellerPanel").classList.add("hidden");
+  document.getElementById("editor").classList.remove("hidden");
+  renderEditorItems();
+  renderShops();
+  alert("Shop saved on this device. Add the real menu items next.");
+});
+
+document.getElementById("menuForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const shop = shops.find(s => s.id === editingShopId);
+  if (!shop) return;
+
+  const name = document.getElementById("foodName").value.trim();
+  const description = document.getElementById("foodDescription").value.trim();
+  const price = Number(document.getElementById("foodPrice").value);
+
+  if (!name || !Number.isFinite(price) || price <= 0) {
+    alert("Enter a menu item and its valid price.");
+    return;
+  }
+
+  shop.menu.push({
+    id: "item-" + Date.now() + "-" + Math.random().toString(36).slice(2,6),
+    name, description, price
+  });
+
+  if (!saveShops()) {
+    shop.menu.pop();
+    return;
+  }
+
+  document.getElementById("menuForm").reset();
+  renderEditorItems();
+  renderShops();
+});
+
+function renderEditorItems() {
+  const target = document.getElementById("editorItems");
+  target.replaceChildren();
+  const shop = shops.find(s => s.id === editingShopId);
+  if (!shop) return;
+
+  target.appendChild(element("h3", "Current menu"));
+  shop.menu.forEach(item => {
+    const row = element("div", undefined, "item");
+    row.appendChild(element("span", item.name + " — " + money(item.price)));
+    const remove = element("button", "Remove", "light");
+    remove.addEventListener("click", () => {
+      shop.menu = shop.menu.filter(i => i.id !== item.id);
+      saveShops();
+      renderEditorItems();
+      renderShops();
+    });
+    row.appendChild(remove);
+    target.appendChild(row);
+  });
+}
+
+document.getElementById("finishEditing").addEventListener("click", () => {
+  document.getElementById("editor").classList.add("hidden");
+  renderShops();
+  alert("Menu saved on this device.");
+});
+
+document.getElementById("checkout").addEventListener("submit", event => {
+  event.preventDefault();
+  const shop = getShop();
+  if (!shop || !cart.length) {
+    alert("Choose a shop and add at least one menu item first.");
+    return;
+  }
+
+  const fulfilment = document.getElementById("fulfilment").value;
+  const delivery = fulfilment === "delivery" ? DELIVERY_FEE : 0;
+  const total = foodSubtotal() + delivery;
+  const lines = cart.map(item =>
+    item.name + " x " + item.quantity + " = " +
+    money(item.price * item.quantity)
+  );
+
+  const summary = [
+    "KOTA CONNECT ORDER SUMMARY",
+    "Shop: " + shop.name,
+    "Shop area: " + shop.area,
+    "Customer: " + document.getElementById("customer").value.trim(),
+    "Contact: " + document.getElementById("phone").value.trim(),
+    "Customer area: " + document.getElementById("customerArea").value.trim(),
+    "Fulfilment: " + (fulfilment === "delivery" ? "Delivery" : "Collection"),
+    "Address / instructions: " + document.getElementById("address").value.trim(),
+    "Items:",
+    ...lines,
+    "Food total: " + money(foodSubtotal()),
+    "Delivery: " + money(delivery),
+    "TOTAL: " + money(total),
+    "Payment: " + document.getElementById("payment").value,
+    "Extra instructions: " + (document.getElementById("notes").value.trim() || "None"),
+    "",
+    "Please confirm availability and payment with the shop."
+  ].join("\n");
+
+  const result = document.getElementById("result");
+  result.replaceChildren();
+  result.appendChild(element("h3", "Order summary prepared"));
+  result.appendChild(element("p",
+    "Your total is " + money(total) +
+    ". This website has prepared your order details but has not sent an order or processed payment."));
+  const preview = element("textarea");
+  preview.readOnly = true;
+  preview.rows = 12;
+  preview.value = summary;
+  preview.setAttribute("aria-label", "Order summary");
+  result.appendChild(preview);
+
+  const copy = element("button", "Copy order summary", "primary");
+  copy.style.marginTop = "10px";
+  copy.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(summary);
+      copy.textContent = "Copied";
+    } catch {
+      preview.focus();
+      preview.select();
+      alert("Select and copy the order summary above.");
+    }
+  });
+  result.appendChild(copy);
+
+  const contact = element("p",
+    "To place the order, send the summary to the shop using a verified contact method. Online order submission and automatic payment require a secure backend.");
+  result.appendChild(contact);
+  result.classList.remove("hidden");
+  result.scrollIntoView({behavior:"smooth"});
+});
+
+renderShops();
 </script>
-
 </body>
-
 </html>
