@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kota Connect - WhatsApp Orders</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff8e8;
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
+    .card {
+      max-width: 480px;
+      margin: 20px auto;
+      background: white;
+      padding: 22px;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px #0001;
+    }
+    h1 { color: #167c45; text-align: center; }
+    label { display: block; margin-top: 14px; font-weight: bold; }
+    input, textarea {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 9px;
+      background: #16864a;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+    }
+    .note { font-size: 13px; color: #555; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>🍔 Kota Connect</h1>
+    <p>Place your kota order and send it directly to the shop on WhatsApp.</p>
+
+    <form id="orderForm">
+      <label for="shop">Shop WhatsApp number</label>
+      <input id="shop" type="tel"
+        placeholder="Example: 27821234567"
+        required>
+      <p class="note">
+        Enter the shop's number with South Africa's country code,
+        without the + sign.
+      </p>
+
+      <label for="customer">Your name</label>
+      <input id="customer" required>
+
+      <label for="phone">Your contact number</label>
+      <input id="phone" type="tel" required>
+
+      <label for="item">Kota / food order</label>
+      <textarea id="item" rows="3"
+        placeholder="Example: 2 cheese kotas, extra chips"
+        required></textarea>
+
+      <label for="total">Order total (R)</label>
+      <input id="total" type="number" min="0.01"
+        step="0.01" required>
+
+      <label for="collection">Collection or delivery details</label>
+      <input id="collection"
+        placeholder="Example: Collect at the shop"
+        required>
+
+      <button type="submit">Send Order on WhatsApp</button>
+    </form>
+
+    <p class="note">
+      Your order is only submitted when you send the message
+      in WhatsApp. The shop must confirm availability.
+    </p>
+  </main>
+
+  <script>
+    document.getElementById("orderForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const shop = document.getElementById("shop")
+          .value.replace(/\D/g, "");
+        const customer = document.getElementById("customer").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const item = document.getElementById("item").value.trim();
+        const total = Number(document.getElementById("total").value);
+        const collection = document.getElementById("collection").value.trim();
+
+        if (!/^27\d{9}$/.test(shop)) {
+          alert("Enter a valid South African shop number, e.g. 27821234567.");
+          return;
+        }
+
+        if (!Number.isFinite(total) || total <= 0) {
+          alert("Enter a valid order total.");
+          return;
+        }
+
+        const orderNumber = "KC-" + Date.now().toString().slice(-8);
+
+        const message =
+          "🍔 KOTA CONNECT — NEW ORDER\n\n" +
+          "Order number: " + orderNumber + "\n" +
+          "Customer: " + customer + "\n" +
+          "Customer contact: " + phone + "\n" +
+          "Order: " + item + "\n" +
+          "Total: R" + total.toFixed(2) + "\n" +
+          "Collection/delivery: " + collection + "\n\n" +
+          "SHOP: Please reply with one option:\n" +
+          "✅ ACCEPT — Ready in 20 minutes\n" +
+          "❌ REJECT — Out of stock\n" +
+          "⏳ DELAY — Another 15 minutes";
+
+        const url = "https://wa.me/" + shop +
+          "?text=" + encodeURIComponent(message);
+
+        window.location.href = url;
+      });
+  </script>
+</body>
+</html>
