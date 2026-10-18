@@ -548,5 +548,36 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
   });
 }
 </script>
+  
+<script>
+function orderOnWhatsApp(shopName, phoneNumber, orderDetails) {
+  if (!phoneNumber) {
+    alert(
+      "WhatsApp ordering for " + shopName +
+      " is not available yet. Please contact the shop to get its WhatsApp number."
+    );
+    return;
+  }
+
+  const number = phoneNumber.replace(/\D/g, "");
+
+  if (!number || number.length < 10) {
+    alert("This shop's WhatsApp number needs to be checked.");
+    return;
+  }
+
+  const message =
+    "Hello " + shopName + "! I would like to place an order.\n\n" +
+    orderDetails + "\n\n" +
+    "Please confirm my order. Thank you!";
+
+  const url =
+    "https://wa.me/" + number +
+    "?text=" + encodeURIComponent(message);
+
+  window.open(url, "_blank");
+}
+</script>
+
 </body>
 </html>
