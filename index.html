@@ -632,6 +632,187 @@ document.getElementById("paymentForm").addEventListener("submit", function(event
 });
 </script>
 
+<!-- KOTA CONNECT SHOPPING CART -->
+<section id="kota-cart" style="max-width:650px;margin:24px auto;padding:20px;background:#fff4e6;border-radius:16px;font-family:Arial,sans-serif;color:#222;">
+  <h2>🛒 Your Kota Cart</h2>
+  <p>Choose quantities and add your favourite kotas.</p>
+
+  <div id="kota-products"></div>
+
+  <hr>
+  <h3>Cart Items</h3>
+  <div id="kota-cart-items">Your cart is empty.</div>
+
+  <h3 id="kota-cart-total">Total: R0.00</h3>
+  <button type="button" id="kota-clear-cart"
+    style="padding:10px;background:#777;color:white;border:0;border-radius:8px;">
+    Clear Cart
+  </button>
+  <p id="kota-cart-message" role="status" aria-live="polite"></p>
+</section>
+
+<script>
+(function () {
+  // Change these example names and prices to match your real menu.
+  const products = [
+    { id: 1, name: "Basic Kota", price: 30 },
+    { id: 2, name: "Russian Kota", price: 40 },
+    { id: 3, name: "Special Kota", price: 50 },
+    { id: 4, name: "Full House Kota", price: 60 }
+  ];
+
+  const cart = {};
+  const productArea = document.getElementById("kota-products");
+  const cartArea = document.getElementById("kota-cart-items");
+  const totalArea = document.getElementById("kota-cart-total");
+  const messageArea = document.getElementById("kota-cart-message");
+
+  function money(amount) {
+    return "R" + amount.toFixed(2);
+  }
+
+  function renderProducts() {
+    productArea.innerHTML = "";
+
+    products.forEach(function (product) {
+      const row = document.createElement("div");
+      row.style.cssText =
+        "background:white;padding:12px;margin:10px 0;border-radius:10px;";
+
+      const title = document.createElement("strong");
+      title.textContent = product.name + " — " + money(product.price);
+      row.appendChild(title);
+
+      const line = document.createElement("div");
+      line.style.marginTop = "10px";
+
+      const quantity = document.createElement("input");
+      quantity.type = "number";
+      quantity.min = "1";
+      quantity.max = "99";
+      quantity.step = "1";
+      quantity.value = "1";
+      quantity.setAttribute("aria-label", "Quantity for " + product.name);
+      quantity.style.cssText = "width:65px;padding:8px;margin-right:8px;";
+
+      const addButton = document.createElement("button");
+      addButton.type = "button";
+      addButton.textContent = "Add to Cart";
+      addButton.style.cssText =
+        "padding:10px;background:#16803c;color:white;border:0;border-radius:8px;";
+
+      addButton.addEventListener("click", function () {
+        const qty = Number(quantity.value);
+
+        if (!Number.isInteger(qty) || qty < 1 || qty > 99) {
+          messageArea.textContent = "Choose a quantity from 1 to 99.";
+          return;
+        }
+
+        const currentQty = cart[product.id] || 0;
+        if (currentQty + qty > 99) {
+          messageArea.textContent = "Maximum quantity per item is 99.";
+          return;
+        }
+
+        cart[product.id] = currentQty + qty;
+        messageArea.textContent = product.name + " added to your cart.";
+        renderCart();
+      });
+
+      line.appendChild(quantity);
+      line.appendChild(addButton);
+      row.appendChild(line);
+      productArea.appendChild(row);
+    });
+  }
+
+  function renderCart() {
+    cartArea.innerHTML = "";
+    let total = 0;
+    let count = 0;
+    let hasItems = false;
+
+    products.forEach(function (product) {
+      const qty = cart[product.id] || 0;
+      if (qty === 0) return;
+
+      hasItems = true;
+      count += qty;
+      total += qty * product.price;
+
+      const row = document.createElement("div");
+      row.style.cssText =
+        "padding:10px 0;border-bottom:1px solid #ddd;";
+
+      const description = document.createElement("p");
+      description.textContent =
+        product.name + " × " + qty + " = " +
+        money(product.price * qty);
+      row.appendChild(description);
+
+      const minus = document.createElement("button");
+      minus.type = "button";
+      minus.textContent = "−";
+      minus.setAttribute("aria-label", "Remove one " + product.name);
+      minus.style.marginRight = "8px";
+
+      minus.addEventListener("click", function () {
+        cart[product.id]--;
+        if (cart[product.id] <= 0) delete cart[product.id];
+        renderCart();
+      });
+
+      const plus = document.createElement("button");
+      plus.type = "button";
+      plus.textContent = "+";
+      plus.setAttribute("aria-label", "Add one " + product.name);
+      plus.style.marginRight = "8px";
+
+      plus.addEventListener("click", function () {
+        if ((cart[product.id] || 0) < 99) {
+          cart[product.id]++;
+          renderCart();
+        } else {
+          messageArea.textContent = "Maximum quantity per item is 99.";
+        }
+      });
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "Remove";
+      remove.addEventListener("click", function () {
+        delete cart[product.id];
+        renderCart();
+      });
+
+      row.appendChild(minus);
+      row.appendChild(plus);
+      row.appendChild(remove);
+      cartArea.appendChild(row);
+    });
+
+    if (!hasItems) {
+      cartArea.textContent = "Your cart is empty.";
+    }
+
+    totalArea.textContent =
+      "Total: " + money(total) + " (" + count + " item(s))";
+  }
+
+  document.getElementById("kota-clear-cart").addEventListener("click", function () {
+    Object.keys(cart).forEach(function (id) {
+      delete cart[id];
+    });
+    messageArea.textContent = "Cart cleared.";
+    renderCart();
+  });
+
+  renderProducts();
+  renderCart();
+})();
+</script>
+
 </body>
 
 </html>
