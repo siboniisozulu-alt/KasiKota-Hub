@@ -39,27 +39,6 @@ button{padding:11px 14px;border:0;border-radius:9px;background:#167447;color:whi
 footer{text-align:center;padding:25px;color:#666;font-size:13px}
 </style>
 
-  </a>
-</section>
-
-<p>Discover local kota shops in Newcastle</p>
-</header>
-<main>
-<section class="hero"><section class="hero">
-  <h2>🌯 Own a Kota Shop?</h2>
-  <p>Join Kota Connect and help customers in Newcastle discover your business.</p>
-  <a href="https://docs.google.com/forms/d/1tOhJGuvhAX2DBWseXz4GBGPNxcxUpf08_EuEQimMEWE/viewform"
-     target="_blank" rel="noopener noreferrer"
-     style="display:inline-block;background:#167447;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:bold;">
-    Register Your Kota Shop
-  
-</section>
-
-<h2>📍 Find shops near you</h2>
-<h2>Your area. Your kota shops.</h2>
-<p>Find a local seller, explore their menu and choose pickup or delivery.</p>
-<strong>Support local. Eat lekker!</strong>
-</section>
 
 <section style="background:#e5f4e9;padding:18px;border-radius:14px;margin:18px 0;">
   <h2>🏪 Own a Kota Shop?</h2>
@@ -592,6 +571,65 @@ function orderKota(name, price) {
     name + ' selected. Price: R' + price +
     '. Seller ordering and payment setup is coming next!';
 }
+</script>
+
+<!-- KOTA CONNECT PAYMENT METHODS -->
+<section id="payment-methods" style="max-width:600px;margin:24px auto;padding:20px;border-radius:16px;background:#fff4e6;color:#222;font-family:Arial,sans-serif;">
+  <h2>💳 Choose Your Payment Method</h2>
+  <p>Select how you would like to pay for your kota order.</p>
+
+  <form id="paymentForm">
+    <label style="display:block;padding:12px;margin:8px 0;background:white;border-radius:10px;">
+      <input type="radio" name="payment" value="Cash on collection" required>
+      💵 Cash on collection
+    </label>
+
+    <label style="display:block;padding:12px;margin:8px 0;background:white;border-radius:10px;">
+      <input type="radio" name="payment" value="Cash on delivery">
+      🛵 Cash on delivery
+    </label>
+
+    <label style="display:block;padding:12px;margin:8px 0;background:white;border-radius:10px;">
+      <input type="radio" name="payment" value="EFT / bank transfer">
+      🏦 EFT / bank transfer
+    </label>
+
+    <label style="display:block;padding:12px;margin:8px 0;background:white;border-radius:10px;">
+      <input type="radio" name="payment" value="Pay online">
+      🔒 Pay online by secure payment link
+    </label>
+
+    <button type="submit" style="width:100%;padding:14px;background:#16803c;color:white;border:0;border-radius:10px;font-size:16px;font-weight:bold;">
+      Confirm Payment Choice
+    </button>
+  </form>
+
+  <p id="paymentMessage" role="status" aria-live="polite"></p>
+  <small>Never share your bank PIN or password. Online payments must be completed through a verified payment provider.</small>
+</section>
+
+<script>
+document.getElementById("paymentForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const selected = document.querySelector('input[name="payment"]:checked');
+  const message = document.getElementById("paymentMessage");
+
+  if (!selected) {
+    message.textContent = "Please select a payment method.";
+    return;
+  }
+
+  if (selected.value === "Pay online") {
+    message.textContent =
+      "Online payment is not connected yet. Please choose another method for now.";
+    return;
+  }
+
+  message.textContent =
+    "Selected: " + selected.value +
+    ". Your payment choice has been selected, but your order has not been submitted.";
+});
 </script>
 
 </body>
