@@ -584,6 +584,35 @@ function orderOnWhatsApp(shopName, phoneNumber, orderDetails) {
   '1 Kota'
 )">
   Order on WhatsApp
-</button>
+</button> 
+  
+<script>
+function orderOnWhatsApp(shopName, phoneNumber, orderDetails) {
+  if (!phoneNumber) {
+    alert("WhatsApp ordering for " + shopName +
+      " is not available yet. Please contact the shop for its number.");
+    return;
+  }
+
+  const number = phoneNumber.replace(/\D/g, "");
+
+  if (!number || number.length < 10) {
+    alert("Please check this shop's WhatsApp number.");
+    return;
+  }
+
+  const message = "Hello " + shopName +
+    "! I would like to place an order.\n\n" +
+    orderDetails +
+    "\n\nPlease confirm my order. Thank you!";
+
+  window.open(
+    "https://wa.me/" + number +
+    "?text=" + encodeURIComponent(message),
+    "_blank"
+  );
+}
+</script>
+
 </body>
 </html>
