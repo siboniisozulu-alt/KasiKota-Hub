@@ -1,0 +1,13 @@
+
+{
+  "id": "./",
+  "name": "Kota Connect",
+  "short_name": "Kota Connect",
+  "description": "Find local kota shops and order your favourite kota.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#172033"
+}
