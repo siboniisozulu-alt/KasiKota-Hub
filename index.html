@@ -1,1003 +1,374 @@
 
-<!-- KOTA CONNECT SELLER REGISTRATION -->
-<section id="seller-registration" class="seller-section">
-  <div class="seller-container">
-    <h2>Register Your Kota Shop</h2>
-    <p class="seller-intro">
-      Join Kota Connect and help customers discover your business.
-      Registration is subject to review before your shop is listed.
-    </p>
-
-    <form id="sellerForm">
-      <h3>1. Business Information</h3>
-
-      <label for="businessName">Kota shop name *</label>
-      <input id="businessName" name="businessName"
-        type="text" required maxlength="100"
-        placeholder="Enter your shop name">
-
-      <label for="ownerName">Owner's full name *</label>
-      <input id="ownerName" name="ownerName"
-        type="text" required maxlength="100"
-        placeholder="Enter your full name">
-
-      <label for="phone">Business contact number *</label>
-      <input id="phone" name="phone"
-        type="tel" required maxlength="20"
-        placeholder="e.g. 07XXXXXXXX">
-
-      <label for="email">Email address (optional)</label>
-      <input id="email" name="email" type="email"
-        maxlength="120" placeholder="you@example.com">
-
-      <label for="area">Shop location *</label>
-      <select id="area" name="area" required>
-        <option value="">Choose your area</option>
-        <option>Newcastle CBD</option>
-        <option>Madadeni Section 1</option>
-        <option>Madadeni Section 2</option>
-        <option>Madadeni Section 3</option>
-        <option>Madadeni Section 4</option>
-        <option>Madadeni Section 5</option>
-        <option>Madadeni Section 6</option>
-        <option>Madadeni Section 7</option>
-        <option>Osizweni</option>
-        <option>Other Newcastle area</option>
-      </select>
-
-      <label for="address">Street, section or directions *</label>
-      <textarea id="address" name="address"
-        required maxlength="300" rows="3"
-        placeholder="Help customers find your shop"></textarea>
-
-      <h3>2. Shop Details</h3>
-
-      <label for="description">Tell customers about your shop *</label>
-      <textarea id="description" name="description"
-        required maxlength="500" rows="3"
-        placeholder="Describe your kota shop and what makes it special"></textarea>
-
-      <label for="menu">Your kota menu (optional)</label>
-      <textarea id="menu" name="menu" rows="4"
-        maxlength="1500"
-        placeholder="Enter your kota names and prices. You can add or update your menu later."></textarea>
-
-      <label for="hours">Operating hours *</label>
-      <input id="hours" name="hours" type="text"
-        required maxlength="100"
-        placeholder="e.g. Monday–Saturday, 09:00–18:00">
-
-      <label for="fulfilment">How do customers get their orders? *</label>
-      <select id="fulfilment" name="fulfilment" required>
-        <option value="">Choose an option</option>
-        <option value="Collection">Collection at the shop</option>
-        <option value="Delivery">Delivery</option>
-        <option value="Both">Collection and delivery</option>
-      </select>
-
-      <h3>3. Registration Agreement</h3>
-
-      <label class="seller-check">
-        <input type="checkbox" id="permission" required>
-        I confirm that the information provided is accurate and
-        I am authorised to register this business.
-      </label>
-
-      <label class="seller-check">
-        <input type="checkbox" id="reviewConsent" required>
-        I understand that Kota Connect must review my registration
-        before my shop is listed.
-      </label>
-
-      <button type="submit" class="seller-submit">
-        Submit Seller Registration
-      </button>
-
-      <p id="sellerMessage" role="status" aria-live="polite"></p>
-    </form>
-  </div>
-</section>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#142b20">
+<title>Kota Connect | Local Kota Ordering</title>
 <style>
-  .seller-section {
-    padding: 28px 14px;
-    background: #f6f6f6;
-    color: #222;
-    font-family: Arial, sans-serif;
-  }
-
-  .seller-container {
-    max-width: 650px;
-    margin: 0 auto;
-    padding: 22px;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 3px 14px rgba(0,0,0,.08);
-  }
-
-  .seller-container h2 {
-    margin-top: 0;
-    color: #b77900;
-    font-size: 26px;
-  }
-
-  .seller-intro {
-    line-height: 1.6;
-    color: #555;
-  }
-
-  .seller-container h3 {
-    margin-top: 26px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .seller-container label:not(.seller-check) {
-    display: block;
-    margin: 16px 0 6px;
-    font-weight: 600;
-  }
-
-  .seller-container input:not([type="checkbox"]),
-  .seller-container select,
-  .seller-container textarea {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    color: #222;
-    font: inherit;
-  }
-
-  .seller-container textarea {
-    resize: vertical;
-  }
-
-  .seller-check {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin: 18px 0;
-    line-height: 1.5;
-  }
-
-  .seller-check input {
-    margin-top: 4px;
-    flex-shrink: 0;
-  }
-
-  .seller-submit {
-    width: 100%;
-    padding: 14px;
-    border: 0;
-    border-radius: 8px;
-    background: #171717;
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  .seller-submit:hover {
-    background: #333;
-  }
-
-  #sellerMessage {
-    margin-top: 16px;
-    line-height: 1.5;
-  }
-
-  @media (max-width: 480px) {
-    .seller-container {
-      padding: 16px;
-    }
-  }
+:root{--green:#142b20;--lime:#d7f36a;--cream:#fffaf0;--orange:#ef8b35}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--cream);color:#202820}
+header{background:var(--green);color:white;padding:20px 16px}
+.brand{font-size:27px;font-weight:800}
+.brand span{color:var(--lime)}
+header p{margin-bottom:0;color:#e1e9df}
+main{max-width:850px;margin:auto;padding:16px}
+section{background:white;padding:18px;margin:15px 0;border-radius:15px;border:1px solid #e6e9df}
+h2{font-size:20px;margin-top:0}
+input,select,textarea{width:100%;padding:12px;margin:7px 0 13px;border:1px solid #cbd2c7;border-radius:9px;font:inherit;background:white}
+button{border:0;border-radius:9px;padding:12px 16px;background:var(--green);color:white;font-weight:bold;cursor:pointer}
+button.secondary{background:#e9f0df;color:var(--green)}
+button:disabled{opacity:.5}
+label{font-size:14px;font-weight:bold}
+.shop{border:1px solid #e0e5db;border-radius:12px;padding:14px;margin:12px 0}
+.shop h3{margin:0 0 6px}
+.muted{color:#657064;font-size:14px}
+.pill{display:inline-block;background:#edf4df;padding:5px 9px;border-radius:20px;font-size:12px}
+.menu-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
+.menu-row strong{display:block}
+.price{white-space:nowrap;font-weight:bold}
+.hidden{display:none!important}
+.notice{background:#fff4d8;padding:12px;border-radius:8px;font-size:14px}
+footer{text-align:center;padding:25px;color:#667064;font-size:13px}
 </style>
-
-<script>
-  document.getElementById("sellerForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    if (!form.reportValidity()) return;
-
-    const registration = {
-      businessName: form.businessName.value.trim(),
-      ownerName: form.ownerName.value.trim(),
-      phone: form.phone.value.trim(),
-      email: form.email.value.trim(),
-      area: form.area.value,
-      address: form.address.value.trim(),
-      description: form.description.value.trim(),
-      menu: form.menu.value.trim(),
-      hours: form.hours.value.trim(),
-      fulfilment: form.fulfilment.value,
-      status: "Pending review",
-      submittedAt: new Date().toISOString()
-    };
-
-    try {
-      const storageKey = "kota_connect_seller_registrations";
-      const registrations = JSON.parse(
-        localStorage.getItem(storageKey) || "[]"
-      );
-
-      registrations.push(registration);
-      localStorage.setItem(storageKey, JSON.stringify(registrations));
-
-      document.getElementById("sellerMessage").textContent =
-        "This registration was saved on this device only. It has NOT been sent to Kota Connect yet. Please contact the Kota Connect administrator to complete registration.";
-
-      form.reset();
-    } catch (error) {
-      document.getElementById("sellerMessage").textContent =
-        "Registration could not be saved in this browser. Please try again.";
-    }
-  });
-</script>
-<!-- END KOTA CONNECT SELLER REGISTRATION -->
-
-      <h3>2. Shop Details</h3>
-
-      <label for="description">Tell customers about your shop *</label>
-      <textarea id="description" name="description"
-        required maxlength="500" rows="3"
-        placeholder="Describe your kota shop and what makes it special"></textarea>
-
-      <label for="menu">Your kota menu (optional)</label>
-      <textarea id="menu" name="menu" rows="4"
-        maxlength="1500"
-        placeholder="Enter your kota names and prices. You can add or update your menu later."></textarea>
-
-      <label for="hours">Operating hours *</label>
-      <input id="hours" name="hours" type="text"
-        required maxlength="100"
-        placeholder="e.g. Monday–Saturday, 09:00–18:00">
-
-      <label for="fulfilment">How do customers get their orders? *</label>
-      <select id="fulfilment" name="fulfilment" required>
-        <option value="">Choose an option</option>
-        <option value="Collection">Collection at the shop</option>
-        <option value="Delivery">Delivery</option>
-        <option value="Both">Collection and delivery</option>
-      </select>
-
-      <h3>3. Registration Agreement</h3>
-
-      <label class="seller-check">
-        <input type="checkbox" id="permission" required>
-        I confirm that the information provided is accurate and
-        I am authorised to register this business.
-      </label>
-
-      <label class="seller-check">
-        <input type="checkbox" id="reviewConsent" required>
-        I understand that Kota Connect must review my registration
-        before my shop is listed.
-      </label>
-
-      <button type="submit" class="seller-submit">
-        Submit Seller Registration
-      </button>
-
-      <p id="sellerMessage" role="status" aria-live="polite"></p>
-    </form>
-  </div>
-</section>
-
-<style>
-  .seller-section {
-    padding: 28px 14px;
-    background: #f6f6f6;
-    color: #222;
-    font-family: Arial, sans-serif;
-  }
-
-  .seller-container {
-    max-width: 650px;
-    margin: 0 auto;
-    padding: 22px;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 3px 14px rgba(0,0,0,.08);
-  }
-
-  .seller-container h2 {
-    margin-top: 0;
-    color: #b77900;
-    font-size: 26px;
-  }
-
-  .seller-intro {
-    line-height: 1.6;
-    color: #555;
-  }
-
-  .seller-container h3 {
-    margin-top: 26px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .seller-container label:not(.seller-check) {
-    display: block;
-    margin: 16px 0 6px;
-    font-weight: 600;
-  }
-
-  .seller-container input:not([type="checkbox"]),
-  .seller-container select,
-  .seller-container textarea {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    color: #222;
-    font: inherit;
-  }
-
-  .seller-container textarea {
-    resize: vertical;
-  }
-
-  .seller-check {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin: 18px 0;
-    line-height: 1.5;
-  }
-
-  .seller-check input {
-    margin-top: 4px;
-    flex-shrink: 0;
-  }
-
-  .seller-submit {
-    width: 100%;
-    padding: 14px;
-    border: 0;
-    border-radius: 8px;
-    background: #171717;
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  .seller-submit:hover {
-    background: #333;
-  }
-
-  #sellerMessage {
-    margin-top: 16px;
-    line-height: 1.5;
-  }
-
-  @media (max-width: 480px) {
-    .seller-container {
-      padding: 16px;
-    }
-  }
-</style>
-
-<script>
-  document.getElementById("sellerForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    if (!form.reportValidity()) return;
-
-    const registration = {
-      businessName: form.businessName.value.trim(),
-      ownerName: form.ownerName.value.trim(),
-      phone: form.phone.value.trim(),
-      email: form.email.value.trim(),
-      area: form.area.value,
-      address: form.address.value.trim(),
-      description: form.description.value.trim(),
-      menu: form.menu.value.trim(),
-      hours: form.hours.value.trim(),
-      fulfilment: form.fulfilment.value,
-      status: "Pending review",
-      submittedAt: new Date().toISOString()
-    };
-
-    try {
-      const storageKey = "kota_connect_seller_registrations";
-      const registrations = JSON.parse(
-        localStorage.getItem(storageKey) || "[]"
-      );
-
-      registrations.push(registration);
-      localStorage.setItem(storageKey, JSON.stringify(registrations));
-
-      document.getElementById("sellerMessage").textContent =
-        "This registration was saved on this device only. It has NOT been sent to Kota Connect yet. Please contact the Kota Connect administrator to complete registration.";
-
-      form.reset();
-    } catch (error) {
-      document.getElementById("sellerMessage").textContent =
-        "Registration could not be saved in this browser. Please try again.";
-    }
-  });
-</script>
-<!-- END KOTA CONNECT SELLER REGISTRATION -->
-
 </head>
 <body>
 <header>
-<nav>
-<div class="logo">Kota <span>Connect</span></div>
-<a href="#find">Find a shop</a>
-</nav>
+  <div class="brand">🍔 Kota <span>Connect</span></div>
+  <p>Find your favourite local kota shop. Order your way.</p>
 </header>
 
 <main>
-<section class="hero" id="find">
-<h1>Your kota. Your neighbourhood.</h1>
-<p>Discover local kota shops, explore menus and order for collection or delivery around Newcastle.</p>
-
-<label for="search">Search shop name or area</label>
-<input id="search" type="search" placeholder="Search for a kota shop..." autocomplete="off">
-
-<div class="search-grid">
-<div>
-<label for="area">Choose your area</label>
-<select id="area">
-<option value="">All areas</option>
-<option>Newcastle CBD</option>
-<option>Madadeni Section 1</option>
-<option>Madadeni Section 2</option>
-<option>Madadeni Section 3</option>
-<option>Madadeni Section 4</option>
-<option>Madadeni Section 5</option>
-<option>Madadeni Section 6</option>
-<option>Madadeni Section 7</option>
-<option>Osizweni</option>
-<option>Other Newcastle area</option>
-</select>
-</div>
-<div>
-<label for="sort">Shop results</label>
-<select id="sort">
-<option value="name">Shop name</option>
-<option value="area">Location</option>
-</select>
-</div>
-</div>
-<button class="primary" id="searchBtn" style="margin-top:13px">Find shops</button>
+<section>
+  <h2>Find your kota shop</h2>
+  <label for="search">Shop name or area</label>
+  <input id="search" placeholder="Search Newcastle CBD, Osizweni...">
+  <label for="area">Choose an area</label>
+  <select id="area">
+    <option value="">All areas</option>
+    <option>Newcastle CBD</option>
+    <option>Madadeni Section 1</option>
+    <option>Madadeni Section 2</option>
+    <option>Madadeni Section 3</option>
+    <option>Madadeni Section 4</option>
+    <option>Madadeni Section 5</option>
+    <option>Madadeni Section 6</option>
+    <option>Madadeni Section 7</option>
+    <option>Osizweni</option>
+    <option>Other</option>
+  </select>
+  <div id="shops"></div>
 </section>
 
-<section class="section">
-<div class="shop-head">
-<h2>Available shops</h2>
-<span class="tag" id="shopCount">0 shops</span>
-</div>
-<div id="shops" aria-live="polite"></div>
+<section id="ordering" class="hidden">
+  <h2 id="shopTitle">Shop menu</h2>
+  <div id="menu"></div>
+  <button class="secondary" onclick="closeShop()">Back to shops</button>
 </section>
 
-<section id="menuSection" class="section hidden">
-<button class="light" id="backBtn">← Back to shops</button>
-<div id="shopInfo" class="panel"></div>
-<h2>Menu</h2>
-<div id="menuItems"></div>
+<section id="cartSection" class="hidden">
+  <h2>Your order</h2>
+  <div id="cart"></div>
+  <p id="total"></p>
+  <label for="customer">Your name</label>
+  <input id="customer" autocomplete="name" placeholder="Name for your order">
+  <label for="phone">Your contact number</label>
+  <input id="phone" type="tel" autocomplete="tel" placeholder="Your phone number">
+  <label for="fulfilment">Collection or delivery</label>
+  <select id="fulfilment" onchange="updateCart()">
+    <option value="collection">Collect from shop</option>
+    <option value="delivery">Delivery (+ R15)</option>
+  </select>
+  <label for="address">Delivery area and address (if applicable)</label>
+  <textarea id="address" placeholder="Area, street, section and directions"></textarea>
+  <label for="payment">Preferred payment method</label>
+  <select id="payment">
+    <option>Cash</option>
+    <option>EFT - confirm with seller</option>
+    <option>Pay on collection</option>
+  </select>
+  <label for="notes">Order notes (optional)</label>
+  <textarea id="notes" placeholder="Any special instructions?"></textarea>
+  <button onclick="sendOrder()">Send order to seller on WhatsApp</button>
+  <p class="muted">Your WhatsApp app will open so you can review and send the order.</p>
 </section>
 
-<section id="checkoutSection" class="section hidden">
-<h2>Your basket and checkout</h2>
-<div class="panel">
-<div id="basket"></div>
-<div class="total"><span>Food subtotal</span><strong id="subtotal">R0.00</strong></div>
-<div class="total"><span>Delivery fee</span><strong id="deliveryFee">R15.00</strong></div>
-<div class="total grand"><span>Total</span><strong id="grandTotal">R0.00</strong></div>
-</div>
-
-<form id="orderForm" class="panel">
-<h3>Customer details</h3>
-<label for="customerName">Your name</label>
-<input id="customerName" required maxlength="80" autocomplete="name">
-
-<label for="customerPhone">Phone number</label>
-<input id="customerPhone" required type="tel" maxlength="25" autocomplete="tel">
-
-<label for="fulfilment">Delivery or collection</label>
-<select id="fulfilment">
-<option value="delivery">Delivery — R15</option>
-<option value="collection">Collection — no delivery fee</option>
-</select>
-
-<label for="customerArea">Your area</label>
-<select id="customerArea" required>
-<option value="">Choose your area</option>
-<option>Newcastle CBD</option>
-<option>Madadeni Section 1</option>
-<option>Madadeni Section 2</option>
-<option>Madadeni Section 3</option>
-<option>Madadeni Section 4</option>
-<option>Madadeni Section 5</option>
-<option>Madadeni Section 6</option>
-<option>Madadeni Section 7</option>
-<option>Osizweni</option>
-<option>Other Newcastle area</option>
-</select>
-
-<div id="addressWrap">
-<label for="address">Delivery address or landmark</label>
-<textarea id="address" maxlength="250" placeholder="Street, house number or safe landmark"></textarea>
-</div>
-
-<label for="payment">Payment method</label>
-<select id="payment" required>
-<option value="">Choose payment method</option>
-<option>Cash on delivery</option>
-<option>Cash on collection</option>
-<option>EFT / bank transfer by arrangement</option>
-<option>Card payment, if supported by the shop</option>
-<option>Secure online payment, when available</option>
-</select>
-
-<label for="notes">Special instructions (optional)</label>
-<textarea id="notes" maxlength="300" placeholder="Order instructions"></textarea>
-
-<p class="warning">Never enter your banking PIN, password or full card details here. Electronic payments must use a trusted payment provider.</p>
-<button class="primary" type="submit">Prepare order</button>
-</form>
-<div id="orderResult" class="panel hidden" aria-live="polite"></div>
+<section id="sellerSection">
+  <h2>Are you a kota business owner?</h2>
+  <p class="muted">Register your shop and enter your own menu and prices.</p>
+  <form id="sellerForm">
+    <label>Business name</label>
+    <input id="sellerName" required maxlength="80" placeholder="Your shop name">
+    <label>Area</label>
+    <select id="sellerArea" required>
+      <option value="">Select area</option>
+      <option>Newcastle CBD</option>
+      <option>Madadeni Section 1</option>
+      <option>Madadeni Section 2</option>
+      <option>Madadeni Section 3</option>
+      <option>Madadeni Section 4</option>
+      <option>Madadeni Section 5</option>
+      <option>Madadeni Section 6</option>
+      <option>Madadeni Section 7</option>
+      <option>Osizweni</option>
+      <option>Other</option>
+    </select>
+    <label>Shop description</label>
+    <input id="sellerDescription" maxlength="200" placeholder="Tell customers about your shop">
+    <label>WhatsApp number</label>
+    <input id="sellerPhone" type="tel" required placeholder="e.g. 0821234567">
+    <label>Menu and prices</label>
+    <textarea id="sellerMenu" required rows="5"
+      placeholder="Enter one item per line in this format:
+Kota name | price in rand"></textarea>
+    <p class="muted">Enter your real menu and prices. Example format: Chicken Kota | 35. Do not enter prices until you have confirmed them.</p>
+    <button type="submit">Register my shop</button>
+  </form>
 </section>
 
-<section class="section" id="seller">
-<h2>For kota shop owners</h2>
-<p>Register your business, submit your details for approval and manage your menu.</p>
-<div class="panel">
-<h3>Register your shop</h3>
-<form id="sellerForm">
-<label for="sellerName">Owner's full name</label>
-<input id="sellerName" required maxlength="100" autocomplete="name">
-
-<label for="businessName">Shop or business name</label>
-<input id="businessName" required maxlength="100">
-
-<label for="businessArea">Shop location</label>
-<select id="businessArea" required>
-<option value="">Choose area</option>
-<option>Newcastle CBD</option>
-<option>Madadeni Section 1</option>
-<option>Madadeni Section 2</option>
-<option>Madadeni Section 3</option>
-<option>Madadeni Section 4</option>
-<option>Madadeni Section 5</option>
-<option>Madadeni Section 6</option>
-<option>Madadeni Section 7</option>
-<option>Osizweni</option>
-<option>Other Newcastle area</option>
-</select>
-
-<label for="businessAddress">Business address or landmark</label>
-<input id="businessAddress" required maxlength="180">
-
-<label for="businessPhone">Business phone number</label>
-<input id="businessPhone" required type="tel" maxlength="25">
-
-<label for="businessEmail">Email address (optional)</label>
-<input id="businessEmail" type="email" maxlength="120">
-
-<label for="sellerNotes">Additional business information (optional)</label>
-<textarea id="sellerNotes" maxlength="300"></textarea>
-
-<button class="primary" type="submit">Submit registration</button>
-</form>
-<p class="notice">New registrations are marked pending. In this prototype, the registration is saved on this device only and is not sent to an administrator.</p>
-</div>
-
-<div class="panel">
-<h3>Seller registration status</h3>
-<p class="muted">Registrations made in this browser appear here.</p>
-<div id="sellerStatus"></div>
-</div>
-
-<div class="panel">
-<h3>Shop owner sign-in / menu management</h3>
-<p class="muted">This prototype does not have secure seller accounts. Do not use this section to publish sensitive business information or to manage a live business. A secure server and administrator-controlled approval are required before launch.</p>
-<label for="manageShop">Choose a shop registered on this device</label>
-<select id="manageShop"><option value="">Choose shop</option></select>
-<button class="light" id="openManager" type="button">Open menu manager</button>
-<div id="manager" class="hidden">
-<h3>Add a menu item</h3>
-<form id="menuForm">
-<label for="newItem">Food item name</label>
-<input id="newItem" required maxlength="100">
-<label for="newDescription">Description (optional)</label>
-<input id="newDescription" maxlength="180">
-<label for="newPrice">Actual price in rand</label>
-<input id="newPrice" type="number" required min="0.01" max="100000" step="0.01" placeholder="Enter your real price">
-<button class="primary" type="submit">Add menu item</button>
-</form>
-<div id="managerItems"></div>
-</div>
-</div>
-</section>
-
-<section class="section" id="faq">
-<h2>Frequently asked questions</h2>
-<details><summary>How do I order a kota?</summary><p>Search for a shop, open its menu, add items to your basket, choose delivery or collection and prepare your order.</p></details>
-<details><summary>Which areas does Kota Connect cover?</summary><p>The website includes Newcastle CBD, Madadeni Sections 1–7, Osizweni and an option for other Newcastle areas. Actual shop coverage depends on registered businesses.</p></details>
-<details><summary>How much is delivery?</summary><p>The displayed delivery fee is R15 per order. The shop must confirm delivery availability and the fee before the order is accepted.</p></details>
-<details><summary>How can I pay?</summary><p>Payment choices include cash on delivery, cash on collection, EFT by arrangement and electronic payment if supported. Online payments require a secure payment provider.</p></details>
-<details><summary>How do I register my kota shop?</summary><p>Complete the shop registration form with your business name, location and contact details. Registrations should be reviewed before the shop is made public.</p></details>
-<details><summary>How does shop approval work?</summary><p>This prototype records a pending status. Real approval requires a private administrator account, server-side review and a shared database. A browser-only status is not proof of approval.</p></details>
-<details><summary>Can I add more shops?</summary><p>There is no fixed shop count in this code. However, this browser-only prototype saves data locally. A shared database is needed for many shops and customers to use the same live listings.</p></details>
-<details><summary>Is my personal information private?</summary><p>Do not enter sensitive banking information. A live version should protect customer details, restrict address access to the relevant seller and use secure connections and access controls.</p></details>
-<details><summary>Can I cancel or change an order?</summary><p>Contact the shop directly to request a change or cancellation. This prototype does not send orders to shops automatically.</p></details>
+<section>
+  <h2>Privacy and safety</h2>
+  <p class="muted">Only share the contact and delivery information needed for your order. Check the seller's details before paying. This starter version does not collect card details or process online payments.</p>
 </section>
 </main>
-
-<footer>
-<strong>Kota Connect</strong>
-<p>Connecting local kota shops and customers across Newcastle.</p>
-<p class="muted">Prototype only: shared listings, real order delivery, secure accounts, approval controls and payment processing require backend setup.</p>
-</footer>
+<footer>Kota Connect · Supporting local kota businesses</footer>
 
 <script>
-"use strict";
-
-const KEY = "kota_connect_newcastle_v2";
-const DELIVERY = 15;
-let shops = load();
+const KEY = "kotaConnectShopsV1";
+let shops = [];
 let selectedShop = null;
-let cart = [];
-let managedShop = null;
+let cartItems = [];
 
-function load() {
-  try {
-    const x = JSON.parse(localStorage.getItem(KEY) || '{"shops":[],"sellers":[]}');
-    return {
-      shops: Array.isArray(x.shops) ? x.shops : [],
-      sellers: Array.isArray(x.sellers) ? x.sellers : []
-    };
-  } catch {
-    return {shops:[],sellers:[]};
-  }
+try {
+  shops = JSON.parse(localStorage.getItem(KEY) || "[]");
+  if (!Array.isArray(shops)) shops = [];
+} catch (e) {
+  shops = [];
 }
 
-function save() {
+const $ = id => document.getElementById(id);
+const money = n => "R" + Number(n).toFixed(2);
+
+function saveShops() {
   try {
     localStorage.setItem(KEY, JSON.stringify(shops));
     return true;
-  } catch {
-    alert("Could not save data in this browser.");
+  } catch (e) {
+    alert("Could not save shop details on this device.");
     return false;
   }
 }
 
-function id(prefix) {
-  return prefix + "-" + Date.now().toString(36) + "-" +
-    Math.random().toString(36).slice(2,8);
+function safe(text) {
+  return String(text).replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  }[c]));
 }
 
-function money(n) {
-  return "R" + Number(n).toFixed(2);
+function normalizePhone(value) {
+  let p = value.replace(/\D/g, "");
+  if (p.startsWith("0")) p = "27" + p.slice(1);
+  return p;
 }
 
-function el(tag, text, cls) {
-  const node = document.createElement(tag);
-  if (text !== undefined) node.textContent = text;
-  if (cls) node.className = cls;
-  return node;
+function validSAWhatsApp(value) {
+  return /^27\d{9}$/.test(normalizePhone(value));
 }
 
 function renderShops() {
-  const query = document.getElementById("search").value.trim().toLowerCase();
-  const area = document.getElementById("area").value.toLowerCase();
-  const sort = document.getElementById("sort").value;
-  const target = document.getElementById("shops");
-  target.replaceChildren();
-
-  let matches = shops.shops.filter(s =>
-    s.status === "approved" &&
-    (!query || (s.name + " " + s.area).toLowerCase().includes(query)) &&
-    (!area || s.area.toLowerCase() === area)
+  const term = $("search").value.trim().toLowerCase();
+  const area = $("area").value;
+  const matches = shops.filter(s =>
+    (!area || s.area === area) &&
+    (!term || (s.name + " " + s.area + " " + s.description)
+      .toLowerCase().includes(term))
   );
 
-  matches.sort((a,b) => sort === "area"
-    ? a.area.localeCompare(b.area)
-    : a.name.localeCompare(b.name));
+  $("shops").innerHTML = matches.length
+    ? matches.map(s => `
+      <div class="shop">
+        <h3>${safe(s.name)}</h3>
+        <span class="pill">${safe(s.area)}</span>
+        <p>${safe(s.description || "Local kota business")}</p>
+        <button onclick="openShop('${s.id}')">View menu and order</button>
+      </div>`).join("")
+    : `<p>No registered shops match your search yet.</p>
+       <p class="muted">Try another area, or invite your favourite kota seller to register below.</p>`;
+}
 
-  document.getElementById("shopCount").textContent =
-    matches.length + (matches.length === 1 ? " shop" : " shops");
+function openShop(id) {
+  selectedShop = shops.find(s => s.id === id);
+  if (!selectedShop) return;
+  cartItems = [];
+  $("shopTitle").textContent = selectedShop.name + " menu";
+  $("ordering").classList.remove("hidden");
+  $("cartSection").classList.remove("hidden");
+  $("sellerSection").classList.add("hidden");
 
-  if (!matches.length) {
-    target.appendChild(el("div",
-      shops.shops.some(s => s.status === "pending")
-        ? "No approved shops match your search yet. New registrations are pending review."
-        : "No approved shops are available yet. Shop owners can register below.",
-      "panel"));
+  $("menu").innerHTML = selectedShop.menu.map((item, i) => `
+    <div class="menu-row">
+      <div><strong>${safe(item.name)}</strong>
+      <span class="price">${money(item.price)}</span></div>
+      <button onclick="addItem(${i})">Add</button>
+    </div>`).join("");
+
+  updateCart();
+  $("ordering").scrollIntoView({behavior:"smooth"});
+}
+
+function closeShop() {
+  selectedShop = null;
+  cartItems = [];
+  $("ordering").classList.add("hidden");
+  $("cartSection").classList.add("hidden");
+  $("sellerSection").classList.remove("hidden");
+  renderShops();
+}
+
+function addItem(i) {
+  const item = selectedShop.menu[i];
+  const existing = cartItems.find(x => x.name === item.name);
+  if (existing) existing.qty++;
+  else cartItems.push({...item, qty:1});
+  updateCart();
+}
+
+function changeQty(i, amount) {
+  cartItems[i].qty += amount;
+  if (cartItems[i].qty <= 0) cartItems.splice(i, 1);
+  updateCart();
+}
+
+function updateCart() {
+  $("cart").innerHTML = cartItems.length
+    ? cartItems.map((item, i) => `
+      <div class="menu-row">
+        <div>${safe(item.name)}<br>
+          ${money(item.price)} × ${item.qty}</div>
+        <div>
+          <button class="secondary" onclick="changeQty(${i},-1)">−</button>
+          <button class="secondary" onclick="changeQty(${i},1)">+</button>
+        </div>
+      </div>`).join("")
+    : "<p>Your basket is empty. Add items from the menu.</p>";
+
+  const subtotal = cartItems.reduce((sum, x) => sum + x.price*x.qty, 0);
+  const delivery = $("fulfilment").value === "delivery" ? 15 : 0;
+  $("total").textContent =
+    `Subtotal: ${money(subtotal)} · Delivery: ${money(delivery)} · Total: ${money(subtotal + delivery)}`;
+}
+
+$("sellerForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const name = $("sellerName").value.trim();
+  const area = $("sellerArea").value;
+  const phone = $("sellerPhone").value.trim();
+  const rawMenu = $("sellerMenu").value.trim();
+
+  if (!validSAWhatsApp(phone)) {
+    alert("Enter a valid South African WhatsApp number, including the 0 prefix or +27.");
     return;
   }
 
-  matches.forEach(shop => {
-    const card = el("article", undefined, "shop");
-    const head = el("div", undefined, "shop-head");
-    head.appendChild(el("h3", shop.name));
-    head.appendChild(el("span", "Approved", "tag"));
-    card.appendChild(head);
-    card.appendChild(el("p", shop.area + " · " + shop.address, "muted"));
-    card.appendChild(el("p", shop.description || "Local kota shop"));
-    card.appendChild(el("p", shop.menu.length + " menu items"));
-    const button = el("button", "View menu & order", "primary");
-    button.addEventListener("click", () => openShop(shop.id));
-    card.appendChild(button);
-    target.appendChild(card);
+  const menu = rawMenu.split("\n").map(line => {
+    const parts = line.split("|");
+    if (parts.length < 2) return null;
+    const itemName = parts.slice(0, -1).join("|").trim();
+    const price = Number(parts[parts.length - 1].trim());
+    if (!itemName || !Number.isFinite(price) || price < 0) return null;
+    return {name:itemName, price};
   });
-}
 
-function openShop(shopId) {
-  const shop = shops.shops.find(s => s.id === shopId);
-  if (!shop || shop.status !== "approved") return;
-  selectedShop = shopId;
-  cart = [];
-  document.getElementById("menuSection").classList.remove("hidden");
-  document.getElementById("checkoutSection").classList.remove("hidden");
-  document.getElementById("orderResult").classList.add("hidden");
-  document.getElementById("shopInfo").replaceChildren(
-    el("h2", shop.name), el("p", shop.area + " · " + shop.address, "muted"),
-    el("p", "Contact: " + shop.phone, "muted")
-  );
-  renderMenu();
-  renderCart();
-  document.getElementById("menuSection").scrollIntoView({behavior:"smooth"});
-}
-
-function renderMenu() {
-  const shop = shops.shops.find(s => s.id === selectedShop);
-  const target = document.getElementById("menuItems");
-  target.replaceChildren();
-  if (!shop) return;
-  if (!shop.menu.length) {
-    target.appendChild(el("p", "This shop has not added menu items yet.", "muted"));
+  if (!menu.length || menu.some(x => !x)) {
+    alert("Check the menu: use one item per line, formatted as Item name | price.");
     return;
   }
-  shop.menu.forEach(item => {
-    const line = el("div", undefined, "line");
-    const text = el("div");
-    text.appendChild(el("strong", item.name));
-    if (item.description) text.appendChild(el("p", item.description, "muted"));
-    text.appendChild(el("p", money(item.price)));
-    const button = el("button", "Add +", "primary");
-    button.addEventListener("click", () => {
-      const existing = cart.find(c => c.id === item.id);
-      if (existing) existing.qty++;
-      else cart.push({...item, qty:1});
-      renderCart();
-    });
-    line.append(text, button);
-    target.appendChild(line);
-  });
-}
 
-function renderCart() {
-  const target = document.getElementById("basket");
-  target.replaceChildren();
-  cart = cart.filter(i => i.qty > 0);
-
-  if (!cart.length) target.appendChild(el("p", "Your basket is empty.", "muted"));
-
-  cart.forEach(item => {
-    const line = el("div", undefined, "line");
-    line.appendChild(el("span", item.name + " × " + item.qty + " — " +
-      money(item.price * item.qty)));
-    const buttons = el("div", undefined, "row");
-    const minus = el("button", "−", "light");
-    const plus = el("button", "+", "light");
-    minus.addEventListener("click", () => {item.qty--; renderCart();});
-    plus.addEventListener("click", () => {item.qty++; renderCart();});
-    buttons.append(minus, plus);
-    line.appendChild(buttons);
-    target.appendChild(line);
-  });
-  updateTotal();
-}
-
-function updateTotal() {
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const delivery = cart.length &&
-    document.getElementById("fulfilment").value === "delivery" ? DELIVERY : 0;
-  document.getElementById("subtotal").textContent = money(subtotal);
-  document.getElementById("deliveryFee").textContent = money(delivery);
-  document.getElementById("grandTotal").textContent = money(subtotal + delivery);
-  document.getElementById("addressWrap").classList.toggle("hidden",
-    document.getElementById("fulfilment").value !== "delivery");
-  document.getElementById("address").required =
-    document.getElementById("fulfilment").value === "delivery";
-}
-
-document.getElementById("searchBtn").addEventListener("click", renderShops);
-document.getElementById("search").addEventListener("input", renderShops);
-document.getElementById("area").addEventListener("change", renderShops);
-document.getElementById("sort").addEventListener("change", renderShops);
-document.getElementById("fulfilment").addEventListener("change", updateTotal);
-
-document.getElementById("backBtn").addEventListener("click", () => {
-  document.getElementById("menuSection").classList.add("hidden");
-  document.getElementById("checkoutSection").classList.add("hidden");
-  document.getElementById("find").scrollIntoView({behavior:"smooth"});
-});
-
-document.getElementById("sellerForm").addEventListener("submit", event => {
-  event.preventDefault();
-  const name = document.getElementById("businessName").value.trim();
-  const area = document.getElementById("businessArea").value;
-  const address = document.getElementById("businessAddress").value.trim();
-  const phone = document.getElementById("businessPhone").value.trim();
-
-  if (!name || !area || !address || !phone) return;
+  if (shops.some(s => s.name.toLowerCase() === name.toLowerCase()
+      && s.area === area)) {
+    alert("A shop with this name is already registered in this area on this device.");
+    return;
+  }
 
   const shop = {
-    id:id("shop"),
-    owner:document.getElementById("sellerName").value.trim(),
-    name, area, address, phone,
-    email:document.getElementById("businessEmail").value.trim(),
-    description:document.getElementById("sellerNotes").value.trim(),
-    status:"pending",
-    menu:[]
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
+    name, area, phone: normalizePhone(phone),
+    description: $("sellerDescription").value.trim(),
+    menu
   };
 
-  shops.shops.push(shop);
-  if (!save()) {
-    shops.shops.pop();
+  shops.push(shop);
+  if (!saveShops()) {
+    shops.pop();
     return;
   }
-  event.target.reset();
-  renderSellerStatus();
-  renderManagerOptions();
-  alert("Registration saved as pending on this device. It is not yet publicly listed.");
-});
 
-function renderSellerStatus() {
-  const target = document.getElementById("sellerStatus");
-  target.replaceChildren();
-  const sellers = shops.shops.filter(s => s.status === "pending");
-  if (!sellers.length) {
-    target.appendChild(el("p", "No pending registrations on this device.", "muted"));
-    return;
-  }
-  sellers.forEach(s => {
-    const card = el("div", undefined, "card");
-    card.appendChild(el("strong", s.name));
-    card.appendChild(el("p", s.area + " · Pending approval", "muted"));
-    target.appendChild(card);
-  });
-}
-
-function renderManagerOptions() {
-  const select = document.getElementById("manageShop");
-  select.replaceChildren(new Option("Choose shop", ""));
-  shops.shops.forEach(s => select.add(new Option(s.name + " — " + s.status, s.id)));
-}
-
-document.getElementById("openManager").addEventListener("click", () => {
-  managedShop = document.getElementById("manageShop").value;
-  if (!managedShop) {
-    alert("Choose a shop first.");
-    return;
-  }
-  document.getElementById("manager").classList.remove("hidden");
-  renderManagerItems();
-});
-
-document.getElementById("menuForm").addEventListener("submit", event => {
-  event.preventDefault();
-  const shop = shops.shops.find(s => s.id === managedShop);
-  if (!shop) return;
-  const name = document.getElementById("newItem").value.trim();
-  const description = document.getElementById("newDescription").value.trim();
-  const price = Number(document.getElementById("newPrice").value);
-  if (!name || !Number.isFinite(price) || price <= 0) {
-    alert("Enter a valid menu item and price.");
-    return;
-  }
-  shop.menu.push({id:id("item"), name, description, price});
-  if (!save()) {
-    shop.menu.pop();
-    return;
-  }
-  event.target.reset();
-  renderManagerItems();
-  renderMenu();
+  this.reset();
   renderShops();
+  alert("Shop added on this device. Public registration requires a shared database.");
+  $("search").value = name;
+  $("area").value = area;
+  renderShops();
+  window.scrollTo({top:0, behavior:"smooth"});
 });
 
-function renderManagerItems() {
-  const target = document.getElementById("managerItems");
-  target.replaceChildren();
-  const shop = shops.shops.find(s => s.id === managedShop);
-  if (!shop) return;
-  target.appendChild(el("h3", "Menu items"));
-  shop.menu.forEach(item => {
-    const line = el("div", undefined, "line");
-    line.appendChild(el("span", item.name + " — " + money(item.price)));
-    const remove = el("button", "Remove", "light");
-    remove.addEventListener("click", () => {
-      shop.menu = shop.menu.filter(i => i.id !== item.id);
-      save();
-      renderManagerItems();
-      renderMenu();
-      renderShops();
-    });
-    line.appendChild(remove);
-    target.appendChild(line);
-  });
-}
-
-document.getElementById("orderForm").addEventListener("submit", event => {
-  event.preventDefault();
-  const shop = shops.shops.find(s => s.id === selectedShop);
-  if (!shop || !cart.length) {
-    alert("Choose a shop and add menu items before checkout.");
+function sendOrder() {
+  if (!selectedShop || !cartItems.length) {
+    alert("Choose at least one menu item first.");
     return;
   }
 
-  const fulfilment = document.getElementById("fulfilment").value;
-  const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  const delivery = fulfilment === "delivery" ? DELIVERY : 0;
-  const total = subtotal + delivery;
+  const customer = $("customer").value.trim();
+  const phone = $("phone").value.trim();
+  const delivery = $("fulfilment").value === "delivery";
+  const address = $("address").value.trim();
 
+  if (!customer || !phone) {
+    alert("Enter your name and contact number.");
+    return;
+  }
+  if (delivery && !address) {
+    alert("Enter your delivery area and address.");
+    return;
+  }
+  if (!validSAWhatsApp(selectedShop.phone)) {
+    alert("This shop does not have a valid WhatsApp number.");
+    return;
+  }
+
+  const subtotal = cartItems.reduce((sum,x)=>sum+x.price*x.qty,0);
+  const fee = delivery ? 15 : 0;
   const lines = [
-    "KOTA CONNECT ORDER REQUEST",
-    "Shop: " + shop.name,
-    "Shop area: " + shop.area,
-    "Customer: " + document.getElementById("customerName").value.trim(),
-    "Phone: " + document.getElementById("customerPhone").value.trim(),
-    "Customer area: " + document.getElementById("customerArea").value,
-    "Fulfilment: " + fulfilment,
-    ...(fulfilment === "delivery"
-      ? ["Delivery address: " + document.getElementById("address").value.trim()]
-      : ["Collection details: " + document.getElementById("address").value.trim()]),
-    "Items:",
-    ...cart.map(i => i.name + " × " + i.qty + " = " + money(i.price * i.qty)),
-    "Food subtotal: " + money(subtotal),
-    "Delivery: " + money(delivery),
-    "Total: " + money(total),
-    "Payment preference: " + document.getElementById("payment").value,
-    "Instructions: " + document.getElementById("notes").value.trim(),
+    "KOTA CONNECT ORDER",
+    "Shop: " + selectedShop.name,
+    "Customer: " + customer,
+    "Customer contact: " + phone,
     "",
-    "Order is not confirmed until accepted by the shop."
+    ...cartItems.map(x => `${x.qty} x ${x.name} — ${money(x.price*x.qty)}`),
+    "",
+    "Subtotal: " + money(subtotal),
+    "Delivery: " + money(fee),
+    "TOTAL: " + money(subtotal+fee),
+    "Fulfilment: " + (delivery ? "Delivery" : "Collection"),
+    ...(delivery ? ["Address: " + address] : []),
+    "Payment preference: " + $("payment").value,
+    "Notes: " + ($("notes").value.trim() || "None"),
+    "",
+    "Please confirm availability, total and payment arrangements."
   ];
 
-  const target = document.getElementById("orderResult");
-  target.replaceChildren();
-  target.appendChild(el("h3", "Order summary ready"));
-  target.appendChild(el("p",
-    "This prototype does not send the order to the shop or process payment. Share the summary using an agreed contact method."));
-  const box = document.createElement("textarea");
-  box.readOnly = true;
-  box.rows = 12;
-  box.value = lines.join("\n");
-  target.appendChild(box);
-  const copy = el("button", "Copy order summary", "primary");
-  copy.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(box.value);
-      copy.textContent = "Copied";
-    } catch {
-      box.focus();
-      box.select();
-      alert("Copy the selected order summary.");
-    }
-  });
-  target.appendChild(copy);
-  target.classList.remove("hidden");
-  target.scrollIntoView({behavior:"smooth"});
-});
+  const url = "https://wa.me/" + selectedShop.phone +
+    "?text=" + encodeURIComponent(lines.join("\n"));
+  window.open(url, "_blank", "noopener,noreferrer");
+}
 
+$("search").addEventListener("input", renderShops);
+$("area").addEventListener("change", renderShops);
 renderShops();
-renderSellerStatus();
-renderManagerOptions();
-updateTotal();
 </script>
 </body>
 </html>
