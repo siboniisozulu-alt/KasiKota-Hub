@@ -1,355 +1,5 @@
 <h1>Kota Connect</h1>
-<!DOCTYPE html>
-<html lang="en">
-  
-<!-- Kota Connect PWA settings -->
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#172033">
-<meta name="mobile-web-app-capable" content="yes">
-:root{--green:#142b20;--lime:#d7f36a;--cream:#fffaf0;--orange:#ef8b35}
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:var(--cream);color:#202820}
-header{background:var(--green);color:white;padding:20px 16px}
-.brand{font-size:27px;font-weight:800}
-.brand span{color:var(--lime)}
-header p{margin-bottom:0;color:#e1e9df}
-main{max-width:850px;margin:auto;padding:16px}
-section{background:white;padding:18px;margin:15px 0;border-radius:15px;border:1px solid #e6e9df}
-h2{font-size:20px;margin-top:0}
-input,select,textarea{width:100%;padding:12px;margin:7px 0 13px;border:1px solid #cbd2c7;border-radius:9px;font:inherit;background:white}
-button{border:0;border-radius:9px;padding:12px 16px;background:var(--green);color:white;font-weight:bold;cursor:pointer}
-button.secondary{background:#e9f0df;color:var(--green)}
-button:disabled{opacity:.5}
-label{font-size:14px;font-weight:bold}
-.shop{border:1px solid #e0e5db;border-radius:12px;padding:14px;margin:12px 0}
-.shop h3{margin:0 0 6px}
-.muted{color:#657064;font-size:14px}
-.pill{display:inline-block;background:#edf4df;padding:5px 9px;border-radius:20px;font-size:12px}
-.menu-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
-.menu-row strong{display:block}
-.price{white-space:nowrap;font-weight:bold}
-.hidden{display:none!important}
-.notice{background:#fff4d8;padding:12px;border-radius:8px;font-size:14px}
-footer{text-align:center;padding:25px;color:#667064;font-size:13px}
-</style>
-</head>
-<body>
-<header>
-  <div class="brand">🍔 Kota <span>Connect</span></div>
-  <p>Find your favourite local kota shop. Order your way.</p>
-</header>
 
-<main>
-<section>
-  <h2>Find your kota shop</h2>
-  <label for="search">Shop name or area</label>
-  <input id="search" placeholder="Search Newcastle CBD, Osizweni...">
-  <label for="area">Choose an area</label>
-  <select id="area">
-    <option value="">All areas</option>
-    <option>Newcastle CBD</option>
-    <option>Madadeni Section 1</option>
-    <option>Madadeni Section 2</option>
-    <option>Madadeni Section 3</option>
-    <option>Madadeni Section 4</option>
-    <option>Madadeni Section 5</option>
-    <option>Madadeni Section 6</option>
-    <option>Madadeni Section 7</option>
-    <option>Osizweni</option>
-    <option>Other</option>
-  </select>
-  <div id="shops"></div>
-</section>
-
-<section id="ordering" class="hidden">
-  <h2 id="shopTitle">Shop menu</h2>
-  <div id="menu"></div>
-  <button class="secondary" onclick="closeShop()">Back to shops</button>
-</section>
-
-<section id="cartSection" class="hidden">
-  <h2>Your order</h2>
-  <div id="cart"></div>
-  <p id="total"></p>
-  <label for="customer">Your name</label>
-  <input id="customer" autocomplete="name" placeholder="Name for your order">
-  <label for="phone">Your contact number</label>
-  <input id="phone" type="tel" autocomplete="tel" placeholder="Your phone number">
-  <label for="fulfilment">Collection or delivery</label>
-  <select id="fulfilment" onchange="updateCart()">
-    <option value="collection">Collect from shop</option>
-    <option value="delivery">Delivery (+ R15)</option>
-  </select>
-  <label for="address">Delivery area and address (if applicable)</label>
-  <textarea id="address" placeholder="Area, street, section and directions"></textarea>
-  <label for="payment">Preferred payment method</label>
-  <select id="payment">
-    <option>Cash</option>
-    <option>EFT - confirm with seller</option>
-    <option>Pay on collection</option>
-  </select>
-  <label for="notes">Order notes (optional)</label>
-  <textarea id="notes" placeholder="Any special instructions?"></textarea>
-  <button onclick="sendOrder()">Send order to seller on WhatsApp</button>
-  <p class="muted">Your WhatsApp app will open so you can review and send the order.</p>
-
-<section>
-  <h2>Privacy and safety</h2>
-  <p class="muted">Only share the contact and delivery information needed for your order. Check the seller's details before paying. This starter version does not collect card details or process online payments.</p>
-</section>
-</main>
-<footer>Kota Connect · Supporting local kota businesses</footer>
-
-<script>
-const KEY = "kotaConnectShopsV1";
-let shops = [];
-let selectedShop = null;
-let cartItems = [];
-
-try {
-  shops = JSON.parse(localStorage.getItem(KEY) || "[]");
-  if (!Array.isArray(shops)) shops = [];
-} catch (e) {
-  shops = [];
-}
-
-const $ = id => document.getElementById(id);
-const money = n => "R" + Number(n).toFixed(2);
-
-function saveShops() {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(shops));
-    return true;
-  } catch (e) {
-    alert("Could not save shop details on this device.");
-    return false;
-  }
-}
-
-function safe(text) {
-  return String(text).replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;",
-    '"':"&quot;", "'":"&#39;"
-  }[c]));
-}
-
-function normalizePhone(value) {
-  let p = value.replace(/\D/g, "");
-  if (p.startsWith("0")) p = "27" + p.slice(1);
-  return p;
-}
-
-function validSAWhatsApp(value) {
-  return /^27\d{9}$/.test(normalizePhone(value));
-}
-
-function renderShops() {
-  const term = $("search").value.trim().toLowerCase();
-  const area = $("area").value;
-  const matches = shops.filter(s =>
-    (!area || s.area === area) &&
-    (!term || (s.name + " " + s.area + " " + s.description)
-      .toLowerCase().includes(term))
-  );
-
-  $("shops").innerHTML = matches.length
-    ? matches.map(s => `
-      <div class="shop">
-        <h3>${safe(s.name)}</h3>
-        <span class="pill">${safe(s.area)}</span>
-        <p>${safe(s.description || "Local kota business")}</p>
-        <button onclick="openShop('${s.id}')">View menu and order</button>
-      </div>`).join("")
-    : `<p>No registered shops match your search yet.</p>
-       <p class="muted">Try another area, or invite your favourite kota seller to register below.</p>`;
-}
-
-function openShop(id) {
-  selectedShop = shops.find(s => s.id === id);
-  if (!selectedShop) return;
-  cartItems = [];
-  $("shopTitle").textContent = selectedShop.name + " menu";
-  $("ordering").classList.remove("hidden");
-  $("cartSection").classList.remove("hidden");
-  $("sellerSection").classList.add("hidden");
-
-  $("menu").innerHTML = selectedShop.menu.map((item, i) => `
-    <div class="menu-row">
-      <div><strong>${safe(item.name)}</strong>
-      <span class="price">${money(item.price)}</span></div>
-      <button onclick="addItem(${i})">Add</button>
-    </div>`).join("");
-
-  updateCart();
-  $("ordering").scrollIntoView({behavior:"smooth"});
-}
-
-function closeShop() {
-  selectedShop = null;
-  cartItems = [];
-  $("ordering").classList.add("hidden");
-  $("cartSection").classList.add("hidden");
-  $("sellerSection").classList.remove("hidden");
-  renderShops();
-}
-
-function addItem(i) {
-  const item = selectedShop.menu[i];
-  const existing = cartItems.find(x => x.name === item.name);
-  if (existing) existing.qty++;
-  else cartItems.push({...item, qty:1});
-  updateCart();
-}
-
-function changeQty(i, amount) {
-  cartItems[i].qty += amount;
-  if (cartItems[i].qty <= 0) cartItems.splice(i, 1);
-  updateCart();
-}
-
-function updateCart() {
-  $("cart").innerHTML = cartItems.length
-    ? cartItems.map((item, i) => `
-      <div class="menu-row">
-        <div>${safe(item.name)}<br>
-          ${money(item.price)} × ${item.qty}</div>
-        <div>
-          <button class="secondary" onclick="changeQty(${i},-1)">−</button>
-          <button class="secondary" onclick="changeQty(${i},1)">+</button>
-        </div>
-      </div>`).join("")
-    : "<p>Your basket is empty. Add items from the menu.</p>";
-
-  const subtotal = cartItems.reduce((sum, x) => sum + x.price*x.qty, 0);
-  const delivery = $("fulfilment").value === "delivery" ? 15 : 0;
-  $("total").textContent =
-    `Subtotal: ${money(subtotal)} · Delivery: ${money(delivery)} · Total: ${money(subtotal + delivery)}`;
-}
-
-$("sellerForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const name = $("sellerName").value.trim();
-  const area = $("sellerArea").value;
-  const phone = $("sellerPhone").value.trim();
-  const rawMenu = $("sellerMenu").value.trim();
-
-  if (!validSAWhatsApp(phone)) {
-    alert("Enter a valid South African WhatsApp number, including the 0 prefix or +27.");
-    return;
-  }
-
-  const menu = rawMenu.split("\n").map(line => {
-    const parts = line.split("|");
-    if (parts.length < 2) return null;
-    const itemName = parts.slice(0, -1).join("|").trim();
-    const price = Number(parts[parts.length - 1].trim());
-    if (!itemName || !Number.isFinite(price) || price < 0) return null;
-    return {name:itemName, price};
-  });
-
-  if (!menu.length || menu.some(x => !x)) {
-    alert("Check the menu: use one item per line, formatted as Item name | price.");
-    return;
-  }
-
-  if (shops.some(s => s.name.toLowerCase() === name.toLowerCase()
-      && s.area === area)) {
-    alert("A shop with this name is already registered in this area on this device.");
-    return;
-  }
-
-  const shop = {
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
-    name, area, phone: normalizePhone(phone),
-    description: $("sellerDescription").value.trim(),
-    menu
-  };
-
-  shops.push(shop);
-  if (!saveShops()) {
-    shops.pop();
-    return;
-  }
-
-  this.reset();
-  renderShops();
-  alert("Shop added on this device. Public registration requires a shared database.");
-  $("search").value = name;
-  $("area").value = area;
-  renderShops();
-  window.scrollTo({top:0, behavior:"smooth"});
-});
-
-function sendOrder() {
-  if (!selectedShop || !cartItems.length) {
-    alert("Choose at least one menu item first.");
-    return;
-  }
-
-  const customer = $("customer").value.trim();
-  const phone = $("phone").value.trim();
-  const delivery = $("fulfilment").value === "delivery";
-  const address = $("address").value.trim();
-
-  if (!customer || !phone) {
-    alert("Enter your name and contact number.");
-    return;
-  }
-  if (delivery && !address) {
-    alert("Enter your delivery area and address.");
-    return;
-  }
-  if (!validSAWhatsApp(selectedShop.phone)) {
-    alert("This shop does not have a valid WhatsApp number.");
-    return;
-  }
-
-  const subtotal = cartItems.reduce((sum,x)=>sum+x.price*x.qty,0);
-  const fee = delivery ? 15 : 0;
-  const lines = [
-    "KOTA CONNECT ORDER",
-    "Shop: " + selectedShop.name,
-    "Customer: " + customer,
-    "Customer contact: " + phone,
-    "",
-    ...cartItems.map(x => `${x.qty} x ${x.name} — ${money(x.price*x.qty)}`),
-    "",
-    "Subtotal: " + money(subtotal),
-    "Delivery: " + money(fee),
-    "TOTAL: " + money(subtotal+fee),
-    "Fulfilment: " + (delivery ? "Delivery" : "Collection"),
-    ...(delivery ? ["Address: " + address] : []),
-    "Payment preference: " + $("payment").value,
-    "Notes: " + ($("notes").value.trim() || "None"),
-    "",
-    "Please confirm availability, total and payment arrangements."
-  ];
-
-  const url = "https://wa.me/" + selectedShop.phone +
-    "?text=" + encodeURIComponent(lines.join("\n"));
-  window.open(url, "_blank", "noopener,noreferrer");
-}
-
-$("search").addEventListener("input", renderShops);
-$("area").addEventListener("change", renderShops);
-renderShops();
-</script>
-  
-<!-- KOTA CONNECT OWNER REGISTRATION -->
-<section id="owner-registration" class="owner-registration">
-  <div class="owner-card">
-    <h2>🍔 Register Your Kota Business</h2>
-    <p>
-      Own a kota business in Newcastle or surrounding areas?
-      Join Kota Connect and help more customers discover your shop.
-    </p>
-
-    <div class="owner-benefits">
-      <p>✅ Register your business online</p>
-      <p>📍 Reach customers in your area</p>
-      <p>📱 Let customers discover your menu</p>
-    </div>
 <div style="text-align:center; margin:20px 0;">
   <button id="installAppBtn"
     style="background:#16a34a; color:white;
@@ -362,196 +12,483 @@ renderShops();
   </p>
 </div>
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#142b20">
-<title>Kota Connect | Local Kota Ordering</title>
-<style>
-<div style="text-align:center; margin:20px 0;">
-  <button id="installAppBtn"
-    style="background:#16a34a; color:white; padding:14px 22px; border:0; border-radius:12px; font-size:16px; font-weight:bold; cursor:pointer;">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176b42">
+  <meta name="description" content="Kota Connect connects customers with local kota shops in Newcastle, KwaZulu-Natal.">
+  <title>Kota Connect | Support Local</title>
+  <link rel="manifest" href="./manifest.json">
+  <style>
+    :root {
+      --green:#176b42; --dark:#173729; --gold:#ffc857;
+      --cream:#fffaf0; --white:#fff; --muted:#66736b;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; font-family:Arial,sans-serif;
+      background:var(--cream); color:var(--dark);
+    }
+    header {
+      background:var(--green); color:white;
+      padding:24px 16px; text-align:center;
+    }
+    header h1 { margin:0 0 8px; font-size:32px; }
+    header p { margin:6px 0; }
+    nav {
+      display:flex; justify-content:center; flex-wrap:wrap;
+      gap:14px; padding:13px; background:var(--dark);
+    }
+    nav a { color:white; text-decoration:none; font-weight:bold; }
+    main { max-width:1000px; margin:auto; padding:16px; }
+    section {
+      background:white; padding:18px; border-radius:16px;
+      margin:16px 0; box-shadow:0 2px 10px #17372912;
+    }
+    h2 { color:var(--green); margin-top:0; }
+    label { display:block; font-weight:bold; margin:12px 0 6px; }
+    input,select,textarea {
+      display:block; width:100%; padding:12px;
+      border:1px solid #cbd5ce; border-radius:9px;
+      font:inherit; background:white;
+    }
+    button,.button {
+      display:inline-block; background:var(--green); color:white;
+      padding:12px 16px; border:0; border-radius:10px;
+      font-weight:bold; font-size:15px; cursor:pointer;
+      text-decoration:none; margin:5px 4px 5px 0;
+    }
+    button.secondary { background:var(--dark); }
+    button.gold { background:var(--gold); color:var(--dark); }
+    .grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:14px;
+    }
+    .shop {
+      border:1px solid #dbe5dc; border-radius:13px;
+      padding:15px; background:#fffefb;
+    }
+    .shop h3 { margin:0 0 8px; }
+    .tag {
+      display:inline-block; background:#e8f5eb; color:var(--green);
+      padding:5px 9px; border-radius:20px; font-size:12px;
+    }
+    .menu-item {
+      border-top:1px solid #e4e9e4; padding:10px 0;
+    }
+    .menu-item strong { display:block; margin-bottom:5px; }
+    .price { color:var(--green); font-weight:bold; }
+    .note { color:var(--muted); font-size:14px; line-height:1.5; }
+    .notice {
+      padding:12px; background:#fff4d6; border-radius:10px;
+      line-height:1.5;
+    }
+    footer {
+      background:var(--dark); color:white; padding:25px 16px;
+      text-align:center; margin-top:25px;
+    }
+    footer a { color:var(--gold); }
+    .hidden { display:none; }
+    @media(max-width:480px) {
+      header h1 { font-size:27px; }
+      main { padding:10px; }
+      section { padding:14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🍔 Kota Connect</h1>
+  <p><strong>Support Local. Eat Local. Grow Together.</strong></p>
+  <p>Discover Newcastle's local kota businesses.</p>
+  <button id="installBtn" class="gold" hidden>
     📲 Install Kota Connect App
   </button>
-  <p id="installAppMessage" style="font-size:14px;">
-    Install Kota Connect on your phone for easy access.
+  <p id="installMessage" class="note" style="color:white">
+    Use your browser menu to install or add this website to your home screen.
   </p>
-</div>
-    <a
-      class="owner-register-button"
-      href="https://docs.google.com/forms/d/e/1FAIpQLSd3OmBSe5-xa65bFvzhPTO-L9Y6mLKGg_4keNTve-m-L-wweA/viewform"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Register Your Shop Now →
+</header>
+
+<nav>
+  <a href="#shops">Shops & Menus</a>
+  <a href="#order">Order</a>
+  <a href="#register">Register a Shop</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<main>
+  <section>
+    <h2>Welcome to Kota Connect</h2>
+    <p>Choose a local shop, view its menu, select your area
+    and order for pickup or delivery. Help local businesses
+    reach more customers.</p>
+    <label for="area">Choose your location</label>
+    <select id="area">
+      <option value="">Select your area</option>
+      <option>Newcastle CBD</option>
+      <option>Madadeni Section 1</option>
+      <option>Madadeni Section 2</option>
+      <option>Madadeni Section 3</option>
+      <option>Madadeni Section 4</option>
+      <option>Madadeni Section 5</option>
+      <option>Madadeni Section 6</option>
+      <option>Madadeni Section 7</option>
+      <option>Osizweni</option>
+      <option>Other Newcastle area</option>
+    </select>
+    <label for="otherArea">Street, section or other location (optional)</label>
+    <input id="otherArea" placeholder="Enter your street or section">
+  </section>
+
+  <section id="shops">
+    <h2>Our Local Shops</h2>
+    <p class="note">Five shop listings are provided below. Replace
+    the sample shop names, menu items and prices with confirmed
+    details from registered businesses before publishing.</p>
+    <div id="shopGrid" class="grid"></div>
+  </section>
+
+  <section id="order">
+    <h2>Place Your Order</h2>
+    <p class="note">Select a shop and menu item. The order summary
+    can be sent to the shop once its correct WhatsApp number is configured.</p>
+
+    <label for="shopSelect">Choose a shop</label>
+    <select id="shopSelect"></select>
+
+    <label for="itemSelect">Choose a menu item</label>
+    <select id="itemSelect"></select>
+
+    <label for="quantity">Quantity</label>
+    <input id="quantity" type="number" min="1" value="1">
+
+    <label for="service">Pickup or delivery</label>
+    <select id="service">
+      <option value="Pickup">Pickup</option>
+      <option value="Delivery">Delivery</option>
+    </select>
+
+    <p class="note">Delivery fee: R15 per order, subject to the
+    shop's delivery coverage and confirmation.</p>
+
+    <label for="customerName">Your name</label>
+    <input id="customerName" autocomplete="name" placeholder="Enter your name">
+
+    <label for="customerPhone">Your phone number</label>
+    <input id="customerPhone" type="tel" autocomplete="tel"
+      placeholder="Enter your phone number">
+
+    <label for="orderAddress">Pickup details or delivery address</label>
+    <textarea id="orderAddress" rows="3"
+      placeholder="Enter the details needed by the shop"></textarea>
+
+    <p id="orderTotal"><strong>Total: Price to be confirmed</strong></p>
+    <button id="prepareOrder">Prepare Order</button>
+    <button id="sendOrder" class="secondary" hidden>Send to Shop on WhatsApp</button>
+    <div id="orderSummary" class="notice hidden" aria-live="polite"></div>
+    <p class="note">Orders are not confirmed until the shop accepts them.
+    This page does not process payments or store orders in a shared database.</p>
+  </section>
+
+  <section id="register">
+    <h2>Register Your Kota Business</h2>
+    <p>Are you a kota shop owner? Join Kota Connect to help more
+    customers discover your business.</p>
+    <ul>
+      <li>Submit your shop registration using our Google Form.</li>
+      <li>Provide your menu, prices, location and contact details.</li>
+      <li>Include your operating schedule and pickup/delivery options.</li>
+      <li>Shop listings should be checked and approved before publication.</li>
+    </ul>
+    <a id="googleFormLink" class="button"
+       href="https://docs.google.com/forms/"
+       target="_blank" rel="noopener">
+       📝 Open Shop Registration Form
     </a>
+    <p class="note">Replace this example link with your actual Google
+    registration form URL. This link alone does not upload or approve
+    registrations automatically.</p>
+  </section>
 
-    <p class="owner-note">
-      Your registration will open securely in Google Forms.
-      Complete the form to submit your business details.
-    </p>
-  </div>
-</section>
+  <section>
+    <h2>Shop Operating Schedules</h2>
+    <p class="note">Confirm each shop's real hours with its owner.
+    These entries are placeholders, not confirmed opening times.</p>
+    <div id="scheduleGrid" class="grid"></div>
+  </section>
 
-<style>
-  .owner-registration {
-    padding: 28px 16px;
-    background: #fff8e9;
-    font-family: Arial, sans-serif;
-  }
+  <section id="contact">
+    <h2>Contact & Social Media</h2>
+    <p>Questions, business registration or partnership enquiries?</p>
+    <p><strong>Phone / WhatsApp:</strong>
+      <span id="contactPhone">Add your business number</span></p>
+    <p><strong>Email:</strong>
+      <span id="contactEmail">Add your business email</span></p>
+    <p><strong>Facebook:</strong>
+      <a id="facebookLink" href="#contact">Add Facebook page</a></p>
+    <p><strong>Instagram:</strong>
+      <a id="instagramLink" href="#contact">Add Instagram page</a></p>
+    <p><strong>TikTok:</strong>
+      <a id="tiktokLink" href="#contact">Add TikTok page</a></p>
+    <p class="note">Update the contact and social details in the
+    SETTINGS section in the code before publishing.</p>
+  </section>
+</main>
 
-  .owner-card {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 24px;
-    background: #ffffff;
-    border: 1px solid #f0d9aa;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
-  }
-
-  .owner-card h2 {
-    color: #172117;
-    margin-top: 0;
-  }
-
-  .owner-card p {
-    line-height: 1.6;
-    color: #444444;
-  }
-
-  .owner-benefits {
-    text-align: left;
-    margin: 20px 0;
-  }
-
-  .owner-register-button {
-    display: block;
-    padding: 15px 18px;
-    background: #176b3a;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: bold;
-  }
-
-  .owner-register-button:hover {
-    background: #10552d;
-  }
-
-  .owner-note {
-    font-size: 13px;
-    margin-bottom: 0;
-  }
-</style>
-
-<!-- KOTA CONNECT CONTACT & SOCIAL LINKS -->
-<footer class="kc-footer">
-  <h2>Connect with Kota Connect</h2>
-  <p>Find your favourite local kota shops and get in touch.</p>
-
-  <div class="kc-socials">
-    <a href="https://wa.me/27YOURNUMBER"
-       target="_blank" rel="noopener"
-       class="kc-social whatsapp">
-      WhatsApp
-    </a>
-
-    <a href="https://facebook.com/YOURPAGE"
-       target="_blank" rel="noopener"
-       class="kc-social facebook">
-      Facebook
-    </a>
-
-    <a href="https://instagram.com/YOURPAGE"
-       target="_blank" rel="noopener"
-       class="kc-social instagram">
-      Instagram
-    </a>
-
-    <a href="https://tiktok.com/@YOURPAGE"
-       target="_blank" rel="noopener"
-       class="kc-social tiktok">
-      TikTok
-    </a>
-  </div>
-
-  <div class="kc-contact">
-    <h3>Contact Us</h3>
-    <p>📍 Serving Newcastle, Madadeni and Osizweni</p>
-    <p>📞 <a href="tel:+27YOURNUMBER">
-      Add your phone number
-    </a></p>
-    <p>✉️ <a href="mailto:YOUREMAIL@example.com">
-      Add your email address
-    </a></p>
-  </div>
-
-  <p class="kc-copy">
-    © <span id="kc-year"></span> Kota Connect.
-    Connecting local kota businesses with customers.
-  </p>
+<footer>
+  <h2 style="color:white">Kota Connect</h2>
+  <p>Supporting local businesses in Newcastle, KwaZulu-Natal.</p>
+  <p>Local shops. Local jobs. Stronger communities. ❤️</p>
+  <p>© <span id="year"></span> Kota Connect</p>
 </footer>
 
-<style>
-.kc-footer {
-  background: #172033;
-  color: white;
-  text-align: center;
-  padding: 30px 16px;
-  margin-top: 35px;
-  border-radius: 16px 16px 0 0;
-  font-family: Arial, sans-serif;
-}
-.kc-footer h2 { margin-bottom: 10px; }
-.kc-footer p { line-height: 1.7; }
-.kc-socials {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin: 22px 0;
-}
-.kc-social {
-  color: white;
-  padding: 12px 16px;
-  border-radius: 9px;
-  text-decoration: none;
-  font-weight: bold;
-}
-.whatsapp { background: #25D366; }
-.facebook { background: #1877F2; }
-.instagram { background: #C13584; }
-.tiktok { background: #000000; }
-.kc-contact { margin-top: 25px; }
-.kc-contact a { color: #8ED8FF; }
-.kc-copy {
-  border-top: 1px solid #465066;
-  margin-top: 25px;
-  padding-top: 15px;
-  font-size: 13px;
-}
-</style>
-
 <script>
-document.getElementById("kc-year").textContent =
-  new Date().getFullYear();
-</script>
+/* ========== SETTINGS: UPDATE BEFORE PUBLISHING ========== */
+const SETTINGS = {
+  googleFormUrl: "https://docs.google.com/forms/",
+  contactPhone: "",
+  contactEmail: "",
+  facebook: "",
+  instagram: "",
+  tiktok: "",
+  deliveryFee: 15
+};
 
-</body>
-</html>
+/* Replace sample menu names and null prices with shop-confirmed details.
+   A null price is deliberately shown as "Price to be confirmed". */
+const shops = [
+  {
+    name:"Shop 1", location:"Newcastle CBD",
+    whatsapp:"", schedule:"Add confirmed opening days and hours",
+    menu:[
+      {name:"Basic Kota", price:null},
+      {name:"Special Kota", price:null},
+      {name:"Chips", price:null},
+      {name:"Cold Beverage", price:null}
+    ]
+  },
+  {
+    name:"Shop 2", location:"Madadeni",
+    whatsapp:"", schedule:"Add confirmed opening days and hours",
+    menu:[
+      {name:"Basic Kota", price:null},
+      {name:"Cheese Kota", price:null},
+      {name:"Russian Kota", price:null},
+      {name:"Cold Beverage", price:null}
+    ]
+  },
+  {
+    name:"Shop 3", location:"Osizweni",
+    whatsapp:"", schedule:"Add confirmed opening days and hours",
+    menu:[
+      {name:"Basic Kota", price:null},
+      {name:"Egg Kota", price:null},
+      {name:"Loaded Kota", price:null},
+      {name:"Cold Beverage", price:null}
+    ]
+  },
+  {
+    name:"Shop 4", location:"Newcastle area",
+    whatsapp:"", schedule:"Add confirmed opening days and hours",
+    menu:[
+      {name:"Basic Kota", price:null},
+      {name:"Chicken Kota", price:null},
+      {name:"Chips", price:null},
+      {name:"Cold Beverage", price:null}
+    ]
+  },
+  {
+    name:"Shop 5", location:"Newcastle area",
+    whatsapp:"", schedule:"Add confirmed opening days and hours",
+    menu:[
+      {name:"Basic Kota", price:null},
+      {name:"Special Kota", price:null},
+      {name:"Extra Filling Kota", price:null},
+      {name:"Cold Beverage", price:null}
+    ]
+  }
+];
 
-<!-- Enable Kota Connect installation -->
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
+const $ = id => document.getElementById(id);
+const money = n => "R" + Number(n).toFixed(2);
+const priceLabel = price => price == null
+  ? "Price to be confirmed" : money(price);
+
+function renderShops() {
+  $("shopGrid").innerHTML = shops.map((shop, i) => `
+    <article class="shop">
+      <span class="tag">${shop.name}</span>
+      <h3>${shop.name}</h3>
+      <p>📍 ${shop.location}</p>
+      ${shop.menu.map(item => `
+        <div class="menu-item">
+          <strong>${item.name}</strong>
+          <span class="price">${priceLabel(item.price)}</span>
+        </div>`).join("")}
+      <button onclick="chooseShop(${i})">Order from ${shop.name}</button>
+    </article>`).join("");
+
+  $("scheduleGrid").innerHTML = shops.map(shop => `
+    <article class="shop">
+      <h3>${shop.name}</h3>
+      <p>📍 ${shop.location}</p>
+      <p>🕒 ${shop.schedule}</p>
+    </article>`).join("");
+}
+
+function fillItems() {
+  const shop = shops[Number($("shopSelect").value)];
+  $("itemSelect").innerHTML = shop.menu.map((item, i) =>
+    `<option value="${i}">${item.name} — ${priceLabel(item.price)}</option>`
+  ).join("");
+  $("orderTotal").innerHTML = "<strong>Total: " +
+    (shop.menu[0].price == null ? "Price to be confirmed" :
+    money(shop.menu[0].price)) + "</strong>";
+  $("orderSummary").classList.add("hidden");
+  $("sendOrder").hidden = true;
+}
+
+function chooseShop(i) {
+  $("shopSelect").value = String(i);
+  fillItems();
+  $("order").scrollIntoView({behavior:"smooth"});
+}
+
+function updateTotal() {
+  const shop = shops[Number($("shopSelect").value)];
+  const item = shop.menu[Number($("itemSelect").value)];
+  const qty = Math.max(1, Number($("quantity").value) || 1);
+  if (item.price == null) {
+    $("orderTotal").innerHTML =
+      "<strong>Total: Price to be confirmed by the shop</strong>";
+    return null;
+  }
+  const total = item.price * qty +
+    ($("service").value === "Delivery" ? SETTINGS.deliveryFee : 0);
+  $("orderTotal").innerHTML =
+    `<strong>Total: ${money(total)}</strong>`;
+  return total;
+}
+
+$("shopSelect").innerHTML = shops.map((shop, i) =>
+  `<option value="${i}">${shop.name}</option>`).join("");
+$("shopSelect").addEventListener("change", fillItems);
+$("itemSelect").addEventListener("change", updateTotal);
+$("quantity").addEventListener("input", updateTotal);
+$("service").addEventListener("change", updateTotal);
+
+$("prepareOrder").addEventListener("click", () => {
+  const shop = shops[Number($("shopSelect").value)];
+  const item = shop.menu[Number($("itemSelect").value)];
+  const qty = Math.max(1, Number($("quantity").value) || 1);
+  const area = $("area").value;
+  const address = $("orderAddress").value.trim();
+  const total = updateTotal();
+
+  if (!area) { alert("Please choose your location."); return; }
+  if (!$("customerName").value.trim() ||
+      !$("customerPhone").value.trim()) {
+    alert("Please enter your name and phone number."); return;
+  }
+  if ($("service").value === "Delivery" && !address) {
+    alert("Please enter your delivery address."); return;
+  }
+  if (item.price == null || total == null) {
+    alert("This menu item has no confirmed price yet. Please contact the shop.");
+    return;
+  }
+
+  const delivery = $("service").value === "Delivery"
+    ? SETTINGS.deliveryFee : 0;
+  const summary =
+    `KOTA CONNECT ORDER\n` +
+    `Shop: ${shop.name}\nItem: ${item.name}\nQuantity: ${qty}\n` +
+    `Customer: ${$("customerName").value.trim()}\n` +
+    `Phone: ${$("customerPhone").value.trim()}\n` +
+    `Area: ${area}\nLocation details: ${address || "Not supplied"}\n` +
+    `Service: ${$("service").value}\n` +
+    `Food total: ${money(item.price * qty)}\n` +
+    `Delivery: ${money(delivery)}\nTOTAL: ${money(total)}\n` +
+    `Please confirm availability and the order.`;
+
+  $("orderSummary").textContent = summary;
+  $("orderSummary").classList.remove("hidden");
+  $("sendOrder").hidden = false;
+
+  $("sendOrder").onclick = () => {
+    if (!shop.whatsapp) {
+      alert("This shop has no WhatsApp number configured yet. Please contact the shop directly.");
+      return;
+    }
+    const number = shop.whatsapp.replace(/\D/g, "");
+    window.open("https://wa.me/" + number + "?text=" +
+      encodeURIComponent(summary), "_blank", "noopener");
+  };
+});
+
+function setLink(id, url) {
+  if (url && /^https?:\/\//i.test(url)) {
+    $(id).href = url;
+    $(id).target = "_blank";
+    $(id).rel = "noopener";
+  } else {
+    $(id).href = "#contact";
+  }
+}
+
+$("googleFormLink").href = SETTINGS.googleFormUrl;
+$("contactPhone").textContent = SETTINGS.contactPhone || "Add your business number";
+$("contactEmail").textContent = SETTINGS.contactEmail || "Add your business email";
+if (SETTINGS.contactEmail) {
+  $("contactEmail").innerHTML = "";
+  const a = document.createElement("a");
+  a.href = "mailto:" + SETTINGS.contactEmail;
+  a.textContent = SETTINGS.contactEmail;
+  $("contactEmail").appendChild(a);
+}
+setLink("facebookLink", SETTINGS.facebook);
+setLink("instagramLink", SETTINGS.instagram);
+setLink("tiktokLink", SETTINGS.tiktok);
+
+$("year").textContent = new Date().getFullYear();
+renderShops();
+fillItems();
+
+/* PWA installation button */
+let installPrompt = null;
+const installBtn = $("installBtn");
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  installPrompt = event;
+  installBtn.hidden = false;
+  $("installMessage").textContent = "Install the app for easier access.";
+});
+installBtn.addEventListener("click", async () => {
+  if (!installPrompt) {
+    $("installMessage").textContent =
+      "In Chrome, open the ⋮ menu and choose Install app or Add to Home screen.";
+    return;
+  }
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+  installPrompt = null;
+  installBtn.hidden = true;
+});
+window.addEventListener("appinstalled", () => {
+  installBtn.hidden = true;
+  $("installMessage").textContent = "Kota Connect has been installed.";
+});
+
+/* Register the offline service worker */
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
     navigator.serviceWorker.register("./service-worker.js")
-      .catch(function (error) {
-        console.error("PWA setup error:", error);
-      });
+      .catch(err => console.log("Service worker registration failed", err));
   });
 }
 </script>
-
+</body>
+</html>
