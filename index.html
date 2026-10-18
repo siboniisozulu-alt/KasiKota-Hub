@@ -1,11 +1,116 @@
-<h1>Kota Connect</h1>
 
-<div style="text-align:center; margin:20px 0;">
-  
+<style>
+.kota-brand {
+  --gold: #ffbd19;
+  --gold-light: #ffe47a;
+  width: min(100%, 440px);
+  margin: 20px auto;
+  padding: 26px 14px;
+  box-sizing: border-box;
+  text-align: center;
+  color: white;
+  background:
+    radial-gradient(ellipse at top, #30200a 0%, #090909 55%);
+  border: 3px solid var(--gold);
+  border-radius: 48% 48% 44% 44% / 15% 15% 20% 20%;
+  box-shadow: 0 0 22px #ffbd1940,
+              inset 0 0 18px #ffbd1920;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+}
+
+.kota-food {
+  font-size: clamp(58px, 16vw, 90px);
+  line-height: 1.2;
+  filter: drop-shadow(0 5px 5px #000);
+}
+
+.kota-name {
+  margin: 8px 0 0;
+  font-size: clamp(34px, 10vw, 56px);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -2px;
+  color: var(--gold);
+  text-shadow: 0 2px 0 #8d5200,
+               0 0 15px #ffbd1930;
+}
+
+.kota-connect {
+  margin: 5px 0 12px;
+  font-size: clamp(25px, 7.5vw, 39px);
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #fff;
+}
+
+.kota-connect span {
+  color: var(--gold);
+}
+
+.kota-line {
+  height: 2px;
+  width: 82%;
+  margin: 12px auto;
+  background: linear-gradient(
+    90deg, transparent, var(--gold), transparent
+  );
+}
+
+.kota-tagline {
+  color: var(--gold-light);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.4px;
+  line-height: 1.8;
+}
+
+.kota-symbols {
+  margin-top: 15px;
+  font-size: 25px;
+  letter-spacing: 8px;
+}
+
+.kota-brand .kota-footer {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: #ddd;
+  letter-spacing: 1px;
+}
+
+.kota-pin {
+  color: #ff3535;
+}
+</style>
+
+<div class="kota-brand">
+  <div class="kota-food" aria-label="Kota sandwich">
+    🥪 <span class="kota-pin">📍</span>
+  </div>
+
+  <div class="kota-name">KOTA</div>
+  <div class="kota-connect">
+    <span>◉</span> CONNECT
+  </div>
+
+  <div class="kota-line"></div>
+
+  <div class="kota-tagline">
+    LOCAL SHOPS • GREAT FOOD<br>
+    FAST &amp; EASY
+  </div>
+
+  <div class="kota-symbols">
+    🍴 🛒 📍
+  </div>
+
+  <div class="kota-line"></div>
+
+  <p class="kota-footer">
+    YOUR COMMUNITY. YOUR KOTA. ONE CONNECTION.
+  </p>
 </div>
 
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
