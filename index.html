@@ -4,66 +4,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#111827">
-<meta name="description" content="Find local kota shops and order in Newcastle, South Africa.">
-<title>Kota Connect</title>
-
+<meta name="theme-color" content="#10251b">
+<meta name="description" content="Kota Connect connects Newcastle customers with local kota shops.">
+<title>Kota Connect | Newcastle</title>
 <style>
+:root{--dark:#10251b;--lime:#d7ff65;--bg:#f5f7f2;--white:#fff;--muted:#68746b;--line:#e0e7df}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#172033}
-header{background:#111827;color:white;padding:18px}
-nav,main,footer{max-width:850px;margin:auto}
-nav{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.logo{font-size:24px;font-weight:bold}
-.logo span{color:#fbbf24}
+body{margin:0;background:var(--bg);color:var(--dark);font-family:Arial,sans-serif}
+header{background:var(--dark);color:white;padding:17px}
+nav,main,footer{max-width:900px;margin:auto}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-weight:800;font-size:23px}.logo span{color:var(--lime)}
+nav a{color:white}
 main{padding:16px}
-.hero{background:#fff0c2;padding:22px;border-radius:16px}
-h1{font-size:29px;margin:0 0 10px}
-h2{font-size:21px}
+.hero{background:#eaf3df;padding:24px;border-radius:17px}
+h1{font-size:clamp(28px,7vw,40px);margin:0 0 10px}
+h2{font-size:21px;margin-top:0}
+h3{font-size:17px}
 p{line-height:1.5}
-label{display:block;font-weight:bold;margin:13px 0 6px}
-input,select,textarea,button{width:100%;padding:12px;border-radius:9px;font:inherit}
-input,select,textarea{border:1px solid #cbd5e1;background:white}
-button{border:0;cursor:pointer;font-weight:bold}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #d97706;outline-offset:2px}
-.primary{background:#fbbf24;color:#172033}
-.dark{background:#111827;color:white}
-.light{background:white;border:1px solid #cbd5e1}
-.card{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:15px;margin:12px 0}
-.muted{color:#64748b;font-size:14px}
-.section{margin-top:25px}
+label{display:block;font-size:14px;font-weight:bold;margin:12px 0 6px}
+input,select,textarea,button{width:100%;font:inherit;padding:12px;border-radius:9px}
+input,select,textarea{border:1px solid #cbd5ca;background:white;color:var(--dark)}
+button{border:0;background:var(--dark);color:white;font-weight:bold;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a5d63d;outline-offset:2px}
+.primary{background:var(--lime);color:var(--dark)}
+.light{background:white;color:var(--dark);border:1px solid var(--line)}
+.panel,.shop,.menu-card{background:white;border:1px solid var(--line);border-radius:13px;padding:16px;margin:13px 0}
+.section{margin-top:27px}
+.muted{color:var(--muted);font-size:13px}
 .row{display:flex;gap:10px;align-items:center}
 .row>*{min-width:0}
-.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #e2e8f0}
-.item button{width:auto}
-.item strong{overflow-wrap:anywhere}
-.total{display:flex;justify-content:space-between;gap:10px;margin:12px 0}
-.notice{background:#eff6ff;border-radius:9px;padding:12px;font-size:14px}
-.warning{background:#fff7ed;border:1px solid #fed7aa;border-radius:9px;padding:12px;font-size:14px}
+.row button{width:auto}
+.shop-head,.line,.total{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.line{padding:12px 0;border-bottom:1px solid var(--line)}
+.line button{width:auto}
+.total{padding:8px 0}
+.total strong:last-child{text-align:right}
+.grand{border-top:1px solid var(--line);font-size:18px;font-weight:bold;margin-top:8px;padding-top:14px}
+.tag{background:#edf5e7;padding:6px 9px;border-radius:20px;font-size:12px}
+.notice{padding:12px;background:#eff6ff;border-radius:9px;font-size:13px;line-height:1.5}
+.warning{padding:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:9px;font-size:13px;line-height:1.5}
 .hidden{display:none!important}
-footer{background:#111827;color:white;text-align:center;padding:22px;margin-top:25px}
-@media(min-width:600px){main{padding:24px}.hero{padding:30px}h1{font-size:36px}}
+details{background:white;border:1px solid var(--line);border-radius:10px;padding:13px;margin:9px 0}
+summary{font-weight:bold;cursor:pointer}
+footer{background:var(--dark);color:white;padding:24px 16px;margin-top:30px}
+footer .muted{color:#d5e4d8}
+@media(min-width:620px){main{padding:24px}.search-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hero{padding:32px}}
 </style>
 </head>
-
 <body>
 <header>
 <nav>
 <div class="logo">Kota <span>Connect</span></div>
-<a href="#find" style="color:white">Find a shop</a>
+<a href="#find">Find a shop</a>
 </nav>
 </header>
 
 <main>
 <section class="hero" id="find">
-<h1>Your kota, your choice.</h1>
-<p>Find local kota shops, explore their menus and order from your phone.</p>
+<h1>Your kota. Your neighbourhood.</h1>
+<p>Discover local kota shops, explore menus and order for collection or delivery around Newcastle.</p>
 
-<label for="search">Search for a shop or area</label>
-<input id="search" type="search"
-placeholder="Shop name, Newcastle CBD, Osizweni..."
-autocomplete="off">
+<label for="search">Search shop name or area</label>
+<input id="search" type="search" placeholder="Search for a kota shop..." autocomplete="off">
 
+<div class="search-grid">
+<div>
 <label for="area">Choose your area</label>
 <select id="area">
 <option value="">All areas</option>
@@ -78,485 +84,543 @@ autocomplete="off">
 <option>Osizweni</option>
 <option>Other Newcastle area</option>
 </select>
-
-<button class="primary" style="margin-top:12px" id="searchBtn">Find kota shops</button>
+</div>
+<div>
+<label for="sort">Shop results</label>
+<select id="sort">
+<option value="name">Shop name</option>
+<option value="area">Location</option>
+</select>
+</div>
+</div>
+<button class="primary" id="searchBtn" style="margin-top:13px">Find shops</button>
 </section>
 
-<section class="section" id="shopSection">
-<h2>Choose your kota shop</h2>
-<p class="muted">Available shop listings will appear here.</p>
+<section class="section">
+<div class="shop-head">
+<h2>Available shops</h2>
+<span class="tag" id="shopCount">0 shops</span>
+</div>
 <div id="shops" aria-live="polite"></div>
 </section>
 
-<section class="section hidden" id="menuSection">
+<section id="menuSection" class="section hidden">
 <button class="light" id="backBtn">← Back to shops</button>
-<div id="shopInfo"></div>
-<h2>Shop menu</h2>
-<div id="menu"></div>
+<div id="shopInfo" class="panel"></div>
+<h2>Menu</h2>
+<div id="menuItems"></div>
 </section>
 
-<section class="section hidden" id="cartSection">
-<h2>Your order</h2>
-<div class="card">
-<div id="cartItems"></div>
-<div class="total"><span>Food total</span><strong id="foodTotal">R0.00</strong></div>
-<div class="total"><span>Delivery fee</span><strong id="deliveryTotal">R0.00</strong></div>
-<hr>
-<div class="total"><strong>Total to pay</strong><strong id="grandTotal">R0.00</strong></div>
+<section id="checkoutSection" class="section hidden">
+<h2>Your basket and checkout</h2>
+<div class="panel">
+<div id="basket"></div>
+<div class="total"><span>Food subtotal</span><strong id="subtotal">R0.00</strong></div>
+<div class="total"><span>Delivery fee</span><strong id="deliveryFee">R15.00</strong></div>
+<div class="total grand"><span>Total</span><strong id="grandTotal">R0.00</strong></div>
 </div>
 
-<h2>Checkout</h2>
-<form id="checkout">
-<label for="customer">Your name</label>
-<input id="customer" required maxlength="80" autocomplete="name">
+<form id="orderForm" class="panel">
+<h3>Customer details</h3>
+<label for="customerName">Your name</label>
+<input id="customerName" required maxlength="80" autocomplete="name">
 
-<label for="phone">Contact number</label>
-<input id="phone" type="tel" required maxlength="20" autocomplete="tel">
+<label for="customerPhone">Phone number</label>
+<input id="customerPhone" required type="tel" maxlength="25" autocomplete="tel">
 
 <label for="fulfilment">Delivery or collection</label>
 <select id="fulfilment">
 <option value="delivery">Delivery — R15</option>
-<option value="collection">Collect from shop — R0 delivery fee</option>
+<option value="collection">Collection — no delivery fee</option>
 </select>
 
 <label for="customerArea">Your area</label>
-<input id="customerArea" required maxlength="100"
-placeholder="e.g. Madadeni Section 3">
+<select id="customerArea" required>
+<option value="">Choose your area</option>
+<option>Newcastle CBD</option>
+<option>Madadeni Section 1</option>
+<option>Madadeni Section 2</option>
+<option>Madadeni Section 3</option>
+<option>Madadeni Section 4</option>
+<option>Madadeni Section 5</option>
+<option>Madadeni Section 6</option>
+<option>Madadeni Section 7</option>
+<option>Osizweni</option>
+<option>Other Newcastle area</option>
+</select>
 
-<label for="address">Delivery address or collection instructions</label>
-<textarea id="address" required maxlength="300"
-placeholder="Enter your delivery address or collection details"></textarea>
+<div id="addressWrap">
+<label for="address">Delivery address or landmark</label>
+<textarea id="address" maxlength="250" placeholder="Street, house number or safe landmark"></textarea>
+</div>
 
 <label for="payment">Payment method</label>
 <select id="payment" required>
 <option value="">Choose payment method</option>
 <option>Cash on delivery</option>
 <option>Cash on collection</option>
-<option>EFT by arrangement with the shop</option>
-<option>Card or electronic payment, if supported by the shop</option>
+<option>EFT / bank transfer by arrangement</option>
+<option>Card payment, if supported by the shop</option>
+<option>Secure online payment, when available</option>
 </select>
 
-<label for="notes">Extra instructions (optional)</label>
-<textarea id="notes" maxlength="300"
-placeholder="Add any special instructions"></textarea>
+<label for="notes">Special instructions (optional)</label>
+<textarea id="notes" maxlength="300" placeholder="Order instructions"></textarea>
 
-<p class="warning">Never enter your bank PIN, password or card details here. EFT and electronic payments must be handled through a trusted payment provider or agreed directly with the shop.</p>
-
-<button class="primary" type="submit">Prepare my order</button>
+<p class="warning">Never enter your banking PIN, password or full card details here. Electronic payments must use a trusted payment provider.</p>
+<button class="primary" type="submit">Prepare order</button>
 </form>
-
-<div id="result" class="card hidden" aria-live="polite"></div>
+<div id="orderResult" class="panel hidden" aria-live="polite"></div>
 </section>
 
-<hr style="margin-top:30px">
-
-<section class="section">
-<h2>Are you a kota shop owner?</h2>
-<p>Register your shop and add your own menu items and prices.</p>
-<button class="dark" id="sellerToggle">Add a shop</button>
-
-<div class="card hidden" id="sellerPanel">
+<section class="section" id="seller">
+<h2>For kota shop owners</h2>
+<p>Register your business, submit your details for approval and manage your menu.</p>
+<div class="panel">
+<h3>Register your shop</h3>
 <form id="sellerForm">
-<label for="shopName">Shop name</label>
-<input id="shopName" required maxlength="100">
+<label for="sellerName">Owner's full name</label>
+<input id="sellerName" required maxlength="100" autocomplete="name">
 
-<label for="shopArea">Shop area</label>
-<input id="shopArea" required maxlength="120"
-list="areas" placeholder="Enter your location">
-<datalist id="areas">
-<option value="Newcastle CBD">
-<option value="Madadeni Section 1">
-<option value="Madadeni Section 2">
-<option value="Madadeni Section 3">
-<option value="Madadeni Section 4">
-<option value="Madadeni Section 5">
-<option value="Madadeni Section 6">
-<option value="Madadeni Section 7">
-<option value="Osizweni">
-<option value="Other Newcastle area">
-</datalist>
+<label for="businessName">Shop or business name</label>
+<input id="businessName" required maxlength="100">
 
-<label for="sellerPhone">Shop contact number</label>
-<input id="sellerPhone" type="tel" required maxlength="20">
+<label for="businessArea">Shop location</label>
+<select id="businessArea" required>
+<option value="">Choose area</option>
+<option>Newcastle CBD</option>
+<option>Madadeni Section 1</option>
+<option>Madadeni Section 2</option>
+<option>Madadeni Section 3</option>
+<option>Madadeni Section 4</option>
+<option>Madadeni Section 5</option>
+<option>Madadeni Section 6</option>
+<option>Madadeni Section 7</option>
+<option>Osizweni</option>
+<option>Other Newcastle area</option>
+</select>
 
-<button class="primary" style="margin-top:15px" type="submit">Save shop on this device</button>
+<label for="businessAddress">Business address or landmark</label>
+<input id="businessAddress" required maxlength="180">
+
+<label for="businessPhone">Business phone number</label>
+<input id="businessPhone" required type="tel" maxlength="25">
+
+<label for="businessEmail">Email address (optional)</label>
+<input id="businessEmail" type="email" maxlength="120">
+
+<label for="sellerNotes">Additional business information (optional)</label>
+<textarea id="sellerNotes" maxlength="300"></textarea>
+
+<button class="primary" type="submit">Submit registration</button>
 </form>
+<p class="notice">New registrations are marked pending. In this prototype, the registration is saved on this device only and is not sent to an administrator.</p>
 </div>
 
-<div class="card hidden" id="editor">
-<h3>Add menu items</h3>
+<div class="panel">
+<h3>Seller registration status</h3>
+<p class="muted">Registrations made in this browser appear here.</p>
+<div id="sellerStatus"></div>
+</div>
+
+<div class="panel">
+<h3>Shop owner sign-in / menu management</h3>
+<p class="muted">This prototype does not have secure seller accounts. Do not use this section to publish sensitive business information or to manage a live business. A secure server and administrator-controlled approval are required before launch.</p>
+<label for="manageShop">Choose a shop registered on this device</label>
+<select id="manageShop"><option value="">Choose shop</option></select>
+<button class="light" id="openManager" type="button">Open menu manager</button>
+<div id="manager" class="hidden">
+<h3>Add a menu item</h3>
 <form id="menuForm">
-<label for="foodName">Food item name</label>
-<input id="foodName" required maxlength="100" placeholder="Enter item name">
-
-<label for="foodDescription">Description (optional)</label>
-<input id="foodDescription" maxlength="160" placeholder="Ingredients or size">
-
-<label for="foodPrice">Actual selling price (R)</label>
-<input id="foodPrice" type="number" min="0.01" max="100000"
-step="0.01" required placeholder="Enter your price">
-
-<button class="primary" style="margin-top:12px" type="submit">Add menu item</button>
+<label for="newItem">Food item name</label>
+<input id="newItem" required maxlength="100">
+<label for="newDescription">Description (optional)</label>
+<input id="newDescription" maxlength="180">
+<label for="newPrice">Actual price in rand</label>
+<input id="newPrice" type="number" required min="0.01" max="100000" step="0.01" placeholder="Enter your real price">
+<button class="primary" type="submit">Add menu item</button>
 </form>
-<div id="editorItems"></div>
-<button class="light" id="finishEditing" style="margin-top:12px">Finish editing</button>
+<div id="managerItems"></div>
 </div>
+</div>
+</section>
+
+<section class="section" id="faq">
+<h2>Frequently asked questions</h2>
+<details><summary>How do I order a kota?</summary><p>Search for a shop, open its menu, add items to your basket, choose delivery or collection and prepare your order.</p></details>
+<details><summary>Which areas does Kota Connect cover?</summary><p>The website includes Newcastle CBD, Madadeni Sections 1–7, Osizweni and an option for other Newcastle areas. Actual shop coverage depends on registered businesses.</p></details>
+<details><summary>How much is delivery?</summary><p>The displayed delivery fee is R15 per order. The shop must confirm delivery availability and the fee before the order is accepted.</p></details>
+<details><summary>How can I pay?</summary><p>Payment choices include cash on delivery, cash on collection, EFT by arrangement and electronic payment if supported. Online payments require a secure payment provider.</p></details>
+<details><summary>How do I register my kota shop?</summary><p>Complete the shop registration form with your business name, location and contact details. Registrations should be reviewed before the shop is made public.</p></details>
+<details><summary>How does shop approval work?</summary><p>This prototype records a pending status. Real approval requires a private administrator account, server-side review and a shared database. A browser-only status is not proof of approval.</p></details>
+<details><summary>Can I add more shops?</summary><p>There is no fixed shop count in this code. However, this browser-only prototype saves data locally. A shared database is needed for many shops and customers to use the same live listings.</p></details>
+<details><summary>Is my personal information private?</summary><p>Do not enter sensitive banking information. A live version should protect customer details, restrict address access to the relevant seller and use secure connections and access controls.</p></details>
+<details><summary>Can I cancel or change an order?</summary><p>Contact the shop directly to request a change or cancellation. This prototype does not send orders to shops automatically.</p></details>
 </section>
 </main>
 
 <footer>
 <strong>Kota Connect</strong>
-<p>Supporting local kota businesses in Newcastle.</p>
-<p class="muted" style="color:#cbd5e1">Shop listings and orders should be handled with care and respect for customer privacy.</p>
+<p>Connecting local kota shops and customers across Newcastle.</p>
+<p class="muted">Prototype only: shared listings, real order delivery, secure accounts, approval controls and payment processing require backend setup.</p>
 </footer>
 
 <script>
 "use strict";
 
-const DELIVERY_FEE = 15;
-const STORAGE_KEY = "kota_connect_shops_v1";
-
-let shops = loadShops();
-let selectedShopId = null;
-let editingShopId = null;
+const KEY = "kota_connect_newcastle_v2";
+const DELIVERY = 15;
+let shops = load();
+let selectedShop = null;
 let cart = [];
+let managedShop = null;
 
-function loadShops() {
+function load() {
   try {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    return Array.isArray(data) ? data : [];
+    const x = JSON.parse(localStorage.getItem(KEY) || '{"shops":[],"sellers":[]}');
+    return {
+      shops: Array.isArray(x.shops) ? x.shops : [],
+      sellers: Array.isArray(x.sellers) ? x.sellers : []
+    };
   } catch {
-    return [];
+    return {shops:[],sellers:[]};
   }
 }
 
-function saveShops() {
+function save() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(shops));
+    localStorage.setItem(KEY, JSON.stringify(shops));
     return true;
   } catch {
-    alert("Unable to save on this device. Storage may be unavailable.");
+    alert("Could not save data in this browser.");
     return false;
   }
+}
+
+function id(prefix) {
+  return prefix + "-" + Date.now().toString(36) + "-" +
+    Math.random().toString(36).slice(2,8);
 }
 
 function money(n) {
   return "R" + Number(n).toFixed(2);
 }
 
-function element(tag, text, className) {
-  const el = document.createElement(tag);
-  if (text !== undefined) el.textContent = text;
-  if (className) el.className = className;
-  return el;
-}
-
-function getShop() {
-  return shops.find(s => s.id === selectedShopId);
+function el(tag, text, cls) {
+  const node = document.createElement(tag);
+  if (text !== undefined) node.textContent = text;
+  if (cls) node.className = cls;
+  return node;
 }
 
 function renderShops() {
   const query = document.getElementById("search").value.trim().toLowerCase();
   const area = document.getElementById("area").value.toLowerCase();
+  const sort = document.getElementById("sort").value;
   const target = document.getElementById("shops");
   target.replaceChildren();
 
-  const matches = shops.filter(s =>
-    (!query || s.name.toLowerCase().includes(query) ||
-      s.area.toLowerCase().includes(query)) &&
+  let matches = shops.shops.filter(s =>
+    s.status === "approved" &&
+    (!query || (s.name + " " + s.area).toLowerCase().includes(query)) &&
     (!area || s.area.toLowerCase() === area)
   );
 
+  matches.sort((a,b) => sort === "area"
+    ? a.area.localeCompare(b.area)
+    : a.name.localeCompare(b.name));
+
+  document.getElementById("shopCount").textContent =
+    matches.length + (matches.length === 1 ? " shop" : " shops");
+
   if (!matches.length) {
-    target.appendChild(element("div",
-      shops.length
-        ? "No matching shops found. Try another search or area."
-        : "No shops have been registered yet. Shop owners can add their business below.",
-      "card"));
+    target.appendChild(el("div",
+      shops.shops.some(s => s.status === "pending")
+        ? "No approved shops match your search yet. New registrations are pending review."
+        : "No approved shops are available yet. Shop owners can register below.",
+      "panel"));
     return;
   }
 
   matches.forEach(shop => {
-    const card = element("div", undefined, "card");
-    card.appendChild(element("h3", shop.name));
-    card.appendChild(element("p", shop.area, "muted"));
-    card.appendChild(element("p",
-      (shop.menu || []).length + " menu items listed"));
-    const btn = element("button", "View menu", "primary");
-    btn.addEventListener("click", () => openShop(shop.id));
-    card.appendChild(btn);
+    const card = el("article", undefined, "shop");
+    const head = el("div", undefined, "shop-head");
+    head.appendChild(el("h3", shop.name));
+    head.appendChild(el("span", "Approved", "tag"));
+    card.appendChild(head);
+    card.appendChild(el("p", shop.area + " · " + shop.address, "muted"));
+    card.appendChild(el("p", shop.description || "Local kota shop"));
+    card.appendChild(el("p", shop.menu.length + " menu items"));
+    const button = el("button", "View menu & order", "primary");
+    button.addEventListener("click", () => openShop(shop.id));
+    card.appendChild(button);
     target.appendChild(card);
   });
 }
 
-function openShop(id) {
-  const shop = shops.find(s => s.id === id);
-  if (!shop) return;
-
-  if (selectedShopId !== id) cart = [];
-  selectedShopId = id;
-
+function openShop(shopId) {
+  const shop = shops.shops.find(s => s.id === shopId);
+  if (!shop || shop.status !== "approved") return;
+  selectedShop = shopId;
+  cart = [];
   document.getElementById("menuSection").classList.remove("hidden");
-  document.getElementById("cartSection").classList.remove("hidden");
-  document.getElementById("result").classList.add("hidden");
-
-  const info = document.getElementById("shopInfo");
-  info.replaceChildren(element("h2", shop.name), element("p", shop.area, "muted"));
-
+  document.getElementById("checkoutSection").classList.remove("hidden");
+  document.getElementById("orderResult").classList.add("hidden");
+  document.getElementById("shopInfo").replaceChildren(
+    el("h2", shop.name), el("p", shop.area + " · " + shop.address, "muted"),
+    el("p", "Contact: " + shop.phone, "muted")
+  );
   renderMenu();
   renderCart();
   document.getElementById("menuSection").scrollIntoView({behavior:"smooth"});
 }
 
 function renderMenu() {
-  const shop = getShop();
-  const target = document.getElementById("menu");
+  const shop = shops.shops.find(s => s.id === selectedShop);
+  const target = document.getElementById("menuItems");
   target.replaceChildren();
   if (!shop) return;
-
   if (!shop.menu.length) {
-    target.appendChild(element("div", "This shop has not added menu items yet.", "card"));
+    target.appendChild(el("p", "This shop has not added menu items yet.", "muted"));
     return;
   }
-
   shop.menu.forEach(item => {
-    const line = element("div", undefined, "item");
-    const details = document.createElement("div");
-    details.appendChild(element("strong", item.name));
-    if (item.description) details.appendChild(element("p", item.description, "muted"));
-    details.appendChild(element("div", money(item.price), "price"));
-
-    const add = element("button", "Add +", "primary");
-    add.addEventListener("click", () => {
+    const line = el("div", undefined, "line");
+    const text = el("div");
+    text.appendChild(el("strong", item.name));
+    if (item.description) text.appendChild(el("p", item.description, "muted"));
+    text.appendChild(el("p", money(item.price)));
+    const button = el("button", "Add +", "primary");
+    button.addEventListener("click", () => {
       const existing = cart.find(c => c.id === item.id);
-      if (existing) existing.quantity++;
-      else cart.push({...item, quantity:1});
+      if (existing) existing.qty++;
+      else cart.push({...item, qty:1});
       renderCart();
     });
-
-    line.append(details, add);
+    line.append(text, button);
     target.appendChild(line);
   });
 }
 
 function renderCart() {
-  const target = document.getElementById("cartItems");
+  const target = document.getElementById("basket");
   target.replaceChildren();
+  cart = cart.filter(i => i.qty > 0);
 
-  cart = cart.filter(c => c.quantity > 0);
+  if (!cart.length) target.appendChild(el("p", "Your basket is empty.", "muted"));
+
   cart.forEach(item => {
-    const line = element("div", undefined, "item");
-    const detail = element("div",
-      item.name + " × " + item.quantity + " — " +
-      money(item.price * item.quantity));
-    const controls = element("div");
-    controls.className = "row";
-
-    const minus = element("button", "−", "light");
-    minus.style.width = "44px";
-    minus.addEventListener("click", () => {
-      item.quantity--;
-      renderCart();
-    });
-
-    const plus = element("button", "+", "light");
-    plus.style.width = "44px";
-    plus.addEventListener("click", () => {
-      item.quantity++;
-      renderCart();
-    });
-
-    controls.append(minus, plus);
-    line.append(detail, controls);
+    const line = el("div", undefined, "line");
+    line.appendChild(el("span", item.name + " × " + item.qty + " — " +
+      money(item.price * item.qty)));
+    const buttons = el("div", undefined, "row");
+    const minus = el("button", "−", "light");
+    const plus = el("button", "+", "light");
+    minus.addEventListener("click", () => {item.qty--; renderCart();});
+    plus.addEventListener("click", () => {item.qty++; renderCart();});
+    buttons.append(minus, plus);
+    line.appendChild(buttons);
     target.appendChild(line);
   });
-
-  if (!cart.length) target.appendChild(element("p", "Your cart is empty."));
-  updateTotals();
+  updateTotal();
 }
 
-function foodSubtotal() {
-  return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-}
-
-function updateTotals() {
-  const delivery = document.getElementById("fulfilment").value === "delivery"
-    && cart.length ? DELIVERY_FEE : 0;
-  document.getElementById("foodTotal").textContent = money(foodSubtotal());
-  document.getElementById("deliveryTotal").textContent = money(delivery);
-  document.getElementById("grandTotal").textContent = money(foodSubtotal() + delivery);
+function updateTotal() {
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const delivery = cart.length &&
+    document.getElementById("fulfilment").value === "delivery" ? DELIVERY : 0;
+  document.getElementById("subtotal").textContent = money(subtotal);
+  document.getElementById("deliveryFee").textContent = money(delivery);
+  document.getElementById("grandTotal").textContent = money(subtotal + delivery);
+  document.getElementById("addressWrap").classList.toggle("hidden",
+    document.getElementById("fulfilment").value !== "delivery");
+  document.getElementById("address").required =
+    document.getElementById("fulfilment").value === "delivery";
 }
 
 document.getElementById("searchBtn").addEventListener("click", renderShops);
 document.getElementById("search").addEventListener("input", renderShops);
 document.getElementById("area").addEventListener("change", renderShops);
-document.getElementById("fulfilment").addEventListener("change", updateTotals);
+document.getElementById("sort").addEventListener("change", renderShops);
+document.getElementById("fulfilment").addEventListener("change", updateTotal);
 
 document.getElementById("backBtn").addEventListener("click", () => {
   document.getElementById("menuSection").classList.add("hidden");
-  document.getElementById("cartSection").classList.add("hidden");
-  document.getElementById("shopSection").scrollIntoView({behavior:"smooth"});
-});
-
-document.getElementById("sellerToggle").addEventListener("click", () => {
-  document.getElementById("sellerPanel").classList.toggle("hidden");
+  document.getElementById("checkoutSection").classList.add("hidden");
+  document.getElementById("find").scrollIntoView({behavior:"smooth"});
 });
 
 document.getElementById("sellerForm").addEventListener("submit", event => {
   event.preventDefault();
-  const name = document.getElementById("shopName").value.trim();
-  const area = document.getElementById("shopArea").value.trim();
-  const phone = document.getElementById("sellerPhone").value.trim();
-  if (!name || !area || !phone) return;
+  const name = document.getElementById("businessName").value.trim();
+  const area = document.getElementById("businessArea").value;
+  const address = document.getElementById("businessAddress").value.trim();
+  const phone = document.getElementById("businessPhone").value.trim();
+
+  if (!name || !area || !address || !phone) return;
 
   const shop = {
-    id: "shop-" + Date.now() + "-" + Math.random().toString(36).slice(2,7),
-    name, area, phone, menu: []
+    id:id("shop"),
+    owner:document.getElementById("sellerName").value.trim(),
+    name, area, address, phone,
+    email:document.getElementById("businessEmail").value.trim(),
+    description:document.getElementById("sellerNotes").value.trim(),
+    status:"pending",
+    menu:[]
   };
-  shops.push(shop);
-  if (!saveShops()) {
-    shops = shops.filter(s => s.id !== shop.id);
+
+  shops.shops.push(shop);
+  if (!save()) {
+    shops.shops.pop();
     return;
   }
+  event.target.reset();
+  renderSellerStatus();
+  renderManagerOptions();
+  alert("Registration saved as pending on this device. It is not yet publicly listed.");
+});
 
-  editingShopId = shop.id;
-  selectedShopId = shop.id;
-  document.getElementById("sellerForm").reset();
-  document.getElementById("sellerPanel").classList.add("hidden");
-  document.getElementById("editor").classList.remove("hidden");
-  renderEditorItems();
-  renderShops();
-  alert("Shop saved on this device. Add the real menu items next.");
+function renderSellerStatus() {
+  const target = document.getElementById("sellerStatus");
+  target.replaceChildren();
+  const sellers = shops.shops.filter(s => s.status === "pending");
+  if (!sellers.length) {
+    target.appendChild(el("p", "No pending registrations on this device.", "muted"));
+    return;
+  }
+  sellers.forEach(s => {
+    const card = el("div", undefined, "card");
+    card.appendChild(el("strong", s.name));
+    card.appendChild(el("p", s.area + " · Pending approval", "muted"));
+    target.appendChild(card);
+  });
+}
+
+function renderManagerOptions() {
+  const select = document.getElementById("manageShop");
+  select.replaceChildren(new Option("Choose shop", ""));
+  shops.shops.forEach(s => select.add(new Option(s.name + " — " + s.status, s.id)));
+}
+
+document.getElementById("openManager").addEventListener("click", () => {
+  managedShop = document.getElementById("manageShop").value;
+  if (!managedShop) {
+    alert("Choose a shop first.");
+    return;
+  }
+  document.getElementById("manager").classList.remove("hidden");
+  renderManagerItems();
 });
 
 document.getElementById("menuForm").addEventListener("submit", event => {
   event.preventDefault();
-  const shop = shops.find(s => s.id === editingShopId);
+  const shop = shops.shops.find(s => s.id === managedShop);
   if (!shop) return;
-
-  const name = document.getElementById("foodName").value.trim();
-  const description = document.getElementById("foodDescription").value.trim();
-  const price = Number(document.getElementById("foodPrice").value);
-
+  const name = document.getElementById("newItem").value.trim();
+  const description = document.getElementById("newDescription").value.trim();
+  const price = Number(document.getElementById("newPrice").value);
   if (!name || !Number.isFinite(price) || price <= 0) {
-    alert("Enter a menu item and its valid price.");
+    alert("Enter a valid menu item and price.");
     return;
   }
-
-  shop.menu.push({
-    id: "item-" + Date.now() + "-" + Math.random().toString(36).slice(2,6),
-    name, description, price
-  });
-
-  if (!saveShops()) {
+  shop.menu.push({id:id("item"), name, description, price});
+  if (!save()) {
     shop.menu.pop();
     return;
   }
-
-  document.getElementById("menuForm").reset();
-  renderEditorItems();
+  event.target.reset();
+  renderManagerItems();
+  renderMenu();
   renderShops();
 });
 
-function renderEditorItems() {
-  const target = document.getElementById("editorItems");
+function renderManagerItems() {
+  const target = document.getElementById("managerItems");
   target.replaceChildren();
-  const shop = shops.find(s => s.id === editingShopId);
+  const shop = shops.shops.find(s => s.id === managedShop);
   if (!shop) return;
-
-  target.appendChild(element("h3", "Current menu"));
+  target.appendChild(el("h3", "Menu items"));
   shop.menu.forEach(item => {
-    const row = element("div", undefined, "item");
-    row.appendChild(element("span", item.name + " — " + money(item.price)));
-    const remove = element("button", "Remove", "light");
+    const line = el("div", undefined, "line");
+    line.appendChild(el("span", item.name + " — " + money(item.price)));
+    const remove = el("button", "Remove", "light");
     remove.addEventListener("click", () => {
       shop.menu = shop.menu.filter(i => i.id !== item.id);
-      saveShops();
-      renderEditorItems();
+      save();
+      renderManagerItems();
+      renderMenu();
       renderShops();
     });
-    row.appendChild(remove);
-    target.appendChild(row);
+    line.appendChild(remove);
+    target.appendChild(line);
   });
 }
 
-document.getElementById("finishEditing").addEventListener("click", () => {
-  document.getElementById("editor").classList.add("hidden");
-  renderShops();
-  alert("Menu saved on this device.");
-});
-
-document.getElementById("checkout").addEventListener("submit", event => {
+document.getElementById("orderForm").addEventListener("submit", event => {
   event.preventDefault();
-  const shop = getShop();
+  const shop = shops.shops.find(s => s.id === selectedShop);
   if (!shop || !cart.length) {
-    alert("Choose a shop and add at least one menu item first.");
+    alert("Choose a shop and add menu items before checkout.");
     return;
   }
 
   const fulfilment = document.getElementById("fulfilment").value;
-  const delivery = fulfilment === "delivery" ? DELIVERY_FEE : 0;
-  const total = foodSubtotal() + delivery;
-  const lines = cart.map(item =>
-    item.name + " x " + item.quantity + " = " +
-    money(item.price * item.quantity)
-  );
+  const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const delivery = fulfilment === "delivery" ? DELIVERY : 0;
+  const total = subtotal + delivery;
 
-  const summary = [
-    "KOTA CONNECT ORDER SUMMARY",
+  const lines = [
+    "KOTA CONNECT ORDER REQUEST",
     "Shop: " + shop.name,
     "Shop area: " + shop.area,
-    "Customer: " + document.getElementById("customer").value.trim(),
-    "Contact: " + document.getElementById("phone").value.trim(),
-    "Customer area: " + document.getElementById("customerArea").value.trim(),
-    "Fulfilment: " + (fulfilment === "delivery" ? "Delivery" : "Collection"),
-    "Address / instructions: " + document.getElementById("address").value.trim(),
+    "Customer: " + document.getElementById("customerName").value.trim(),
+    "Phone: " + document.getElementById("customerPhone").value.trim(),
+    "Customer area: " + document.getElementById("customerArea").value,
+    "Fulfilment: " + fulfilment,
+    ...(fulfilment === "delivery"
+      ? ["Delivery address: " + document.getElementById("address").value.trim()]
+      : ["Collection details: " + document.getElementById("address").value.trim()]),
     "Items:",
-    ...lines,
-    "Food total: " + money(foodSubtotal()),
+    ...cart.map(i => i.name + " × " + i.qty + " = " + money(i.price * i.qty)),
+    "Food subtotal: " + money(subtotal),
     "Delivery: " + money(delivery),
-    "TOTAL: " + money(total),
-    "Payment: " + document.getElementById("payment").value,
-    "Extra instructions: " + (document.getElementById("notes").value.trim() || "None"),
+    "Total: " + money(total),
+    "Payment preference: " + document.getElementById("payment").value,
+    "Instructions: " + document.getElementById("notes").value.trim(),
     "",
-    "Please confirm availability and payment with the shop."
-  ].join("\n");
+    "Order is not confirmed until accepted by the shop."
+  ];
 
-  const result = document.getElementById("result");
-  result.replaceChildren();
-  result.appendChild(element("h3", "Order summary prepared"));
-  result.appendChild(element("p",
-    "Your total is " + money(total) +
-    ". This website has prepared your order details but has not sent an order or processed payment."));
-  const preview = element("textarea");
-  preview.readOnly = true;
-  preview.rows = 12;
-  preview.value = summary;
-  preview.setAttribute("aria-label", "Order summary");
-  result.appendChild(preview);
-
-  const copy = element("button", "Copy order summary", "primary");
-  copy.style.marginTop = "10px";
+  const target = document.getElementById("orderResult");
+  target.replaceChildren();
+  target.appendChild(el("h3", "Order summary ready"));
+  target.appendChild(el("p",
+    "This prototype does not send the order to the shop or process payment. Share the summary using an agreed contact method."));
+  const box = document.createElement("textarea");
+  box.readOnly = true;
+  box.rows = 12;
+  box.value = lines.join("\n");
+  target.appendChild(box);
+  const copy = el("button", "Copy order summary", "primary");
   copy.addEventListener("click", async () => {
     try {
-      await navigator.clipboard.writeText(summary);
+      await navigator.clipboard.writeText(box.value);
       copy.textContent = "Copied";
     } catch {
-      preview.focus();
-      preview.select();
-      alert("Select and copy the order summary above.");
+      box.focus();
+      box.select();
+      alert("Copy the selected order summary.");
     }
   });
-  result.appendChild(copy);
-
-  const contact = element("p",
-    "To place the order, send the summary to the shop using a verified contact method. Online order submission and automatic payment require a secure backend.");
-  result.appendChild(contact);
-  result.classList.remove("hidden");
-  result.scrollIntoView({behavior:"smooth"});
+  target.appendChild(copy);
+  target.classList.remove("hidden");
+  target.scrollIntoView({behavior:"smooth"});
 });
 
 renderShops();
+renderSellerStatus();
+renderManagerOptions();
+updateTotal();
 </script>
 </body>
 </html>
