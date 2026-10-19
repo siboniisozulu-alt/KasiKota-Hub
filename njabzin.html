@@ -285,5 +285,295 @@
       window.location.href = whatsappURL;
     }
   </script>
+  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111111">
+  <title>Njabzin Fast Food | Kota Connect</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #101010;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+
+    .shop {
+      width: 100%;
+      max-width: 520px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 26px 14px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #382600, #111111);
+      border: 1px solid #ffbd19;
+    }
+
+    .logo {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      color: #ffbd19;
+      font-size: 27px;
+      margin: 0 0 10px;
+    }
+
+    .location {
+      color: #eeeeee;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #ffbd19;
+      color: #171717;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .heading {
+      margin: 26px 0 6px;
+      color: #ffbd19;
+      font-size: 23px;
+    }
+
+    .intro {
+      color: #cccccc;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .menu-item {
+      background: #1d1d1d;
+      border: 1px solid #383838;
+      border-radius: 14px;
+      padding: 17px;
+      margin: 15px 0;
+      box-shadow: 0 5px 15px #00000035;
+    }
+
+    .menu-item h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+
+    .description {
+      color: #cccccc;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 12px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .price {
+      color: #ffbd19;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .currency {
+      color: #aaaaaa;
+      font-size: 11px;
+    }
+
+    .order-btn {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 9px;
+      background: #ffbd19;
+      color: #171717;
+      text-decoration: none;
+      text-align: center;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .order-btn:active {
+      opacity: 0.8;
+    }
+
+    .notice {
+      background: #29220f;
+      border-left: 4px solid #ffbd19;
+      border-radius: 8px;
+      padding: 13px;
+      color: #eeeeee;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: 22px;
+    }
+
+    footer {
+      color: #aaaaaa;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.8;
+      padding: 25px 5px;
+    }
+
+    footer strong {
+      color: #ffbd19;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shop">
+
+    <header class="header">
+      <div class="logo">🍔</div>
+      <h1>Njabzin Fast Food</h1>
+      <div class="location">
+        📍 Madadeni, Section 7, Newcastle<br>
+        South Africa · Prices in rand (R)
+      </div>
+      <span class="tag">KOTA CONNECT SHOP</span>
+    </header>
+
+    <h2 class="heading">Our Kota Menu</h2>
+    <p class="intro">
+      Fresh kota favourites at affordable prices.
+      Choose your favourite below to order on WhatsApp.
+    </p>
+
+    <section class="menu-item">
+      <h3>Classic Kota</h3>
+      <p class="description">
+        Chips, polony, sausage, atchar and sauce.
+      </p>
+      <div class="price-row">
+        <span class="price">R25</span>
+        <span class="currency">PER KOTA</span>
+      </div>
+      <a class="order-btn" href="#"
+         onclick="orderKota('Classic Kota',25); return false;">
+        Order Classic Kota
+      </a>
+    </section>
+
+    <section class="menu-item">
+      <h3>Cheese Kota</h3>
+      <p class="description">
+        Classic fillings with cheese.
+      </p>
+      <div class="price-row">
+        <span class="price">R30</span>
+        <span class="currency">PER KOTA</span>
+      </div>
+      <a class="order-btn" href="#"
+         onclick="orderKota('Cheese Kota',30); return false;">
+        Order Cheese Kota
+      </a>
+    </section>
+
+    <section class="menu-item">
+      <h3>Chicken Kota</h3>
+      <p class="description">
+        Chicken, chips and sauce.
+      </p>
+      <div class="price-row">
+        <span class="price">R35</span>
+        <span class="currency">PER KOTA</span>
+      </div>
+      <a class="order-btn" href="#"
+         onclick="orderKota('Chicken Kota',35); return false;">
+        Order Chicken Kota
+      </a>
+    </section>
+
+    <section class="menu-item">
+      <h3>Beef Kota</h3>
+      <p class="description">
+        Beef, chips, onions and sauce.
+      </p>
+      <div class="price-row">
+        <span class="price">R40</span>
+        <span class="currency">PER KOTA</span>
+      </div>
+      <a class="order-btn" href="#"
+         onclick="orderKota('Beef Kota',40); return false;">
+        Order Beef Kota
+      </a>
+    </section>
+
+    <section class="menu-item">
+      <h3>Special Kota</h3>
+      <p class="description">
+        Mixed meats, chips, cheese and sauces.
+      </p>
+      <div class="price-row">
+        <span class="price">R45</span>
+        <span class="currency">PER KOTA</span>
+      </div>
+      <a class="order-btn" href="#"
+         onclick="orderKota('Special Kota',45); return false;">
+        Order Special Kota
+      </a>
+    </section>
+
+    <div class="notice">
+      <strong>Ordering information</strong><br>
+      Your WhatsApp order is a request. The shop must
+      confirm availability and the final order details.
+      Delivery charges, if any, must be agreed separately.
+    </div>
+
+    <footer>
+      <strong>Njabzin Fast Food</strong><br>
+      Powered by Kota Connect<br>
+      Madadeni, Section 7, Newcastle
+    </footer>
+
+  </main>
+
+  <script>
+    function orderKota(name, price) {
+      // South African international format.
+      // Confirm this is the correct WhatsApp number.
+      const phone = "27705859342";
+
+      const message =
+        "Hello Njabzin Fast Food! I would like to order " +
+        name + " for R" + price +
+        ". Please confirm availability.";
+
+      const whatsappURL =
+        "https://wa.me/" + phone +
+        "?text=" + encodeURIComponent(message);
+
+      window.location.href = whatsappURL;
+    }
+  </script>
+</body>
+</html>
+
 </body>
 </html>
