@@ -1,1 +1,261 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kota Connect | Admin Dashboard</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff2d6;
+      color: #222;
+    }
+    header {
+      background: #171717;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 5px solid #ffb300;
+    }
+    header h1 { color: #ffbd35; }
+    main { max-width: 1000px; margin: 25px auto; padding: 15px; }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 15px #0001;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border-radius: 8px;
+      font: inherit;
+    }
+    input { border: 1px solid #ccc; }
+    button {
+      border: 0;
+      cursor: pointer;
+      font-weight: bold;
+      background: #ffb300;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    .reject { background: #f8d7da; }
+    .approve { background: #d4edda; }
+    .application {
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+    .actions { display: flex; gap: 10px; }
+    .actions button { flex: 1; }
+    #message { line-height: 1.5; overflow-wrap: anywhere; }
+    .muted { color: #666; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🍔 KOTA CONNECT</h1>
+  <p>Admin Dashboard</p>
+</header>
+
+<main>
+  <section class="card" id="loginCard">
+    <h2>Admin Login</h2>
+    <p>Sign in with your authorized admin account.</p>
+    <form id="loginForm">
+      <input id="email" type="email" placeholder="Admin email"
+             autocomplete="username" required>
+      <input id="password" type="password" placeholder="Password"
+             autocomplete="current-password" required>
+      <button id="loginButton" type="submit">Sign In</button>
+    </form>
+  </section>
+
+  <section class="card" id="dashboard" hidden>
+    <h2>Shop Applications</h2>
+    <p id="signedInAs" class="muted"></p>
+    <button id="refreshButton" type="button">Refresh Applications</button>
+    <div id="message" role="status" aria-live="polite"></div>
+    <div id="applications"></div>
+    <button id="logoutButton" type="button">Sign Out</button>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+    authDomain: "kasikota-hub.firebaseapp.com",
+    projectId: "kasikota-hub",
+    storageBucket: "kasikota-hub.firebasestorage.app",
+    messagingSenderId: "470531130099",
+    appId: "PASTE_YOUR_EXISTING_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const loginCard = document.getElementById("loginCard");
+  const dashboard = document.getElementById("dashboard");
+  const loginForm = document.getElementById("loginForm");
+  const loginButton = document.getElementById("loginButton");
+  const message = document.getElementById("message");
+  const applications = document.getElementById("applications");
+
+  function showMessage(text) {
+    message.textContent = text;
+  }
+
+  loginForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    loginButton.disabled = true;
+    showMessage("");
+
+    try {
+      await auth.signInWithEmailAndPassword(
+        document.getElementById("email").value.trim(),
+        document.getElementById("password").value
+      );
+    } catch (error) {
+      showMessage("Sign-in failed. Check your details and admin access.");
+    } finally {
+      loginButton.disabled = false;
+    }
+  });
+
+  auth.onAuthStateChanged(async function (user) {
+    loginCard.hidden = !!user;
+    dashboard.hidden = !user;
+    applications.replaceChildren();
+
+    if (!user) return;
+
+    document.getElementById("signedInAs").textContent =
+      "Signed in as: " + user.email;
+    await loadApplications();
+  });
+
+  async function loadApplications() {
+    applications.replaceChildren();
+    showMessage("Loading applications...");
+
+    try {
+      const snapshot = await db.collection("shopApplications")
+        .orderBy("createdAt", "desc").get();
+
+      if (snapshot.empty) {
+        showMessage("No shop applications found.");
+        return;
+      }
+
+      snapshot.forEach(function (doc) {
+        const data = doc.data();
+        const card = document.createElement("article");
+        card.className = "application";
+
+        const title = document.createElement("h3");
+        title.textContent = data.shopName || "Unnamed shop";
+        card.appendChild(title);
+
+        [
+          ["Owner", data.ownerName],
+          ["Email", data.email],
+          ["Phone", data.phone],
+          ["Address", data.address],
+          ["Description", data.description],
+          ["Status", data.status]
+        ].forEach(function (item) {
+          const p = document.createElement("p");
+          p.textContent = item[0] + ": " + (item[1] || "Not provided");
+          card.appendChild(p);
+        });
+
+        if (data.status === "pending") {
+          const actions = document.createElement("div");
+          actions.className = "actions";
+
+          const approve = document.createElement("button");
+          approve.className = "approve";
+          approve.textContent = "Approve";
+          approve.addEventListener("click", () =>
+            updateStatus(doc.id, "approved", approve, reject)
+          );
+
+          const reject = document.createElement("button");
+          reject.className = "reject";
+          reject.textContent = "Reject";
+          reject.addEventListener("click", () =>
+            updateStatus(doc.id, "rejected", approve, reject)
+          );
+
+          actions.append(approve, reject);
+          card.appendChild(actions);
+        }
+
+        applications.appendChild(card);
+      });
+
+      showMessage("Applications loaded: " + snapshot.size);
+    } catch (error) {
+      console.error(error);
+      showMessage(
+        "Could not load applications. Check Firebase configuration, " +
+        "Firestore rules, and authorized admin access."
+      );
+    }
+  }
+
+  async function updateStatus(id, status, approve, reject) {
+    if (!auth.currentUser) {
+      showMessage("Please sign in again.");
+      return;
+    }
+
+    if (!confirm("Change this application's status to " + status + "?")) {
+      return;
+    }
+
+    approve.disabled = true;
+    reject.disabled = true;
+    showMessage("Updating application...");
+
+    try {
+      await db.collection("shopApplications").doc(id).update({
+        status: status,
+        reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      showMessage("Application status updated to " + status + ".");
+      await loadApplications();
+    } catch (error) {
+      console.error(error);
+      showMessage(
+        "Update failed. Your account must have admin permission in " +
+        "Firestore security rules."
+      );
+      approve.disabled = false;
+      reject.disabled = false;
+    }
+  }
+
+  document.getElementById("refreshButton").addEventListener(
+    "click", loadApplications
+  );
+
+  document.getElementById("logoutButton").addEventListener(
+    "click", () => auth.signOut()
+  );
+</script>
+</body>
+</html>
+
