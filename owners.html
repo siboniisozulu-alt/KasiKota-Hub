@@ -144,6 +144,18 @@ renderOverview();renderMenu();renderReports();
   const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  
+document.getElementById("sign-out-button")
+  .addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.replace("./owner-login.html");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      alert("Unable to sign out. Please try again.");
+    }
+  });
+
 
   function showAccessError(message) {
     document.body.style.visibility = "visible";
