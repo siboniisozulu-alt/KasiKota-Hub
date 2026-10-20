@@ -1,16 +1,13 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kota Connect | Shop Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kota Connect | Register Shop</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -23,24 +20,16 @@
       background: #171717;
       color: white;
       text-align: center;
-      padding: 28px 15px;
+      padding: 25px 15px;
       border-bottom: 5px solid #ffb300;
     }
 
-    header h1 {
-      margin: 0;
-      color: #ffbd35;
-      font-size: 32px;
-    }
-
-    header p {
-      margin-bottom: 0;
-    }
+    header h1 { color: #ffbd35; }
 
     main {
-      max-width: 850px;
+      max-width: 700px;
       margin: 25px auto;
-      padding: 20px;
+      padding: 16px;
     }
 
     .card {
@@ -55,24 +44,43 @@
       text-align: center;
     }
 
-    .register-button {
+    label {
       display: block;
-      background: #ffb300;
-      color: #171717;
-      text-align: center;
-      padding: 16px;
-      margin: 20px 0;
-      border-radius: 12px;
-      text-decoration: none;
       font-weight: bold;
+      margin-top: 15px;
     }
 
-    .form-frame {
+    input, textarea {
       width: 100%;
-      height: 1100px;
+      padding: 12px;
+      margin-top: 7px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
       border: none;
-      border-radius: 12px;
-      background: #fff;
+      border-radius: 10px;
+      background: #ffb300;
+      color: #171717;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    #message {
+      margin-top: 15px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
     }
 
     footer {
@@ -85,7 +93,6 @@
 </head>
 
 <body>
-
   <header>
     <h1>🍔 KOTA CONNECT</h1>
     <p>Connecting customers with local Kota businesses</p>
@@ -94,20 +101,45 @@
   <main>
     <section class="card">
       <h2>Register Your Kota Shop</h2>
+      <p>Submit your shop details for admin approval.</p>
 
-      <p>
-        Join Kota Connect and help more customers
-        discover your business online.
-      </p>
+      <form id="registerForm">
+        <label for="ownerName">Owner's full name</label>
+        <input id="ownerName" required maxlength="100"
+               autocomplete="name">
 
-      <a
-        class="register-button"
-        href=https://docs.google.com/forms/d/1ohWDfMx5Ou5RqZcBoWRRqUcptaZZQiNTing044a579Q/viewform
-        target="_blank"
-        rel="noopener noreferrer">
-        📝 OPEN SHOP REGISTRATION FORM
-      </a>
+        <label for="shopName">Shop name</label>
+        <input id="shopName" required maxlength="100">
 
+        <label for="email">Email address</label>
+        <input id="email" type="email" required
+               autocomplete="email" maxlength="254">
+
+        <label for="phone">Phone number</label>
+        <input id="phone" type="tel" required
+               autocomplete="tel" maxlength="25">
+
+        <label for="address">Shop address / location</label>
+        <input id="address" required maxlength="200">
+
+        <label for="description">Tell us about your shop</label>
+        <textarea id="description" rows="3"
+                  required maxlength="1000"></textarea>
+
+        <label for="password">Create a password</label>
+        <input id="password" type="password" required
+               minlength="8" autocomplete="new-password">
+
+        <label for="confirmPassword">Confirm password</label>
+        <input id="confirmPassword" type="password" required
+               minlength="8" autocomplete="new-password">
+
+        <button id="submitButton" type="submit">
+          Submit Shop Application
+        </button>
+
+        <p id="message" role="status" aria-live="polite"></p>
+      </form>
     </section>
   </main>
 
@@ -115,8 +147,120 @@
     <p>© Kota Connect | Supporting Local Businesses 🇿🇦</p>
   </footer>
 
-</body>
-</html>
+  <!-- Firebase compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
+  <script>
+    // IMPORTANT:
+    // Copy your EXISTING firebaseConfig object from owner-login.html.
+    // Replace the example below with that exact object.
+    const firebaseConfig = {
+      apiKey: "PASTE_YOUR_EXISTING_API_KEY",
+      authDomain: "PASTE_YOUR_EXISTING_AUTH_DOMAIN",
+      projectId: "PASTE_YOUR_EXISTING_PROJECT_ID",
+      storageBucket: "PASTE_YOUR_EXISTING_STORAGE_BUCKET",
+      messagingSenderId: "PASTE_YOUR_EXISTING_MESSAGING_SENDER_ID",
+      appId: "PASTE_YOUR_EXISTING_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const form = document.getElementById("registerForm");
+    const button = document.getElementById("submitButton");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const ownerName =
+        document.getElementById("ownerName").value.trim();
+      const shopName =
+        document.getElementById("shopName").value.trim();
+      const email =
+        document.getElementById("email").value.trim();
+      const phone =
+        document.getElementById("phone").value.trim();
+      const address =
+        document.getElementById("address").value.trim();
+      const description =
+        document.getElementById("description").value.trim();
+      const password =
+        document.getElementById("password").value;
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+      if (password !== confirmPassword) {
+        message.textContent = "Your passwords do not match.";
+        return;
+      }
+
+      if (password.length < 8) {
+        message.textContent =
+          "Your password must contain at least 8 characters.";
+        return;
+      }
+
+      button.disabled = true;
+      message.textContent = "Submitting your application...";
+
+      let credential = null;
+
+      try {
+        credential = await auth.createUserWithEmailAndPassword(
+          email, password
+        );
+
+        const uid = credential.user.uid;
+
+        await db.collection("shopApplications").doc(uid).set({
+          ownerName: ownerName,
+          shopName: shopName,
+          email: email,
+          phone: phone,
+          address: address,
+          description: description,
+          status: "pending",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        form.reset();
+
+        message.textContent =
+          "Your account has been created and your shop application submitted. " +
+          "It is awaiting admin approval. Please wait for approval before " +
+          "trying to access the Owner Dashboard.";
+
+      } catch (error) {
+        console.error("Registration error:", error);
+
+        if (credential && credential.user) {
+          message.textContent =
+            "Your account was created, but we could not save your shop " +
+            "application. Do not register again. Please contact the site " +
+            "administrator to resolve the application.";
+        } else if (error.code === "auth/email-already-in-use") {
+          message.textContent =
+            "This email already has an account. Please use the existing " +
+            "account or contact the administrator.";
+        } else if (error.code === "auth/invalid-email") {
+          message.textContent = "Please enter a valid email address.";
+        } else if (error.code === "auth/weak-password") {
+          message.textContent =
+            "Please choose a stronger password.";
+        } else {
+          message.textContent =
+            "Registration failed. Check your Firebase configuration " +
+            "and Firestore permissions before trying again.";
+        }
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
