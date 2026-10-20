@@ -30,7 +30,17 @@ button,input,select{font:inherit}button{cursor:pointer}.layout{min-height:100vh;
     <button data-page="profile"><span class="ico">🏪</span>Shop profile</button>
     <button data-page="reports"><span class="ico">📈</span>Sales reports</button>
   </nav>
-  <div class="sidebar-foot">Signed in as<br><strong>Demo Kota Shop</strong><br><span style="color:#a9c7b5">Demo dashboard · sample data</span></div>
+
+<div class="sidebar-foot">
+  Signed in as<br>
+  <strong>Demo Kota Shop</strong><br>
+  <span style="color:#a9c7b5">Demo dashboard · sample data</span>
+  <br><br>
+  <button id="sign-out-button" class="btn btn-light" style="width:100%">
+    Sign Out
+  </button>
+</div>
+
 </aside>
 <main class="main">
 <header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="btn btn-light mobile-menu" id="mobile-nav">☰ Menu</button><span class="crumb">Kota Connect / <strong id="crumb-current">Overview</strong></span></div><div class="owner"><div class="avatar">DK</div><div class="owner-text">Demo Kota Shop<span class="sub">Shop owner</span></div></div></header>
