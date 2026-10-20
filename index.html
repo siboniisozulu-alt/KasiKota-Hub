@@ -277,5 +277,187 @@
 
     calculateTotal();
   </script>
+  
+<section id="firebase-shop-register">
+  <h2>Register Your Kota Shop</h2>
+  <p>Create an account to submit your shop for approval.</p>
+
+  <form id="shopRegisterForm">
+    <label for="ownerName">Owner's full name</label>
+    <input id="ownerName" required maxlength="100"
+      autocomplete="name" placeholder="Your full name">
+
+    <label for="shopName">Shop name</label>
+    <input id="shopName" required maxlength="100"
+      placeholder="Your shop name">
+
+    <label for="shopEmail">Email address</label>
+    <input id="shopEmail" type="email" required
+      autocomplete="email" placeholder="you@example.com">
+
+    <label for="shopPassword">Create password</label>
+    <input id="shopPassword" type="password" required
+      minlength="6" autocomplete="new-password"
+      placeholder="At least 6 characters">
+
+    <label for="shopPhone">WhatsApp / phone number</label>
+    <input id="shopPhone" type="tel" required maxlength="25"
+      autocomplete="tel" placeholder="e.g. 27...">
+
+    <label for="shopAddress">Shop address</label>
+    <input id="shopAddress" required maxlength="200"
+      placeholder="Section, town or city">
+
+    <label for="shopDescription">Shop and menu description</label>
+    <textarea id="shopDescription" required maxlength="1500"
+      placeholder="Describe your shop and menu"></textarea>
+
+    <button type="submit">Create Account & Submit Application</button>
+    <p id="shopRegisterMessage" role="status" aria-live="polite"></p>
+  </form>
+</section>
+
+<style>
+#firebase-shop-register {
+  max-width: 440px;
+  margin: 24px auto;
+  padding: 20px;
+  border-radius: 16px;
+  background: #17130c;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+#firebase-shop-register input,
+#firebase-shop-register textarea,
+#firebase-shop-register button {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 8px 0 16px;
+  padding: 12px;
+  border-radius: 8px;
+  font: inherit;
+}
+#firebase-shop-register input,
+#firebase-shop-register textarea {
+  border: 1px solid #b88a24;
+  background: #fff;
+  color: #111;
+}
+#firebase-shop-register button {
+  border: 0;
+  background: #ffbd19;
+  color: #17130c;
+  font-weight: bold;
+  cursor: pointer;
+}
+#firebase-shop-register label {
+  display: block;
+  font-weight: 600;
+}
+#shopRegisterMessage {
+  overflow-wrap: anywhere;
+}
+</style>
+
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+  authDomain: "kasikota-hub.firebaseapp.com",
+  databaseURL: "https://kasikota-hub-default-rtdb.firebaseio.com",
+  projectId: "kasikota-hub",
+  storageBucket: "kasikota-hub.firebasestorage.app",
+  messagingSenderId: "470531130099",
+  appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86",
+  measurementId: "G-WKH542B38C"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const form = document.getElementById("shopRegisterForm");
+const message = document.getElementById("shopRegisterMessage");
+const submitButton = form.querySelector('button[type="submit"]');
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  submitButton.disabled = true;
+  message.textContent = "Submitting your application...";
+
+  let accountCreated = false;
+
+  try {
+    const email = document.getElementById("shopEmail")
+      .value.trim().toLowerCase();
+    const ownerName = document.getElementById("ownerName")
+      .value.trim();
+    const shopName = document.getElementById("shopName")
+      .value.trim();
+    const phone = document.getElementById("shopPhone")
+      .value.trim();
+    const address = document.getElementById("shopAddress")
+      .value.trim();
+    const description = document.getElementById("shopDescription")
+      .value.trim();
+    const password = document.getElementById("shopPassword").value;
+
+    if (!ownerName || !shopName || !phone || !address || !description) {
+      throw new Error("Please complete every field.");
+    }
+
+    const credential = await createUserWithEmailAndPassword(
+      auth, email, password
+    );
+    accountCreated = true;
+
+    await setDoc(doc(db, "shopApplications", credential.user.uid), {
+      ownerName,
+      shopName,
+      email: credential.user.email,
+      phone,
+      address,
+      description,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    message.textContent =
+      "Application submitted successfully! Your shop is awaiting admin approval.";
+    form.reset();
+  } catch (error) {
+    console.error("Shop registration error:", error);
+
+    if (accountCreated) {
+      message.textContent =
+        "Your account was created, but the application could not be saved. Please contact the administrator before trying to register again.";
+    } else if (error.code === "auth/email-already-in-use") {
+      message.textContent =
+        "This email already has an account. Use a different email or sign in.";
+    } else if (error.code === "auth/weak-password") {
+      message.textContent = "Please choose a stronger password.";
+    } else if (error.code === "auth/invalid-email") {
+      message.textContent = "Please enter a valid email address.";
+    } else if (error.code === "permission-denied" ||
+               error.code === "firestore/permission-denied") {
+      message.textContent =
+        "Firestore denied the application. Your security rules were not changed; contact the administrator.";
+    } else {
+      message.textContent =
+        "Registration failed: " + (error.message || "Please try again.");
+    }
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+</script>
+
 </body>
 </html>
