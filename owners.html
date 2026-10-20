@@ -107,5 +107,73 @@ document.getElementById('profile-form').addEventListener('submit',e=>{e.preventD
 function resetDemo(){orders=structuredClone(seedOrders);menu=structuredClone(seedMenu);document.getElementById('order-filter').value='All';renderOrders();renderMenu();renderReports();renderOverview();toast('Demo data reset')}
 renderOverview();renderMenu();renderReports();
 </script>
+  
+<script type="module">
+  import { initializeApp, getApp, getApps }
+    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+    authDomain: "kasikota-hub.firebaseapp.com",
+    projectId: "kasikota-hub",
+    appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
+  };
+
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  function showAccessError(message) {
+    document.body.style.visibility = "visible";
+    document.body.innerHTML = `
+      <main style="font-family:Arial,sans-serif;padding:30px;max-width:500px;margin:50px auto">
+        <h2>Kota Connect</h2>
+        <p>${message}</p>
+        <a href="./owner-login.html">Return to Owner Login</a>
+      </main>
+    `;
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.replace("./owner-login.html");
+      return;
+    }
+
+    try {
+      const applicationRef = doc(db, "shopApplications", user.uid);
+      const applicationSnapshot = await getDoc(applicationRef);
+
+      if (!applicationSnapshot.exists() ||
+          applicationSnapshot.data().status !== "approved") {
+        await signOut(auth);
+        window.location.replace("./owner-login.html");
+        return;
+      }
+
+      // The owner is signed in and their application is approved.
+      document.body.style.visibility = "visible";
+
+    } catch (error) {
+      console.error("Dashboard approval check failed:", error);
+      showAccessError(
+        "We couldn't verify your shop approval. Please try again later."
+      );
+    }
+  });
+</script>
+
 </body>
 </html>
