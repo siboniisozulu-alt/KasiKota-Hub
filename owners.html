@@ -113,7 +113,10 @@ function renderReports(){const total=orders.reduce((s,o)=>s+o.total,0);document.
 function updateStats(){document.getElementById('new-orders').textContent=orders.filter(o=>o.status==='Pending').length;document.getElementById('nav-count').textContent=orders.filter(o=>o.status==='Pending').length;document.getElementById('completed-orders').textContent=8+orders.filter(o=>o.status==='Completed').length-1;document.getElementById('menu-count').textContent=menu.length;document.getElementById('sales-total').textContent=money(orders.reduce((s,o)=>s+o.total,0));}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 document.getElementById('new-item').addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('item-name').value.trim(),price=Number(document.getElementById('item-price').value),desc=document.getElementById('item-desc').value.trim();if(!name||!Number.isFinite(price)||price<=0){toast('Enter a valid name and price');return}menu.push({id:Math.max(0,...menu.map(m=>m.id))+1,name,desc,price,available:true,emoji:'🍽️'});e.target.reset();renderMenu();renderReports();toast(name+' added to demo menu')});
-document.getElementById('profile-form').addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('shop-name').value.trim();document.querySelectorAll('.owner-text').forEach(el=>{el.childNodes[0].textContent=name});document.querySelector('.sidebar-foot strong').textContent=name;toast('Profile updated in this demo')});
+document.getElementById('profile-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  toast('Profile saving is not connected yet. No changes were saved.');
+});
 function resetDemo(){orders=structuredClone(seedOrders);menu=structuredClone(seedMenu);document.getElementById('order-filter').value='All';renderOrders();renderMenu();renderReports();renderOverview();toast('Demo data reset')}
 renderOverview();renderMenu();renderReports();
 </script>
