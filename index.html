@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,12 +15,10 @@
       --cream: #fffaf0;
       --white: #fff;
       --muted: #66736b;
-      --border: #dbe5dc;
       --danger: #9b1c1c;
     }
 
     * { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -220,6 +217,11 @@
       font-size: 19px;
     }
 
+    .shop-card h4 {
+      color: #ffca35;
+      margin: 4px 0 10px;
+    }
+
     .shop-card p { margin: 6px 0; }
     .shop-card .sub { color: #ddd; font-size: 13px; }
 
@@ -250,6 +252,61 @@
     .shop-actions .call {
       background: #ffca35;
       color: #171717;
+    }
+
+    .shop-menu {
+      margin-top: 16px;
+      padding: 12px;
+      background: #222;
+      border: 1px solid #57491e;
+      border-radius: 10px;
+    }
+
+    .menu-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #494949;
+    }
+
+    .menu-row:last-child { border-bottom: 0; }
+
+    .menu-item-name {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-weight: bold;
+    }
+
+    .menu-price-button {
+      flex-shrink: 0;
+      min-width: 100px;
+      margin: 0;
+      padding: 10px 12px;
+      background: var(--gold);
+      color: #171717;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .quantity-control input {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+    }
+
+    .quantity-control button {
+      flex-shrink: 0;
+      width: 52px;
+      margin: 0;
+      font-size: 22px;
+      padding: 8px;
     }
 
     .total-panel {
@@ -297,7 +354,6 @@
     }
 
     .modal-top h2 { margin: 0; }
-
     body.modal-open { overflow: hidden; }
 
     .account-bar {
@@ -328,6 +384,7 @@
       .form-grid { grid-template-columns: 1fr; }
       .full { grid-column: auto; }
       .modal-panel { padding: 14px; }
+      .menu-price-button { min-width: 88px; padding: 9px; }
     }
   </style>
 </head>
@@ -408,7 +465,7 @@
 
         <label for="itemName">Menu item</label>
         <input id="itemName" maxlength="120" required
-               placeholder="Enter the item name">
+               placeholder="Tap a menu price or enter item name">
 
         <label for="itemPrice">Price per item (R)</label>
         <input id="itemPrice" type="number" min="0.01" max="100000"
@@ -416,8 +473,14 @@
                placeholder="Enter the confirmed menu price">
 
         <label for="quantity">Quantity (1–50)</label>
-        <input id="quantity" type="number" min="1" max="50"
-               step="1" value="1" required inputmode="numeric">
+        <div class="quantity-control">
+          <button id="quantityMinus" type="button"
+                  class="secondary" aria-label="Decrease quantity">−</button>
+          <input id="quantity" type="number" min="1" max="50"
+                 step="1" value="1" required inputmode="numeric">
+          <button id="quantityPlus" type="button"
+                  class="secondary" aria-label="Increase quantity">+</button>
+        </div>
 
         <label for="service">Pickup or delivery</label>
         <select id="service">
@@ -517,6 +580,7 @@
 
           <p class="note">
             Menu items and prices are entered in the description for now.
+            Use a format such as: Classic Kota — R25; Cheese Kota — R30.
             Do not enter private information that should not be public.
           </p>
 
@@ -686,6 +750,27 @@
       return { item, quantity, foodSubtotal, delivery, total };
     }
 
+    // Plus and minus quantity controls.
+    function changeQuantity(amount) {
+      const input = $("quantity");
+      const current = Number(input.value);
+      const quantity = Number.isInteger(current) ? current : 1;
+
+      input.value = String(
+        Math.min(50, Math.max(1, quantity + amount))
+      );
+
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+
+    $("quantityMinus").addEventListener("click", () => {
+      changeQuantity(-1);
+    });
+
+    $("quantityPlus").addEventListener("click", () => {
+      changeQuantity(1);
+    });
+
     ["shopSelect", "itemName", "itemPrice", "quantity", "service"].forEach(id => {
       $(id).addEventListener("input", () => {
         calculateTotal();
@@ -784,7 +869,7 @@
       window.open(url, "_blank", "noopener,noreferrer");
     });
 
-    // Registration modal
+    // Registration modal.
     const modal = $("registerModal");
 
     function openRegisterModal(event) {
@@ -872,7 +957,6 @@
     let currentOwner = null;
     let currentShopId = null;
     let currentShopData = null;
-    let unsubscribeApprovedShops = null;
 
     function showMessage(element, text, type = "info") {
       element.textContent = text;
@@ -941,6 +1025,36 @@
         shop.description || "Menu details have not been added yet.";
       card.appendChild(description);
 
+      // Confirmed prices for Snethemba's fast food.
+      // Prices for other shops are read from their menu description.
+      const menu = shopName.toLowerCase().includes("snethemba")
+        ? [
+            { name: "Classic Kota", price: 20 },
+            { name: "Russian Kota", price: 25 },
+            { name: "Cheesy Egg Kota", price: 25 },
+            { name: "Boss Kota", price: 35 },
+            { name: "Chicken Kota", price: 35 }
+          ]
+        : [];
+
+      // Other shop descriptions can use:
+      // Classic Kota — R25; Cheese Kota — R30
+      const pricedItems =
+        /(?:^|[;\n])\s*([^;\n–—-]+?)\s*(?:—|–|-|:)\s*R\s*(\d+(?:\.\d{1,2})?)/gi;
+
+      if (menu.length === 0) {
+        let match;
+
+        while ((match = pricedItems.exec(shop.description || "")) !== null) {
+          const name = match[1].trim();
+          const price = Number(match[2]);
+
+          if (name && Number.isFinite(price) && price > 0) {
+            menu.push({ name, price });
+          }
+        }
+      }
+
       const actions = document.createElement("div");
       actions.className = "shop-actions";
 
@@ -949,29 +1063,40 @@
       choose.className = "gold";
       choose.textContent = "Choose this shop to order";
 
-      choose.addEventListener("click", () => {
+      function selectShop(item) {
         const select = $("shopSelect");
         const value = "approved:" + id;
 
         let option = Array.from(select.options).find(
-          item => item.value === value
+          existing => existing.value === value
         );
 
         if (!option) {
           option = document.createElement("option");
           option.value = value;
           option.textContent = shopName;
-          option.dataset.phone = phone;
           select.appendChild(option);
         }
 
+        option.dataset.phone = phone;
         select.value = value;
-        $("itemName").value = "";
-        $("itemPrice").value = "";
+
+        if (item) {
+          $("itemName").value = item.name;
+          $("itemPrice").value = item.price.toFixed(2);
+          $("quantity").value = "1";
+        }
+
+        ["shopSelect", "itemName", "itemPrice", "quantity"].forEach(field => {
+          $(field).dispatchEvent(new Event("input", { bubbles: true }));
+        });
+
+        $("service").dispatchEvent(new Event("input", { bubbles: true }));
         $("order").scrollIntoView({ behavior: "smooth" });
         $("itemName").focus({ preventScroll: true });
-      });
+      }
 
+      choose.addEventListener("click", () => selectShop(null));
       actions.appendChild(choose);
 
       if (phone) {
@@ -991,6 +1116,40 @@
       }
 
       card.appendChild(actions);
+
+      if (menu.length > 0) {
+        const menuPanel = document.createElement("div");
+        menuPanel.className = "shop-menu";
+
+        const menuTitle = document.createElement("h4");
+        menuTitle.textContent = "🍔 Kota Menu — Tap a price to order";
+        menuPanel.appendChild(menuTitle);
+
+        menu.forEach(item => {
+          const row = document.createElement("div");
+          row.className = "menu-row";
+
+          const itemName = document.createElement("span");
+          itemName.className = "menu-item-name";
+          itemName.textContent = item.name;
+
+          const priceButton = document.createElement("button");
+          priceButton.type = "button";
+          priceButton.className = "menu-price-button";
+          priceButton.textContent = "R" + item.price.toFixed(2);
+          priceButton.setAttribute(
+            "aria-label",
+            "Order " + item.name + " for R" + item.price.toFixed(2)
+          );
+
+          priceButton.addEventListener("click", () => selectShop(item));
+
+          row.append(itemName, priceButton);
+          menuPanel.appendChild(row);
+        });
+
+        card.appendChild(menuPanel);
+      }
 
       const contact = document.createElement("p");
       contact.className = "sub";
@@ -1127,7 +1286,7 @@
       }
     }
 
-    // Initialise Firebase and start the approved-shop listener.
+    // Initialise Firebase and listen for approved shops.
     try {
       const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
@@ -1140,17 +1299,13 @@
         where("status", "==", "approved")
       );
 
-      unsubscribeApprovedShops = onSnapshot(
-        approvedQuery,
-        renderApprovedShops,
-        showShopLoadError
-      );
+      onSnapshot(approvedQuery, renderApprovedShops, showShopLoadError);
     } catch (error) {
       showShopLoadError(error);
       showMessage(message, friendlyError(error), "error");
     }
 
-    // Owner sign-in
+    // Owner sign-in.
     $("ownerSignInForm").addEventListener("submit", async event => {
       event.preventDefault();
 
@@ -1180,7 +1335,7 @@
       }
     });
 
-    // Password reset
+    // Password reset.
     $("forgotPasswordButton").addEventListener("click", async () => {
       const email = $("ownerLoginEmail").value.trim();
       const element = $("ownerSignInMessage");
@@ -1203,7 +1358,7 @@
       }
     });
 
-    // Owner sign-out
+    // Owner sign-out.
     $("ownerSignOutButton").addEventListener("click", async () => {
       try {
         await signOut(auth);
@@ -1218,7 +1373,7 @@
 
     $("ownerReloadShopButton").addEventListener("click", loadOwnerShop);
 
-    // Owner may update their own shop details, subject to Firestore rules.
+    // Owner may update their shop details, subject to Firestore rules.
     $("ownerShopForm").addEventListener("submit", async event => {
       event.preventDefault();
 
@@ -1267,7 +1422,7 @@
       }
     });
 
-    // Track the current signed-in owner.
+    // Track the signed-in owner.
     onAuthStateChanged(auth, user => {
       currentOwner = user || null;
 
@@ -1366,4 +1521,4 @@
     });
   </script>
 </body>
-</html>
+            </html>
