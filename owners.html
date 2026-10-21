@@ -179,8 +179,41 @@ document.getElementById("sign-out-button")
       return;
     }
 
-    try {
-      const applicationRef = doc(db, "shopApplications", user.uid);
+    
+const applicationRef = doc(db, "shopApplications", user.uid);
+const applicationSnapshot = await getDoc(applicationRef);
+
+if (
+  !applicationSnapshot.exists() ||
+  applicationSnapshot.data().status !== "approved"
+) {
+  await signOut(auth);
+  window.location.replace("./owner-login.html");
+  return;
+}
+
+// Find the shop linked to this signed-in owner.
+const shopsQuery = query(
+  collection(db, "shops"),
+  where("ownerUid", "==", user.uid)
+);
+
+const shopsSnapshot = await getDocs(shopsQuery);
+
+const approvedShop = shopsSnapshot.docs.find(
+  shopDoc => shopDoc.data().status === "approved"
+);
+
+if (!approvedShop) {
+  showAccessError(
+    "Your application is approved, but no approved shop was found linked to this account. Please contact the Kota Connect administrator."
+  );
+  return;
+}
+
+// The application and shop are both approved.
+document.body.style.visibility = "visible";
+
       const applicationSnapshot = await getDoc(applicationRef);
 
       if (!applicationSnapshot.exists() ||
