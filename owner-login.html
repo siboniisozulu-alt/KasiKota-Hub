@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,8 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#176b45">
   <title>Kota Connect | Owner Login</title>
+
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -17,6 +22,7 @@
       background: #f4f8f4;
       color: #183b2b;
     }
+
     .card {
       width: 100%;
       max-width: 420px;
@@ -26,6 +32,7 @@
       box-shadow: 0 8px 30px #17372915;
       border: 1px solid #e1eae3;
     }
+
     .logo {
       width: 58px;
       height: 58px;
@@ -36,14 +43,25 @@
       font-size: 30px;
       margin-bottom: 16px;
     }
-    h1 { margin: 0 0 8px; font-size: 25px; }
-    .intro { color: #66766b; line-height: 1.5; font-size: 14px; }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 25px;
+    }
+
+    .intro {
+      color: #66766b;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
     label {
       display: block;
       margin: 17px 0 7px;
       font-weight: bold;
       font-size: 13px;
     }
+
     input {
       width: 100%;
       padding: 13px;
@@ -51,10 +69,12 @@
       border-radius: 9px;
       font-size: 16px;
     }
+
     input:focus {
       outline: 2px solid #176b45;
       border-color: #176b45;
     }
+
     button {
       width: 100%;
       border: 0;
@@ -67,7 +87,12 @@
       font-weight: bold;
       cursor: pointer;
     }
-    button:disabled { opacity: .6; cursor: wait; }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
     #message {
       display: none;
       margin-top: 16px;
@@ -79,6 +104,7 @@
       line-height: 1.5;
       overflow-wrap: anywhere;
     }
+
     .back {
       display: block;
       margin-top: 22px;
@@ -86,6 +112,7 @@
       color: #176b45;
       font-size: 14px;
     }
+
     .note {
       margin-top: 20px;
       font-size: 12px;
@@ -94,10 +121,13 @@
     }
   </style>
 </head>
+
 <body>
   <main class="card">
     <div class="logo" aria-hidden="true">🍔</div>
+
     <h1>Owners Login</h1>
+
     <p class="intro">
       Sign in to Kota Connect to access your shop owner portal.
     </p>
@@ -121,25 +151,35 @@
         placeholder="Enter your password"
       >
 
-      <button id="login-button" type="submit">Sign In</button>
-      <div id="message" role="alert"></div>
+      <button id="login-button" type="submit">
+        Sign In
+      </button>
+
+      <div id="message" role="alert" aria-live="polite"></div>
     </form>
 
-    <a class="back" href="./index.html">← Back to Kota Connect</a>
+    <a class="back" href="./index.html">
+      ← Back to Kota Connect
+    </a>
 
     <p class="note">
-      Access is for registered shop owners whose shops have been approved.
-      Signing in does not approve a shop.
+      Access is for registered shop owners whose shops have
+      been approved. Signing in does not approve a shop.
     </p>
   </main>
 
   <script type="module">
-    import { initializeApp, getApps }
-      from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      initializeApp,
+      getApps
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
     import {
       getAuth,
-      signInWithEmailAndPassword
+      signInWithEmailAndPassword,
+      signOut
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
     import {
       getFirestore,
       doc,
@@ -153,6 +193,7 @@
       appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
     };
 
+    // Reuse the existing default Firebase app when available.
     const app = getApps().length
       ? getApps()[0]
       : initializeApp(firebaseConfig);
@@ -169,30 +210,63 @@
       message.style.display = "block";
     }
 
+    function isApproved(record) {
+      return record.approved === true ||
+        (
+          typeof record.status === "string" &&
+          record.status.trim().toLowerCase() === "approved"
+        );
+    }
+
+    async function safelySignOut() {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("Owner sign-out error:", error.code || error);
+      }
+    }
+
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+
       message.style.display = "none";
       button.disabled = true;
       button.textContent = "Checking account…";
 
       let signedInUser = null;
+      let stage = "Firebase Authentication sign-in";
 
       try {
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
+        const email =
+          document.getElementById("email").value.trim();
 
+        const password =
+          document.getElementById("password").value;
+
+        // Step 1: Sign in with Firebase Authentication.
         const credential = await signInWithEmailAndPassword(
-          auth, email, password
+          auth,
+          email,
+          password
         );
+
         signedInUser = credential.user;
 
-        // Check the signed-in owner's application and approval.
+        // Step 2: Read this owner's private application.
+        stage = "shop application verification";
+
         const applicationRef = doc(
-          db, "shopApplications", signedInUser.uid
+          db,
+          "shopApplications",
+          signedInUser.uid
         );
+
         const applicationSnapshot = await getDoc(applicationRef);
 
         if (!applicationSnapshot.exists()) {
+          await safelySignOut();
+          signedInUser = null;
+
           showMessage(
             "No shop application was found for this account. " +
             "Please contact the Kota Connect administrator."
@@ -201,75 +275,90 @@
         }
 
         const application = applicationSnapshot.data();
-        const applicationApproved =
-          application.approved === true ||
-          (typeof application.status === "string" &&
-           application.status.toLowerCase() === "approved");
 
-        if (!applicationApproved) {
+        if (!isApproved(application)) {
+          await safelySignOut();
+          signedInUser = null;
+
           showMessage(
-            "Your shop application has not been confirmed as approved. " +
+            "Your shop application is not marked as approved. " +
             "Please contact the Kota Connect administrator."
           );
           return;
         }
 
-        // This check assumes the approved shop document ID is the owner's UID.
-        const shopRef = doc(db, "shops", signedInUser.uid);
+        // Step 3: Read the approved shop using the owner's UID.
+        stage = "approved shop verification";
+
+        const shopRef = doc(
+          db,
+          "shops",
+          signedInUser.uid
+        );
+
         const shopSnapshot = await getDoc(shopRef);
 
         if (!shopSnapshot.exists()) {
+          await safelySignOut();
+          signedInUser = null;
+
           showMessage(
-            "Your application is approved, but the matching shop record " +
-            "could not be found. Please contact the administrator."
+            "Your application is approved, but a matching shop " +
+            "record was not found. Please contact the administrator."
           );
           return;
         }
 
         const shop = shopSnapshot.data();
-        const shopApproved =
-          shop.approved === true ||
-          (typeof shop.status === "string" &&
-           shop.status.toLowerCase() === "approved");
 
-        if (!shopApproved) {
+        if (!isApproved(shop)) {
+          await safelySignOut();
+          signedInUser = null;
+
           showMessage(
             "Your shop record is not marked as approved. " +
-            "Please contact the administrator."
+            "Please contact the Kota Connect administrator."
           );
           return;
         }
 
-        // Keep the dashboard in a separate HTML file.
+        // Step 4: Both records passed their approval checks.
+        // Do not grant access based on a shop name alone.
         window.location.assign("./owners.html");
 
       } catch (error) {
-        console.error("Owner login error:", error);
+        console.error("Owner login error:", {
+          stage,
+          code: error.code || "unknown",
+          message: error.message || "No error message supplied"
+        });
 
-        if (error.code === "auth/invalid-credential" ||
-            error.code === "auth/wrong-password" ||
-            error.code === "auth/user-not-found") {
-          showMessage("The email or password is incorrect.");
+        if (signedInUser) {
+          await safelySignOut();
+          signedInUser = null;
+        }
+
+        if (
+          error.code === "auth/invalid-credential" ||
+          error.code === "auth/wrong-password" ||
+          error.code === "auth/user-not-found" ||
+          error.code === "auth/invalid-email"
+        ) {
+          showMessage(
+            "The email or password is incorrect. " +
+            "Please check your details and try again."
+          );
         } else if (error.code === "auth/too-many-requests") {
           showMessage(
-            "Too many attempts. Please wait before trying again."
+            "Too many sign-in attempts. Please wait before trying again."
           );
         } else {
           showMessage(
-            "We could not verify your login or shop approval. " +
-            "Check your connection and ask the administrator to check " +
-            "Firebase permissions if the problem continues."
+            "Verification failed during " + stage + ". " +
+            "Error code: " + (error.code || "unknown") + ". " +
+            "Please share this error code with the administrator. " +
+            "Do not share your password."
           );
-        }
-
-        // Sign-in may have succeeded even if the approval check failed.
-        // Do not leave an unverified owner signed in on this page.
-        if (signedInUser) {
-          try {
-            await auth.signOut();
-          } catch (signOutError) {
-            console.error("Sign-out error:", signOutError);
-          }
         }
       } finally {
         button.disabled = false;
