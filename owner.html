@@ -1,206 +1,304 @@
 <!doctype html>
 <html lang="en">
 <head>
-<style>
-body { visibility: visible; }
-</style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kota Connect | Owners Dashboard</title>
 <style>
 :root{--green:#176b45;--green2:#e8f5ed;--ink:#17221c;--muted:#6b776f;--line:#e4eae5;--bg:#f6f8f6;--orange:#ef9c36;--white:#fff}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-button,input,select{font:inherit}button{cursor:pointer}.layout{min-height:100vh;display:grid;grid-template-columns:245px 1fr}
-.sidebar{background:#123d2b;color:#fff;padding:26px 18px;display:flex;flex-direction:column;gap:26px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.5px}.logo{width:38px;height:38px;background:#f5b34f;color:#183b2b;border-radius:12px;display:grid;place-items:center;font-size:20px}.brand small{display:block;color:#c2d8ca;font-weight:500;font-size:11px;letter-spacing:1.4px;margin-top:2px}
-.nav{display:grid;gap:7px}.nav button{border:0;color:#d7e7dc;background:transparent;text-align:left;padding:12px 13px;border-radius:10px;display:flex;gap:12px;align-items:center}.nav button.active,.nav button:hover{background:#24563e;color:#fff}.nav .ico{width:22px;text-align:center}.sidebar-foot{margin-top:auto;border-top:1px solid #37634d;padding-top:18px;color:#d7e7dc;font-size:12px;line-height:1.5}
-.main{min-width:0}.topbar{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;gap:14px}.crumb{color:var(--muted);font-size:13px}.owner{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}.avatar{width:37px;height:37px;border-radius:50%;background:#d9eadf;color:#20573b;display:grid;place-items:center;font-weight:800}
-.content{max-width:1320px;margin:0 auto;padding:30px 32px 48px}.heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:25px}.heading h1{margin:0;font-size:28px;letter-spacing:-.8px}.heading p{margin:7px 0 0;color:var(--muted);font-size:14px}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;font-size:13px}.btn-primary{background:var(--green);color:#fff}.btn-light{background:#fff;border:1px solid var(--line);color:var(--ink)}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:15px}.stat{padding:19px}.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px}.stat-icon{height:34px;width:34px;border-radius:10px;background:var(--green2);display:grid;place-items:center}.stat strong{display:block;font-size:27px;letter-spacing:-.7px;margin-top:15px}.stat .hint{font-size:12px;color:var(--muted);margin-top:5px}.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:18px}.panel{overflow:hidden}.panel-head{padding:19px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}.panel-head h2{font-size:16px;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:5px 0 0}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}th,td{text-align:left;padding:14px 17px;border-bottom:1px solid #edf0ed}th{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);background:#fbfcfb}tbody tr:last-child td{border-bottom:0}.customer{font-weight:700}.sub{display:block;font-size:11px;color:var(--muted);margin-top:4px}.status{display:inline-flex;padding:5px 8px;border-radius:99px;font-size:11px;font-weight:700;background:#fff0d8;color:#8c570e}.status.Preparing{background:#e9e7ff;color:#5548a5}.status.Ready{background:#dff4e7;color:#216b43}.status.Completed{background:#e9eeea;color:#56645b}.status.Rejected{background:#ffe5e3;color:#a2352c}.small-select{border:1px solid var(--line);border-radius:8px;padding:7px 8px;background:#fff;font-size:12px}.menu-list{padding:4px 18px}.menu-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #edf0ed}.menu-item:last-child{border:0}.food-icon{width:44px;height:44px;display:grid;place-items:center;background:#fff4df;border-radius:12px;font-size:23px;flex-shrink:0}.food-info{min-width:0;flex:1}.food-info strong{font-size:13px;display:block}.food-info span{font-size:12px;color:var(--muted);display:block;margin-top:4px}.price{font-size:13px;font-weight:800}.toggle{appearance:none;width:36px;height:21px;border-radius:20px;background:#cbd3cd;position:relative;cursor:pointer;flex-shrink:0}.toggle:before{content:"";position:absolute;left:3px;top:3px;width:15px;height:15px;border-radius:50%;background:#fff;transition:.15s}.toggle:checked{background:var(--green)}.toggle:checked:before{left:18px}.quick{display:grid;gap:10px;padding:16px}.quick button{text-align:left;border:1px solid var(--line);background:#fff;border-radius:11px;padding:13px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:13px}.quick button:hover{border-color:#9bc6aa;background:#fbfefc}.quick button span:first-child{font-size:19px;width:25px}.notice{margin-top:18px;padding:13px 15px;background:#fff8e9;border:1px solid #f2dfb8;border-radius:11px;color:#74531c;font-size:12px;line-height:1.5}.section{display:none}.section.active{display:block}.empty{padding:28px;text-align:center;color:var(--muted);font-size:13px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;margin-bottom:13px}.field label{font-size:12px;color:var(--muted);font-weight:700}.field input,.field select{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff}.form-pad{padding:20px}.toast{position:fixed;bottom:20px;right:20px;background:#163f2d;color:#fff;padding:13px 17px;border-radius:10px;box-shadow:0 8px 28px #0002;display:none;font-size:13px;z-index:5}.mobile-menu{display:none}
-@media(max-width:1000px){.layout{grid-template-columns:210px 1fr}.content{padding:24px 20px}.topbar{padding:0 20px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
-@media(max-width:650px){.layout{display:block}.sidebar{display:none}.topbar{height:64px;padding:0 16px}.mobile-menu{display:inline-flex}.content{padding:22px 14px 35px}.heading{align-items:stretch;flex-direction:column}.heading h1{font-size:24px}.heading .btn{align-self:flex-start}.stats{gap:10px}.stat{padding:14px}.stat strong{font-size:23px}.stat-top{font-size:11px}.stat-icon{height:29px;width:29px}.grid{gap:14px}.form-row{grid-template-columns:1fr}.owner .owner-text{display:none}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select{font:inherit}button{cursor:pointer}
+.layout{min-height:100vh;display:grid;grid-template-columns:245px 1fr}
+.sidebar{background:#123d2b;color:#fff;padding:26px 18px;display:flex;flex-direction:column;gap:26px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.5px}
+.logo{width:38px;height:38px;background:#f5b34f;color:#183b2b;border-radius:12px;display:grid;place-items:center;font-size:20px}
+.brand small{display:block;color:#c2d8ca;font-weight:500;font-size:11px;letter-spacing:1.4px;margin-top:2px}
+.nav{display:grid;gap:7px}
+.nav button{border:0;color:#d7e7dc;background:transparent;text-align:left;padding:12px 13px;border-radius:10px;display:flex;gap:12px;align-items:center}
+.nav button.active,.nav button:hover{background:#24563e;color:#fff}
+.nav .ico{width:22px;text-align:center}
+.sidebar-foot{margin-top:auto;border-top:1px solid #37634d;padding-top:18px;color:#d7e7dc;font-size:12px;line-height:1.5}
+.main{min-width:0}
+.topbar{min-height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:12px 32px;gap:14px}
+.crumb{color:var(--muted);font-size:13px}
+.owner{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.avatar{width:37px;height:37px;border-radius:50%;background:#d9eadf;color:#20573b;display:grid;place-items:center;font-weight:800}
+.content{max-width:1320px;margin:0 auto;padding:30px 32px 48px}
+.heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:25px}
+.heading h1{margin:0;font-size:28px;letter-spacing:-.8px}
+.heading p{margin:7px 0 0;color:var(--muted);font-size:14px}
+.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;font-size:13px}
+.btn-primary{background:var(--green);color:#fff}
+.btn-light{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:15px}
+.stat{padding:19px}
+.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px}
+.stat-icon{height:34px;width:34px;border-radius:10px;background:var(--green2);display:grid;place-items:center}
+.stat strong{display:block;font-size:27px;letter-spacing:-.7px;margin-top:15px}
+.stat .hint{font-size:12px;color:var(--muted);margin-top:5px}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:18px}
+.panel{overflow:hidden}
+.panel-head{padding:19px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}
+.panel-head h2{font-size:16px;margin:0}
+.panel-head p{font-size:12px;color:var(--muted);margin:5px 0 0}
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
+th,td{text-align:left;padding:14px 17px;border-bottom:1px solid #edf0ed}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);background:#fbfcfb}
+tbody tr:last-child td{border-bottom:0}
+.customer{font-weight:700}
+.sub{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+.status{display:inline-flex;padding:5px 8px;border-radius:99px;font-size:11px;font-weight:700;background:#fff0d8;color:#8c570e}
+.status.Preparing{background:#e9e7ff;color:#5548a5}
+.status.Ready{background:#dff4e7;color:#216b43}
+.status.Completed{background:#e9eeea;color:#56645b}
+.status.Rejected{background:#ffe5e3;color:#a2352c}
+.small-select{border:1px solid var(--line);border-radius:8px;padding:7px 8px;background:#fff;font-size:12px}
+.menu-list{padding:4px 18px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #edf0ed}
+.menu-item:last-child{border:0}
+.food-icon{width:44px;height:44px;display:grid;place-items:center;background:#fff4df;border-radius:12px;font-size:23px;flex-shrink:0}
+.food-info{min-width:0;flex:1}
+.food-info strong{font-size:13px;display:block}
+.food-info span{font-size:12px;color:var(--muted);display:block;margin-top:4px}
+.price{font-size:13px;font-weight:800}
+.toggle{appearance:none;width:36px;height:21px;border-radius:20px;background:#cbd3cd;position:relative;cursor:pointer;flex-shrink:0}
+.toggle:before{content:"";position:absolute;left:3px;top:3px;width:15px;height:15px;border-radius:50%;background:#fff;transition:.15s}
+.toggle:checked{background:var(--green)}
+.toggle:checked:before{left:18px}
+.quick{display:grid;gap:10px;padding:16px}
+.quick button{text-align:left;border:1px solid var(--line);background:#fff;border-radius:11px;padding:13px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:13px}
+.quick button:hover{border-color:#9bc6aa;background:#fbfefc}
+.quick button span:first-child{font-size:19px;width:25px}
+.notice{margin-top:18px;padding:13px 15px;background:#fff8e9;border:1px solid #f2dfb8;border-radius:11px;color:#74531c;font-size:12px;line-height:1.5}
+.section{display:none}.section.active{display:block}
+.empty{padding:28px;text-align:center;color:var(--muted);font-size:13px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:grid;gap:6px;margin-bottom:13px}
+.field label{font-size:12px;color:var(--muted);font-weight:700}
+.field input,.field select{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.form-pad{padding:20px}
+.toast{position:fixed;bottom:20px;right:20px;background:#163f2d;color:#fff;padding:13px 17px;border-radius:10px;box-shadow:0 8px 28px #0002;display:none;font-size:13px;z-index:5;max-width:calc(100vw - 40px)}
+.mobile-menu{display:none}
+#access-message{display:none}
+@media(max-width:1000px){.layout{grid-template-columns:210px 1fr}.content{padding:24px 20px}.topbar{padding:12px 20px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
+@media(max-width:650px){.layout{display:block}.sidebar{display:none}.sidebar.mobile-open{display:flex}.topbar{min-height:64px;padding:12px 16px}.mobile-menu{display:inline-flex}.content{padding:22px 14px 35px}.heading{align-items:stretch;flex-direction:column}.heading h1{font-size:24px}.heading .btn{align-self:flex-start}.stats{gap:10px}.stat{padding:14px}.stat strong{font-size:23px}.stat-top{font-size:11px}.stat-icon{height:29px;width:29px}.grid{gap:14px}.form-row{grid-template-columns:1fr}.owner .owner-text{display:none}}
 </style>
 </head>
 <body>
-<div class="layout">
-<aside class="sidebar">
+<div id="access-message" role="alert" style="font-family:Arial,sans-serif;padding:30px;max-width:560px;margin:50px auto"></div>
+<div class="layout" id="dashboard-layout">
+<aside class="sidebar" id="sidebar">
   <div class="brand"><div class="logo">🍔</div><div>Kota Connect<small>OWNER PORTAL</small></div></div>
   <nav class="nav" aria-label="Main navigation">
     <button class="active" data-page="overview"><span class="ico">▦</span>Overview</button>
-    <button data-page="orders"><span class="ico">🧾</span>Orders <span id="nav-count" style="margin-left:auto;background:#f5b34f;color:#193b2b;border-radius:20px;padding:2px 7px;font-size:11px">3</span></button>
-    <button data-page="menu"><span class="ico">🍟</span>Menu & prices</button>
+    <button data-page="orders"><span class="ico">🧾</span>Orders <span id="nav-count" style="margin-left:auto;background:#f5b34f;color:#193b2b;border-radius:20px;padding:2px 7px;font-size:11px">0</span></button>
+    <button data-page="menu"><span class="ico">🍟</span>Menu &amp; prices</button>
     <button data-page="profile"><span class="ico">🏪</span>Shop profile</button>
     <button data-page="reports"><span class="ico">📈</span>Sales reports</button>
   </nav>
-
-<div class="sidebar-foot">
-  Signed in as<br>
-  <strong>Demo Kota Shop</strong><br>
-  <span style="color:#a9c7b5">Demo dashboard · sample data</span>
-  <br><br>
-  <button id="sign-out-button" class="btn btn-light" style="width:100%">
-    Sign Out
-  </button>
-</div>
-
+  <div class="sidebar-foot">
+    Signed in as<br><strong id="sidebar-shop-name">Verifying shop…</strong><br>
+    <span style="color:#a9c7b5">Owner portal · demo order data</span>
+    <br><br><button id="sign-out-button" class="btn btn-light" style="width:100%">Sign Out</button>
+  </div>
 </aside>
 <main class="main">
-<header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="btn btn-light mobile-menu" id="mobile-nav">☰ Menu</button><span class="crumb">Kota Connect / <strong id="crumb-current">Overview</strong></span></div><div class="owner"><div class="avatar">DK</div><div class="owner-text">Demo Kota Shop<span class="sub">Shop owner</span></div></div></header>
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="btn btn-light mobile-menu" id="mobile-nav" type="button">☰ Menu</button>
+    <span class="crumb">Kota Connect / <strong id="crumb-current">Overview</strong></span>
+  </div>
+  <div class="owner"><div class="avatar" id="owner-avatar">KC</div><div class="owner-text"><span id="topbar-shop-name">Verifying shop…</span><span class="sub">Shop owner</span></div></div>
+</header>
 <div class="content">
 <section class="section active" id="page-overview">
-  <div class="heading"><div><h1>Good morning, Shop Owner 👋</h1><p>Here's what's happening with your shop today.</p></div><button class="btn btn-primary" onclick="showPage('menu')">＋ Manage menu</button></div>
+  <div class="heading"><div><h1>Welcome to your shop dashboard 👋</h1><p>Review your shop information and explore the dashboard prototype.</p></div><button class="btn btn-primary" type="button" onclick="showPage('menu')">＋ Manage menu</button></div>
   <div class="stats">
-    <div class="stat"><div class="stat-top">Today's sales <span class="stat-icon">💰</span></div><strong id="sales-total">R 845.00</strong><div class="hint">From demo orders</div></div>
-    <div class="stat"><div class="stat-top">New orders <span class="stat-icon">🧾</span></div><strong id="new-orders">3</strong><div class="hint">Need your attention</div></div>
-    <div class="stat"><div class="stat-top">Completed orders <span class="stat-icon">✓</span></div><strong id="completed-orders">8</strong><div class="hint">Today · demo data</div></div>
-    <div class="stat"><div class="stat-top">Menu items <span class="stat-icon">🍔</span></div><strong id="menu-count">6</strong><div class="hint">Items listed in your menu</div></div>
+    <div class="stat"><div class="stat-top">Today's sales <span class="stat-icon">💰</span></div><strong id="sales-total">R 0.00</strong><div class="hint">Demo orders only</div></div>
+    <div class="stat"><div class="stat-top">New orders <span class="stat-icon">🧾</span></div><strong id="new-orders">0</strong><div class="hint">Demo orders only</div></div>
+    <div class="stat"><div class="stat-top">Completed orders <span class="stat-icon">✓</span></div><strong id="completed-orders">0</strong><div class="hint">Demo orders only</div></div>
+    <div class="stat"><div class="stat-top">Menu items <span class="stat-icon">🍔</span></div><strong id="menu-count">6</strong><div class="hint">Sample menu items, not published</div></div>
   </div>
   <div class="grid">
-    <div class="panel"><div class="panel-head"><div><h2>Recent orders</h2><p>Review orders and update their status.</p></div><button class="btn btn-light" onclick="showPage('orders')">View all</button></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Update</th></tr></thead><tbody id="overview-orders"></tbody></table></div></div>
-    <div class="panel"><div class="panel-head"><div><h2>Quick actions</h2><p>Keep your shop up to date.</p></div></div><div class="quick"><button onclick="showPage('orders')"><span>🧾</span><span>Review new orders</span></button><button onclick="showPage('menu')"><span>🍟</span><span>Update menu and prices</span></button><button onclick="showPage('profile')"><span>🏪</span><span>Edit shop details</span></button><button onclick="showPage('reports')"><span>📈</span><span>View sales summary</span></button></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Recent demo orders</h2><p>These are examples, not customer orders.</p></div><button class="btn btn-light" type="button" onclick="showPage('orders')">View all</button></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Update</th></tr></thead><tbody id="overview-orders"></tbody></table></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Quick actions</h2><p>Explore the dashboard prototype.</p></div></div><div class="quick"><button type="button" onclick="showPage('orders')"><span>🧾</span><span>Review demo orders</span></button><button type="button" onclick="showPage('menu')"><span>🍟</span><span>Preview menu tools</span></button><button type="button" onclick="showPage('profile')"><span>🏪</span><span>View shop details</span></button><button type="button" onclick="showPage('reports')"><span>📈</span><span>View demo report</span></button></div></div>
   </div>
-  <div class="notice"><strong>Prototype notice:</strong> This dashboard uses sample data in your browser. Orders, menu changes and profile edits are not sent to a real database yet. Connect a secure backend before using it with real customers.</div>
+  <div class="notice"><strong>Important:</strong> Your sign-in and shop approval are checked with Firebase. Orders, menu items, reports and profile edits below are still demo-only and are not saved to Firestore or published to customers.</div>
 </section>
 <section class="section" id="page-orders">
-  <div class="heading"><div><h1>Orders</h1><p>Manage incoming orders from Kota Connect customers.</p></div><button class="btn btn-light" onclick="resetDemo()">↻ Reset demo</button></div>
-  <div class="panel"><div class="panel-head"><div><h2>All orders</h2><p>Change an order status using the dropdown.</p></div><select class="small-select" id="order-filter" onchange="renderOrders()"><option value="All">All statuses</option><option>Pending</option><option>Preparing</option><option>Ready</option><option>Completed</option><option>Rejected</option></select></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Update status</th></tr></thead><tbody id="all-orders"></tbody></table></div></div>
+  <div class="heading"><div><h1>Demo orders</h1><p>Sample orders to preview the interface. These are not customer orders.</p></div><button class="btn btn-light" type="button" onclick="resetDemo()">↻ Reset demo</button></div>
+  <div class="panel"><div class="panel-head"><div><h2>Sample orders</h2><p>Changes only affect this browser session.</p></div><select class="small-select" id="order-filter" aria-label="Filter demo orders" onchange="renderOrders()"><option value="All">All statuses</option><option>Pending</option><option>Preparing</option><option>Ready</option><option>Completed</option><option>Rejected</option></select></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Update status</th></tr></thead><tbody id="all-orders"></tbody></table></div></div>
 </section>
 <section class="section" id="page-menu">
-  <div class="heading"><div><h1>Menu & prices</h1><p>Add meals, edit prices and toggle item availability.</p></div><button class="btn btn-primary" onclick="document.getElementById('add-item-form').scrollIntoView({behavior:'smooth'})">＋ Add item</button></div>
-  <div class="panel"><div class="panel-head"><div><h2>Your menu</h2><p>Availability changes are saved for this demo session only.</p></div></div><div class="menu-list" id="menu-list"></div></div>
-  <div class="panel" id="add-item-form" style="margin-top:16px"><div class="panel-head"><h2>Add a menu item</h2></div><div class="form-pad"><form id="new-item"><div class="form-row"><div class="field"><label for="item-name">Meal name</label><input id="item-name" required maxlength="50" placeholder="e.g. Cheese Kota"></div><div class="field"><label for="item-price">Price (R)</label><input id="item-price" type="number" required min="1" max="10000" step=".50" placeholder="35.00"></div></div><div class="field"><label for="item-desc">Short description</label><input id="item-desc" maxlength="100" placeholder="What comes with this kota?"></div><button class="btn btn-primary" type="submit">Add to menu</button></form></div></div>
+  <div class="heading"><div><h1>Menu &amp; prices</h1><p>Preview menu tools. Changes are not saved or published.</p></div><button class="btn btn-primary" type="button" onclick="document.getElementById('add-item-form').scrollIntoView({behavior:'smooth'})">＋ Add item</button></div>
+  <div class="panel"><div class="panel-head"><div><h2>Sample menu</h2><p>This sample menu is not your saved Firebase menu.</p></div></div><div class="menu-list" id="menu-list"></div></div>
+  <div class="panel" id="add-item-form" style="margin-top:16px"><div class="panel-head"><h2>Add a sample menu item</h2></div><div class="form-pad"><form id="new-item"><div class="form-row"><div class="field"><label for="item-name">Meal name</label><input id="item-name" required maxlength="50" placeholder="e.g. Cheese Kota"></div><div class="field"><label for="item-price">Price (R)</label><input id="item-price" type="number" required min="1" max="10000" step=".50" placeholder="35.00"></div></div><div class="field"><label for="item-desc">Short description</label><input id="item-desc" maxlength="100" placeholder="What comes with this kota?"></div><button class="btn btn-primary" type="submit">Add sample item</button></form></div></div>
 </section>
 <section class="section" id="page-profile">
-  <div class="heading"><div><h1>Shop profile</h1><p>Keep your public shop information accurate.</p></div></div>
-  <div class="panel"><div class="panel-head"><h2>Business details</h2></div><div class="form-pad"><form id="profile-form"><div class="form-row"><div class="field"><label for="shop-name">Shop name</label><input id="shop-name" value="Demo Kota Shop" required maxlength="70"></div><div class="field"><label for="shop-phone">WhatsApp / phone number</label><input id="shop-phone" type="tel" placeholder="e.g. 071 234 5678"></div></div><div class="form-row"><div class="field"><label for="shop-location">Location / area</label><input id="shop-location" placeholder="e.g. Newcastle, KwaZulu-Natal"></div><div class="field"><label for="shop-hours">Opening hours</label><input id="shop-hours" placeholder="e.g. Mon–Sat, 08:00–18:00"></div></div><div class="field"><label for="shop-description">About your shop</label><input id="shop-description" maxlength="180" placeholder="Tell customers what makes your shop special"></div><button class="btn btn-primary" type="submit">Save profile (demo)”,</button></form></div></div>
-  <div class="notice">Profile edits are only reflected in this prototype. A live public shop page needs a database connection.</div>
+  <div class="heading"><div><h1>Shop profile</h1><p>Details loaded from your approved Firebase shop record where available.</p></div></div>
+  <div class="panel"><div class="panel-head"><h2>Business details</h2></div><div class="form-pad"><form id="profile-form"><div class="form-row"><div class="field"><label for="shop-name">Shop name</label><input id="shop-name" readonly maxlength="70"></div><div class="field"><label for="shop-phone">WhatsApp / phone number</label><input id="shop-phone" readonly type="tel" placeholder="Not set in shop record"></div></div><div class="form-row"><div class="field"><label for="shop-location">Location / area</label><input id="shop-location" readonly placeholder="Not set in shop record"></div><div class="field"><label for="shop-hours">Opening hours</label><input id="shop-hours" readonly placeholder="Not set in shop record"></div></div><div class="field"><label for="shop-description">About your shop</label><input id="shop-description" readonly maxlength="180" placeholder="Not set in shop record"></div><p class="sub">These fields are read-only for now. No changes are saved or published.</p></form></div></div>
+  <div class="notice">Your shop details are read from the approved shop document. Editing and saving them will be added only after the correct Firebase permissions and fields are confirmed.</div>
 </section>
 <section class="section" id="page-reports">
-  <div class="heading"><div><h1>Sales reports</h1><p>A quick snapshot based on the sample orders in this prototype.</p></div></div>
-  <div class="stats"><div class="stat"><div class="stat-top">Recorded order value <span class="stat-icon">💵</span></div><strong id="report-sales">R 845.00</strong><div class="hint">Sample data only</div></div><div class="stat"><div class="stat-top">Orders shown <span class="stat-icon">🧾</span></div><strong id="report-count">5</strong><div class="hint">Demo orders</div></div><div class="stat"><div class="stat-top">Average order <span class="stat-icon">📊</span></div><strong id="report-average">R 169.00</strong><div class="hint">Recorded order value ÷ orders</div></div><div class="stat"><div class="stat-top">Available menu items <span class="stat-icon">🍔</span></div><strong id="report-available">5</strong><div class="hint">Can be ordered in demo</div></div></div>
-  <div class="panel"><div class="panel-head"><div><h2>Order totals</h2><p>Sample order values, not real business revenue.</p></div></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody id="report-orders"></tbody></table></div></div>
+  <div class="heading"><div><h1>Demo sales report</h1><p>Figures are calculated from sample orders, not real business revenue.</p></div></div>
+  <div class="stats"><div class="stat"><div class="stat-top">Sample order value <span class="stat-icon">💵</span></div><strong id="report-sales">R 0.00</strong><div class="hint">Demo data only</div></div><div class="stat"><div class="stat-top">Orders shown <span class="stat-icon">🧾</span></div><strong id="report-count">0</strong><div class="hint">Demo orders only</div></div><div class="stat"><div class="stat-top">Average sample order <span class="stat-icon">📊</span></div><strong id="report-average">R 0.00</strong><div class="hint">Sample total ÷ sample orders</div></div><div class="stat"><div class="stat-top">Available sample items <span class="stat-icon">🍔</span></div><strong id="report-available">0</strong><div class="hint">Not published</div></div></div>
+  <div class="panel"><div class="panel-head"><div><h2>Sample order totals</h2><p>These are example values only.</p></div></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody id="report-orders"></tbody></table></div></div>
 </section>
 </div></main></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
+"use strict";
 const seedOrders=[
-{id:'#KC-1042',customer:'Thando M.',phone:'••• ••• 218',items:'Classic Kota × 2',total:90,status:'Pending'},
-{id:'#KC-1041',customer:'Lerato N.',phone:'••• ••• 604',items:'Cheese Kota × 1, Chips × 1',total:65,status:'Pending'},
-{id:'#KC-1040',customer:'Sibusiso P.',phone:'••• ••• 991',items:'Russian Kota × 2',total:120,status:'Pending'},
-{id:'#KC-1039',customer:'Ayanda D.',phone:'••• ••• 117',items:'Full House Kota × 1',total:75,status:'Preparing'},
-{id:'#KC-1038',customer:'Zanele K.',phone:'••• ••• 440',items:'Classic Kota × 1',total:45,status:'Completed'}
+{id:"#DEMO-1042",customer:"Sample customer A",phone:"Demo only",items:"Classic Kota × 2",total:70,status:"Pending"},
+{id:"#DEMO-1041",customer:"Sample customer B",phone:"Demo only",items:"Cheese Kota × 1, Chips × 1",total:67,status:"Pending"},
+{id:"#DEMO-1040",customer:"Sample customer C",phone:"Demo only",items:"Russian Kota × 2",total:110,status:"Pending"},
+{id:"#DEMO-1039",customer:"Sample customer D",phone:"Demo only",items:"Full House Kota × 1",total:75,status:"Preparing"},
+{id:"#DEMO-1038",customer:"Sample customer E",phone:"Demo only",items:"Classic Kota × 1",total:35,status:"Completed"}
 ];
 const seedMenu=[
-{id:1,name:'Classic Kota',desc:'Polony, chips, atchar and sauces',price:35,available:true,emoji:'🍔'},
-{id:2,name:'Cheese Kota',desc:'Classic kota with melted cheese',price:42,available:true,emoji:'🧀'},
-{id:3,name:'Russian Kota',desc:'Russian, chips and fresh toppings',price:55,available:true,emoji:'🌭'},
-{id:4,name:'Full House Kota',desc:'A loaded kota with all the extras',price:75,available:true,emoji:'🔥'},
-{id:5,name:'Chips',desc:'Freshly fried chips',price:25,available:true,emoji:'🍟'},
-{id:6,name:'Cold drink',desc:'Assorted cold drinks',price:15,available:false,emoji:'🥤'}
+{id:1,name:"Classic Kota",desc:"Polony, chips, atchar and sauces",price:35,available:true,emoji:"🍔"},
+{id:2,name:"Cheese Kota",desc:"Classic kota with melted cheese",price:42,available:true,emoji:"🧀"},
+{id:3,name:"Russian Kota",desc:"Russian, chips and fresh toppings",price:55,available:true,emoji:"🌭"},
+{id:4,name:"Full House Kota",desc:"A loaded kota with all the extras",price:75,available:true,emoji:"🔥"},
+{id:5,name:"Chips",desc:"Freshly fried chips",price:25,available:true,emoji:"🍟"},
+{id:6,name:"Cold drink",desc:"Assorted cold drinks",price:15,available:false,emoji:"🥤"}
 ];
-let orders=structuredClone(seedOrders), menu=structuredClone(seedMenu);
-const money=n=>'R '+Number(n).toFixed(2);
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2500)}
-function showPage(page){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));document.getElementById('crumb-current').textContent=({overview:'Overview',orders:'Orders',menu:'Menu & prices',profile:'Shop profile',reports:'Sales reports'})[page];if(page==='orders')renderOrders();if(page==='menu')renderMenu();if(page==='reports')renderReports();if(page==='overview')renderOverview();window.scrollTo({top:0,behavior:'smooth'})}
-document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
-document.getElementById('mobile-nav').addEventListener('click',()=>{const choices=['overview','orders','menu','profile','reports'];const current=document.querySelector('.section.active').id.replace('page-','');const next=choices[(choices.indexOf(current)+1)%choices.length];showPage(next);toast('Opened '+next)});
-function statusSelect(o){return `<select class="small-select" aria-label="Update ${o.id}" onchange="changeStatus('${o.id}',this.value)">${['Pending','Preparing','Ready','Completed','Rejected'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}</select>`}
-function badge(s){return `<span class="status ${s}">${s}</span>`}
-function renderOverview(){const recent=orders.slice(0,4);document.getElementById('overview-orders').innerHTML=recent.map(o=>`<tr><td><strong>${o.id}</strong><span class="sub">Today</span></td><td><span class="customer">${o.customer}</span></td><td>${money(o.total)}</td><td>${badge(o.status)}</td><td>${statusSelect(o)}</td></tr>`).join('');updateStats()}
-function renderOrders(){const filter=document.getElementById('order-filter').value;const list=orders.filter(o=>filter==='All'||o.status===filter);document.getElementById('all-orders').innerHTML=list.length?list.map(o=>`<tr><td><strong>${o.id}</strong><span class="sub">Today</span></td><td><span class="customer">${o.customer}</span><span class="sub">${o.phone}</span></td><td>${o.items}</td><td><strong>${money(o.total)}</strong></td><td>${badge(o.status)}</td><td>${statusSelect(o)}</td></tr>`).join(''):'<tr><td colspan="6" class="empty">No orders in this status.</td></tr>';updateStats()}
-function changeStatus(id,status){const o=orders.find(x=>x.id===id);if(!o)return;o.status=status;renderOverview();renderOrders();renderReports();toast(`${id} updated to ${status}`)}
-function renderMenu(){document.getElementById('menu-list').innerHTML=menu.map(m=>`<div class="menu-item"><div class="food-icon">${m.emoji||'🍽️'}</div><div class="food-info"><strong>${escapeHtml(m.name)}</strong><span>${escapeHtml(m.desc||'No description added')}</span></div><span class="price">${money(m.price)}</span><label title="${m.available?'Available':'Unavailable'}"><input class="toggle" type="checkbox" ${m.available?'checked':''} onchange="toggleMenu(${m.id},this.checked)" aria-label="Toggle ${escapeHtml(m.name)} availability"></label></div>`).join('');updateStats()}
-function toggleMenu(id,on){const m=menu.find(x=>x.id===id);m.available=on;renderMenu();toast(m.name+' marked '+(on?'available':'unavailable'))}
-function renderReports(){const total=orders.reduce((s,o)=>s+o.total,0);document.getElementById('report-sales').textContent=money(total);document.getElementById('report-count').textContent=orders.length;document.getElementById('report-average').textContent=money(orders.length?total/orders.length:0);document.getElementById('report-available').textContent=menu.filter(m=>m.available).length;document.getElementById('report-orders').innerHTML=orders.map(o=>`<tr><td><strong>${o.id}</strong></td><td>${o.customer}</td><td>${money(o.total)}</td><td>${badge(o.status)}</td></tr>`).join('');updateStats()}
-function updateStats(){document.getElementById('new-orders').textContent=orders.filter(o=>o.status==='Pending').length;document.getElementById('nav-count').textContent=orders.filter(o=>o.status==='Pending').length;document.getElementById('completed-orders').textContent=8+orders.filter(o=>o.status==='Completed').length-1;document.getElementById('menu-count').textContent=menu.length;document.getElementById('sales-total').textContent=money(orders.reduce((s,o)=>s+o.total,0));}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-document.getElementById('new-item').addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('item-name').value.trim(),price=Number(document.getElementById('item-price').value),desc=document.getElementById('item-desc').value.trim();if(!name||!Number.isFinite(price)||price<=0){toast('Enter a valid name and price');return}menu.push({id:Math.max(0,...menu.map(m=>m.id))+1,name,desc,price,available:true,emoji:'🍽️'});e.target.reset();renderMenu();renderReports();toast(name+' added to demo menu')});
-document.getElementById('profile-form').addEventListener('submit',e=>{
-  e.preventDefault();
-  toast('Profile saving is not connected yet. No changes were saved.');
-});
-function resetDemo(){orders=structuredClone(seedOrders);menu=structuredClone(seedMenu);document.getElementById('order-filter').value='All';renderOrders();renderMenu();renderReports();renderOverview();toast('Demo data reset')}
+let orders=seedOrders.map(o=>({...o})),menu=seedMenu.map(m=>({...m}));
+const money=n=>"R "+Number(n).toFixed(2);
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";if(window.toastTimer)clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display="none",2500)}
+function showPage(page){const section=document.getElementById("page-"+page);if(!section)return;document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));section.classList.add("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));const labels={overview:"Overview",orders:"Demo orders",menu:"Menu & prices",profile:"Shop profile",reports:"Demo reports"};document.getElementById("crumb-current").textContent=labels[page]||"Overview";if(page==="orders")renderOrders();if(page==="menu")renderMenu();if(page==="reports")renderReports();if(page==="overview")renderOverview();window.scrollTo({top:0,behavior:"smooth"});document.getElementById("sidebar").classList.remove("mobile-open")}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.getElementById("mobile-nav").addEventListener("click",()=>{const sidebar=document.getElementById("sidebar");if(window.matchMedia("(max-width:650px)").matches){sidebar.classList.toggle("mobile-open")}else{const pages=["overview","orders","menu","profile","reports"];const current=document.querySelector(".section.active").id.replace("page-","");showPage(pages[(pages.indexOf(current)+1)%pages.length])}});
+function statusSelect(o){return `<select class="small-select" aria-label="Update ${escapeHtml(o.id)}" onchange="changeStatus('${escapeHtml(o.id)}',this.value)">${["Pending","Preparing","Ready","Completed","Rejected"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select>`}
+function badge(s){return `<span class="status ${escapeHtml(s)}">${escapeHtml(s)}</span>`}
+function renderOverview(){document.getElementById("overview-orders").innerHTML=orders.slice(0,4).map(o=>`<tr><td><strong>${escapeHtml(o.id)}</strong><span class="sub">Demo</span></td><td><span class="customer">${escapeHtml(o.customer)}</span></td><td>${money(o.total)}</td><td>${badge(o.status)}</td><td>${statusSelect(o)}</td></tr>`).join("");updateStats()}
+function renderOrders(){const filter=document.getElementById("order-filter").value;const list=orders.filter(o=>filter==="All"||o.status===filter);document.getElementById("all-orders").innerHTML=list.length?list.map(o=>`<tr><td><strong>${escapeHtml(o.id)}</strong><span class="sub">Demo</span></td><td><span class="customer">${escapeHtml(o.customer)}</span><span class="sub">${escapeHtml(o.phone)}</span></td><td>${escapeHtml(o.items)}</td><td><strong>${money(o.total)}</strong></td><td>${badge(o.status)}</td><td>${statusSelect(o)}</td></tr>`).join(""):'<tr><td colspan="6" class="empty">No demo orders in this status.</td></tr>';updateStats()}
+function changeStatus(id,status){const o=orders.find(x=>x.id===id);if(!o||!["Pending","Preparing","Ready","Completed","Rejected"].includes(status))return;o.status=status;renderOverview();renderOrders();renderReports();toast("Demo order status updated. Nothing was saved.");}
+function renderMenu(){document.getElementById("menu-list").innerHTML=menu.map(m=>`<div class="menu-item"><div class="food-icon">${m.emoji||"🍽️"}</div><div class="food-info"><strong>${escapeHtml(m.name)}</strong><span>${escapeHtml(m.desc||"No description added")}</span></div><span class="price">${money(m.price)}</span><label title="${m.available?"Available":"Unavailable"}"><input class="toggle" type="checkbox" ${m.available?"checked":""} onchange="toggleMenu(${m.id},this.checked)" aria-label="Toggle ${escapeHtml(m.name)} availability"></label></div>`).join("");updateStats()}
+function toggleMenu(id,on){const m=menu.find(x=>x.id===id);if(!m)return;m.available=on;renderMenu();toast("Demo item availability changed. Nothing was saved.");}
+function renderReports(){const total=orders.reduce((s,o)=>s+o.total,0);document.getElementById("report-sales").textContent=money(total);document.getElementById("report-count").textContent=orders.length;document.getElementById("report-average").textContent=money(orders.length?total/orders.length:0);document.getElementById("report-available").textContent=menu.filter(m=>m.available).length;document.getElementById("report-orders").innerHTML=orders.map(o=>`<tr><td><strong>${escapeHtml(o.id)}</strong></td><td>${escapeHtml(o.customer)}</td><td>${money(o.total)}</td><td>${badge(o.status)}</td></tr>`).join("");updateStats()}
+function updateStats(){document.getElementById("new-orders").textContent=orders.filter(o=>o.status==="Pending").length;document.getElementById("nav-count").textContent=orders.filter(o=>o.status==="Pending").length;document.getElementById("completed-orders").textContent=orders.filter(o=>o.status==="Completed").length;document.getElementById("menu-count").textContent=menu.length;document.getElementById("sales-total").textContent=money(orders.reduce((s,o)=>s+o.total,0))}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+document.getElementById("new-item").addEventListener("submit",e=>{e.preventDefault();const name=document.getElementById("item-name").value.trim(),price=Number(document.getElementById("item-price").value),desc=document.getElementById("item-desc").value.trim();if(!name||!Number.isFinite(price)||price<=0){toast("Enter a valid name and price");return}menu.push({id:Math.max(0,...menu.map(m=>m.id))+1,name,desc,price,available:true,emoji:"🍽️"});e.target.reset();renderMenu();renderReports();toast("Sample item added in this session only.");});
+document.getElementById("profile-form").addEventListener("submit",e=>e.preventDefault());
+function resetDemo(){orders=seedOrders.map(o=>({...o}));menu=seedMenu.map(m=>({...m}));document.getElementById("order-filter").value="All";renderOrders();renderMenu();renderReports();renderOverview();toast("Sample data reset.");}
 renderOverview();renderMenu();renderReports();
 </script>
-  
 <script type="module">
-  import { initializeApp, getApp, getApps }
-    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-  const firebaseConfig = {
-    apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
-    authDomain: "kasikota-hub.firebaseapp.com",
-    projectId: "kasikota-hub",
-    appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+  authDomain: "kasikota-hub.firebaseapp.com",
+  projectId: "kasikota-hub",
+  appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
+};
 
-  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  
-document.getElementById("sign-out-button")
-  .addEventListener("click", async () => {
-    try {
-      await signOut(auth);
-      window.location.replace("./owner-login.html");
-    } catch (error) {
-      console.error("Sign out failed:", error);
-      alert("Unable to sign out. Please try again.");
-    }
-  });
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
+let verificationFinished = false;
 
-  function showAccessError(message) {
-    document.body.style.visibility = "visible";
-    document.body.innerHTML = `
-      <main style="font-family:Arial,sans-serif;padding:30px;max-width:500px;margin:50px auto">
-        <h2>Kota Connect</h2>
-        <p>${message}</p>
-        <a href="./owner-login.html">Return to Owner Login</a>
-      </main>
-    `;
+function showAccessError(message) {
+  document.getElementById("dashboard-layout").style.display = "none";
+  const box = document.getElementById("access-message");
+  box.replaceChildren();
+  const heading = document.createElement("h2");
+  heading.textContent = "Kota Connect";
+  const paragraph = document.createElement("p");
+  paragraph.textContent = message;
+  const link = document.createElement("a");
+  link.href = "./owner-login.html";
+  link.textContent = "Return to Owner Login";
+  box.append(heading, paragraph, link);
+  box.style.display = "block";
+}
+
+async function leaveDashboard() {
+  try { await signOut(auth); } catch (error) { console.error("Sign-out failed:", error); }
+  window.location.replace("./owner-login.html");
+}
+
+document.getElementById("sign-out-button").addEventListener("click", async () => {
+  await leaveDashboard();
+});
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.replace("./owner-login.html");
+    return;
   }
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.replace("./owner-login.html");
+  try {
+    const applicationRef = doc(db, "shopApplications", user.uid);
+    const applicationSnapshot = await getDoc(applicationRef);
+
+    if (!applicationSnapshot.exists()) {
+      await leaveDashboard();
       return;
     }
 
-    
-const applicationRef = doc(db, "shopApplications", user.uid);
-const applicationSnapshot = await getDoc(applicationRef);
+    const applicationData = applicationSnapshot.data();
+    const applicationApproved =
+      applicationData.status === "approved" ||
+      applicationData.approved === true;
 
-if (
-  !applicationSnapshot.exists() ||
-  applicationSnapshot.data().status !== "approved"
-) {
-  await signOut(auth);
-  window.location.replace("./owner-login.html");
-  return;
-}
+    if (!applicationApproved) {
+      await leaveDashboard();
+      return;
+    }
 
-// Find the shop linked to this signed-in owner.
-const shopsQuery = query(
-  collection(db, "shops"),
-  where("ownerUid", "==", user.uid)
-);
+    // The owner's UID is confirmed to be the approved shop document ID.
+    const shopRef = doc(db, "shops", user.uid);
+    const shopSnapshot = await getDoc(shopRef);
 
-const shopsSnapshot = await getDocs(shopsQuery);
+    if (!shopSnapshot.exists()) {
+      showAccessError("Your application appears approved, but the matching shop record was not found. Please contact the Kota Connect administrator. No shop data has been changed.");
+      return;
+    }
 
+    const shopData = shopSnapshot.data();
+    const shopApproved =
+      shopData.approved === true ||
+      (typeof shopData.status === "string" &&
+       shopData.status.toLowerCase() === "approved");
 
+    if (!shopApproved) {
+      showAccessError("Your shop record is not marked as approved. Please contact the Kota Connect administrator. No shop data has been changed.");
+      return;
+    }
 
+    const firstText = (...values) => values.find(v => typeof v === "string" && v.trim())?.trim() || "";
+    const shopName = firstText(shopData.shopName, shopData.name, applicationData.shopName) || "Your Shop";
+    const phone = firstText(shopData.shopPhone, shopData.phone, shopData.whatsapp, shopData.whatsApp, shopData.contactNumber);
+    const location = firstText(shopData.shopAddress, shopData.address, shopData.location, shopData.area);
+    const hours = firstText(shopData.openingHours, shopData.opening_hours, shopData.hours);
+    const description = firstText(shopData.shopDescription, shopData.description, shopData.about);
+
+    document.getElementById("sidebar-shop-name").textContent = shopName;
+    document.getElementById("topbar-shop-name").textContent = shopName;
+    document.getElementById("owner-avatar").textContent =
+      shopName.split(/\s+/).filter(Boolean).slice(0, 2).map(word => word[0].toUpperCase()).join("") || "KC";
+
+    document.getElementById("shop-name").value = shopName;
+    document.getElementById("shop-phone").value = phone;
+    document.getElementById("shop-location").value = location;
+    document.getElementById("shop-hours").value = hours;
+    document.getElementById("shop-description").value = description;
+
+    document.getElementById("dashboard-layout").style.visibility = "visible";
+    verificationFinished = true;
+  } catch (error) {
+    console.error("Dashboard verification failed:", error);
+    showAccessError("We couldn't verify your shop with Firebase. Check your internet connection and try again. If this continues, ask the administrator to check Firestore security rules. No data was changed.");
+  }
+});
+</script>
 </body>
 </html>
