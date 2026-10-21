@@ -163,7 +163,77 @@
     function safeText(value){return String(value??"").replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[character])}
     function normalisePhone(value){let phone=String(value||"").replace(/[^0-9+]/g,"");if(phone.startsWith("+"))phone=phone.slice(1);if(phone.startsWith("0"))phone="27"+phone.slice(1);return/^27\d{9}$/.test(phone)?phone:""}
     function addApprovedShopCard(shop,id){const container=$("approvedShops"),card=document.createElement("article");card.className="kc-shop";card.dataset.approvedShopId=id;const phone=normalisePhone(shop.phone),shopName=safeText(shop.shopName||"Local shop"),address=safeText(shop.address||"Address not provided"),description=safeText(shop.description||"Menu details have not been added yet.");card.innerHTML=`<h3>🍔 ${shopName}</h3><p class="sub">📍 ${address}</p><p>${description.replace(/\n/g,"<br>")}</p><div class="kc-actions"></div><p class="sub">${phone?"Contact: "+safeText(shop.phone):"Contact number not available. Please contact Kota Connect."}</p>`;const actions=card.querySelector(".kc-actions"),choose=document.createElement("button");choose.type="button";choose.className="gold";choose.textContent="Choose this shop to order";choose.addEventListener("click",()=>{const select=$("shopSelect");let option=Array.from(select.options).find(item=>item.value==="approved:"+id);if(!option){option=document.createElement("option");option.value="approved:"+id;option.textContent=shop.shopName||"Local shop";option.dataset.phone=phone;select.appendChild(option)}select.value=option.value;$("itemName").value="";$("itemPrice").value="";calculateTotal();$("order").scrollIntoView({behavior:"smooth"});$("itemName").focus({preventScroll:true)});actions.appendChild(choose);if(phone){const whatsapp=document.createElement("a");whatsapp.className="kc-wa";whatsapp.href="https://wa.me/"+phone;whatsapp.target="_blank";whatsapp.rel="noopener noreferrer";whatsapp.textContent="WhatsApp shop";actions.appendChild(whatsapp)}container.appendChild(card)}
-    function renderApprovedShops(snapshot){const container=$("approvedShops");container.replaceChildren();let count=0;snapshot.forEach(docSnap=>{const shop=docSnap.data();if(String(shop.status||"").toLowerCase()!=="approved")return;addApprovedShopCard(shop,docSnap.id);count++});if(!count){const note=document.createElement("p");note.className="message info";note.textContent="No approved shops are listed yet. Shops will appear here after an administrator approves and publishes their details.";container.appendChild(note)}}
+   
+function addApprovedShopCard(shop, id) {
+  const container = $("approvedShops");
+  const card = document.createElement("article");
+  card.className = "kc-shop";
+  card.dataset.approvedShopId = id;
+
+  const phone = normalisePhone(shop.phone);
+  const shopName = safeText(shop.shopName || "Local shop");
+  const address = safeText(shop.address || "Address not provided");
+  const description = safeText(
+    shop.description || "Menu details have not been added yet."
+  );
+
+  card.innerHTML = `
+    <h3>🍔 ${shopName}</h3>
+    <p class="sub">📍 ${address}</p>
+    <p>${description.replace(/\n/g, "<br>")}</p>
+    <div class="kc-actions"></div>
+    <p class="sub">${
+      phone
+        ? "Contact: " + safeText(shop.phone)
+        : "Contact number not available. Please contact Kota Connect."
+    }</p>
+  `;
+
+  const actions = card.querySelector(".kc-actions");
+  const choose = document.createElement("button");
+
+  choose.type = "button";
+  choose.className = "gold";
+  choose.textContent = "Choose this shop to order";
+
+  choose.addEventListener("click", () => {
+    const select = $("shopSelect");
+
+    let option = Array.from(select.options).find(
+      item => item.value === "approved:" + id
+    );
+
+    if (!option) {
+      option = document.createElement("option");
+      option.value = "approved:" + id;
+      option.textContent = shop.shopName || "Local shop";
+      option.dataset.phone = phone;
+      select.appendChild(option);
+    }
+
+    select.value = option.value;
+    $("itemName").value = "";
+    $("itemPrice").value = "";
+    calculateTotal();
+    $("order").scrollIntoView({ behavior: "smooth" });
+    $("itemName").focus({ preventScroll: true });
+  });
+
+  actions.appendChild(choose);
+
+  if (phone) {
+    const whatsapp = document.createElement("a");
+    whatsapp.className = "kc-wa";
+    whatsapp.href = "https://wa.me/" + phone;
+    whatsapp.target = "_blank";
+    whatsapp.rel = "noopener noreferrer";
+    whatsapp.textContent = "WhatsApp shop";
+    actions.appendChild(whatsapp);
+  }
+
+  container.appendChild(card);
+}
+ function renderApprovedShops(snapshot){const container=$("approvedShops");container.replaceChildren();let count=0;snapshot.forEach(docSnap=>{const shop=docSnap.data();if(String(shop.status||"").toLowerCase()!=="approved")return;addApprovedShopCard(shop,docSnap.id);count++});if(!count){const note=document.createElement("p");note.className="message info";note.textContent="No approved shops are listed yet. Shops will appear here after an administrator approves and publishes their details.";container.appendChild(note)}}
     async function loadOwnerShop(){if(!currentOwner)return;const dashMessage=$("ownerDashboardMessage"),shopForm=$("ownerShopForm"),help=$("ownerDashboardHelp");shopForm.classList.add("hidden");help.textContent="";currentShopId=null;currentShopData=null;if(unsubscribeOwnerShop){unsubscribeOwnerShop();unsubscribeOwnerShop=null}showMessage(dashMessage,"Looking for your shop…","info");try{const shopsQuery=query(collection(db,"shops"),where("ownerUid","==",currentOwner.uid));const snapshot=await getDocsCompat(shopsQuery);if(snapshot.empty){const appSnap=await getDoc(doc(db,"shopApplications",currentOwner.uid));if(appSnap.exists()){const app=appSnap.data();showMessage(dashMessage,"Your account is signed in, but no public shop is linked to it yet. Application status: "+(app.status||"unknown")+". An administrator must publish the shop document in the shops collection and set ownerUid to your UID.","info")}else{showMessage(dashMessage,"We could not find a shop linked to this account. Ask the administrator to check the ownerUid field in Firestore.","error")}return}const match=snapshot.docs.find(d=>d.data().ownerUid===currentOwner.uid);if(!match){showMessage(dashMessage,"No shop linked to this account was found.","error");return}currentShopId=match.id;currentShopData=match.data();$("ownerEditShopName").value=currentShopData.shopName||"";$("ownerEditPhone").value=currentShopData.phone||"";$("ownerEditAddress").value=currentShopData.address||"";$("ownerEditDescription").value=currentShopData.description||"";shopForm.classList.remove("hidden");showMessage(dashMessage,"Your shop is connected. Status: "+(currentShopData.status||"unknown")+".","success");help.textContent="For safety, the dashboard does not let you change approval status or owner UID."}catch(error){console.error("Could not load owner's shop:",error);showMessage(dashMessage,friendlyError(error),"error")}}
     // A small wrapper keeps the query/read logic explicit.
     async function getDocsCompat(q){const {getDocs}=await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");return getDocs(q)}
