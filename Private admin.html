@@ -1,1 +1,198 @@
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176b42">
+  <title>Kota Connect | Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f3f7f4;
+      color: #173b2b;
+    }
+    main {
+      max-width: 700px;
+      margin: 20px auto;
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 3px 14px #00000012;
+    }
+    h1 { color: #176b42; }
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 7px 0;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input { border: 1px solid #aaa; }
+    button {
+      border: 0;
+      background: #176b42;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; }
+    .application {
+      border: 1px solid #d4e3d8;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+      overflow-wrap: anywhere;
+    }
+    .status { color: #555; }
+    #message { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>🍔 Kota Connect Admin</h1>
+  <p>Administrator sign-in and shop application review.</p>
+
+  <section id="loginSection">
+    <label for="email">Admin email</label>
+    <input id="email" type="email" autocomplete="username"
+           placeholder="Enter admin email">
+    <label for="password">Password</label>
+    <input id="password" type="password"
+           autocomplete="current-password" placeholder="Enter password">
+    <button id="loginBtn">Sign in</button>
+  </section>
+
+  <section id="dashboard" hidden>
+    <p id="adminInfo"></p>
+    <button id="refreshBtn">Refresh applications</button>
+    <div id="applications"></div>
+    <button id="logoutBtn">Sign out</button>
+  </section>
+
+  <p id="message" role="status" aria-live="polite"></p>
+  <p><a href="./index.html">← Back to Kota Connect website</a></p>
+</main>
+
+<script type="module">
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+  const ADMIN_UID = "4menEfIBN2XqMMi8dZPSrv73HlQ2";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxaY076gfNFfE3OzxkDJZ5XAdmLEuJzgs",
+    authDomain: "kasikota-hub.firebaseapp.com",
+    projectId: "kasikota-hub",
+    storageBucket: "kasikota-hub.firebasestorage.app",
+    messagingSenderId: "470531130099",
+    appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const message = document.getElementById("message");
+  const loginSection = document.getElementById("loginSection");
+  const dashboard = document.getElementById("dashboard");
+  const applications = document.getElementById("applications");
+
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    message.textContent = "Signing in...";
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        document.getElementById("email").value.trim(),
+        document.getElementById("password").value
+      );
+    } catch (error) {
+      message.textContent = "Sign-in failed: " + error.message;
+    }
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      loginSection.hidden = false;
+      dashboard.hidden = true;
+      return;
+    }
+
+    if (user.uid !== ADMIN_UID) {
+      await signOut(auth);
+      message.textContent =
+        "Access denied. This account is not the configured admin account.";
+      return;
+    }
+
+    loginSection.hidden = true;
+    dashboard.hidden = false;
+    document.getElementById("adminInfo").textContent =
+      "Signed in as administrator: " + user.email;
+    await loadApplications();
+  });
+
+  async function loadApplications() {
+    applications.replaceChildren();
+    message.textContent = "Loading applications...";
+
+    try {
+      const snapshot = await getDocs(collection(db, "shopApplications"));
+      let count = 0;
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (data.status !== "pending") return;
+        count++;
+
+        const card = document.createElement("article");
+        card.className = "application";
+
+        const title = document.createElement("h2");
+        title.textContent = data.shopName || "Unnamed shop";
+
+        const details = document.createElement("p");
+        details.textContent =
+          "Owner: " + (data.ownerName || "Not provided") +
+          " | Email: " + (data.email || "Not provided") +
+          " | Phone: " + (data.phone || "Not provided") +
+          " | Address: " + (data.address || "Not provided");
+
+        const status = document.createElement("p");
+        status.className = "status";
+        status.textContent = "Status: pending";
+
+        card.append(title, details, status);
+        applications.append(card);
+      });
+
+      message.textContent = count
+        ? count + " pending application(s). Review them in Firebase Console for now."
+        : "No pending applications found.";
+    } catch (error) {
+      message.textContent =
+        "Could not load applications. Check Firestore rules and access: " +
+        error.message;
+    }
+  }
+
+  document.getElementById("refreshBtn").addEventListener(
+    "click", loadApplications
+  );
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    message.textContent = "Signed out.";
+  });
+</script>
+</body>
+</html>
