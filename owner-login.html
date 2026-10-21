@@ -1,9 +1,9 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176b45">
   <title>Kota Connect | Owner Login</title>
   <style>
     * { box-sizing: border-box; }
@@ -14,115 +14,268 @@
       place-items: center;
       padding: 20px;
       font-family: Arial, sans-serif;
-      background: #123d32;
-      color: #17372e;
+      background: #f4f8f4;
+      color: #183b2b;
     }
     .card {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
+      background: white;
       padding: 30px;
       border-radius: 18px;
-      background: white;
-      box-shadow: 0 12px 35px #0003;
+      box-shadow: 0 8px 30px #17372915;
+      border: 1px solid #e1eae3;
     }
-    h1 { margin: 0 0 8px; }
-    p { line-height: 1.5; color: #52645d; }
-    label { display: block; margin-top: 18px; font-weight: bold; }
+    .logo {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: #ffc857;
+      font-size: 30px;
+      margin-bottom: 16px;
+    }
+    h1 { margin: 0 0 8px; font-size: 25px; }
+    .intro { color: #66766b; line-height: 1.5; font-size: 14px; }
+    label {
+      display: block;
+      margin: 17px 0 7px;
+      font-weight: bold;
+      font-size: 13px;
+    }
     input {
       width: 100%;
       padding: 13px;
-      margin-top: 7px;
-      border: 1px solid #cbd5d0;
-      border-radius: 8px;
+      border: 1px solid #cfdcd2;
+      border-radius: 9px;
       font-size: 16px;
+    }
+    input:focus {
+      outline: 2px solid #176b45;
+      border-color: #176b45;
     }
     button {
       width: 100%;
-      padding: 14px;
-      margin-top: 22px;
       border: 0;
-      border-radius: 8px;
+      border-radius: 9px;
+      padding: 14px;
+      margin-top: 20px;
       background: #176b45;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
+      cursor: pointer;
     }
-    #message { overflow-wrap: anywhere; }
-    a { color: #176b45; }
+    button:disabled { opacity: .6; cursor: wait; }
+    #message {
+      display: none;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #fff1e9;
+      color: #84391f;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+    .back {
+      display: block;
+      margin-top: 22px;
+      text-align: center;
+      color: #176b45;
+      font-size: 14px;
+    }
+    .note {
+      margin-top: 20px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #66766b;
+    }
   </style>
 </head>
 <body>
   <main class="card">
-    <h1>Kota Connect</h1>
-    <p>Shop Owner Login</p>
+    <div class="logo" aria-hidden="true">🍔</div>
+    <h1>Owners Login</h1>
+    <p class="intro">
+      Sign in to Kota Connect to access your shop owner portal.
+    </p>
 
-    <form id="loginForm">
+    <form id="login-form">
       <label for="email">Email address</label>
-      <input id="email" type="email" autocomplete="username"
-             required>
+      <input
+        id="email"
+        type="email"
+        autocomplete="username"
+        required
+        placeholder="you@example.com"
+      >
 
       <label for="password">Password</label>
-      <input id="password" type="password"
-             autocomplete="current-password" required>
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        required
+        placeholder="Enter your password"
+      >
 
-      <button type="submit" id="loginButton">Sign in</button>
+      <button id="login-button" type="submit">Sign In</button>
+      <div id="message" role="alert"></div>
     </form>
 
-    <p id="message" role="status"></p>
-    <p><a href="./index.html">Back to KasiKota Hub</a></p>
+    <a class="back" href="./index.html">← Back to Kota Connect</a>
+
+    <p class="note">
+      Access is for registered shop owners whose shops have been approved.
+      Signing in does not approve a shop.
+    </p>
   </main>
 
   <script type="module">
-    import { initializeApp }
+    import { initializeApp, getApps }
       from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
     import {
       getAuth,
       signInWithEmailAndPassword
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-    // Replace these placeholders with your Firebase web app config.
     const firebaseConfig = {
-      apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+      apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5XAdmLEuJzgs",
       authDomain: "kasikota-hub.firebaseapp.com",
       projectId: "kasikota-hub",
       appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
     };
 
+    const app = getApps().length
+      ? getApps()[0]
+      : initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("login-form");
+    const button = document.getElementById("login-button");
     const message = document.getElementById("message");
-    const button = document.getElementById("loginButton");
 
-    try {
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
+    function showMessage(text) {
+      message.textContent = text;
+      message.style.display = "block";
+    }
 
-      document.getElementById("loginForm").addEventListener(
-        "submit", async (event) => {
-          event.preventDefault();
-          message.textContent = "";
-          button.disabled = true;
-          button.textContent = "Signing in…";
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      message.style.display = "none";
+      button.disabled = true;
+      button.textContent = "Checking account…";
 
+      let signedInUser = null;
+
+      try {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        const credential = await signInWithEmailAndPassword(
+          auth, email, password
+        );
+        signedInUser = credential.user;
+
+        // Check the signed-in owner's application and approval.
+        const applicationRef = doc(
+          db, "shopApplications", signedInUser.uid
+        );
+        const applicationSnapshot = await getDoc(applicationRef);
+
+        if (!applicationSnapshot.exists()) {
+          showMessage(
+            "No shop application was found for this account. " +
+            "Please contact the Kota Connect administrator."
+          );
+          return;
+        }
+
+        const application = applicationSnapshot.data();
+        const applicationApproved =
+          application.approved === true ||
+          (typeof application.status === "string" &&
+           application.status.toLowerCase() === "approved");
+
+        if (!applicationApproved) {
+          showMessage(
+            "Your shop application has not been confirmed as approved. " +
+            "Please contact the Kota Connect administrator."
+          );
+          return;
+        }
+
+        // This check assumes the approved shop document ID is the owner's UID.
+        const shopRef = doc(db, "shops", signedInUser.uid);
+        const shopSnapshot = await getDoc(shopRef);
+
+        if (!shopSnapshot.exists()) {
+          showMessage(
+            "Your application is approved, but the matching shop record " +
+            "could not be found. Please contact the administrator."
+          );
+          return;
+        }
+
+        const shop = shopSnapshot.data();
+        const shopApproved =
+          shop.approved === true ||
+          (typeof shop.status === "string" &&
+           shop.status.toLowerCase() === "approved");
+
+        if (!shopApproved) {
+          showMessage(
+            "Your shop record is not marked as approved. " +
+            "Please contact the administrator."
+          );
+          return;
+        }
+
+        // Keep the dashboard in a separate HTML file.
+        window.location.assign("./owners.html");
+
+      } catch (error) {
+        console.error("Owner login error:", error);
+
+        if (error.code === "auth/invalid-credential" ||
+            error.code === "auth/wrong-password" ||
+            error.code === "auth/user-not-found") {
+          showMessage("The email or password is incorrect.");
+        } else if (error.code === "auth/too-many-requests") {
+          showMessage(
+            "Too many attempts. Please wait before trying again."
+          );
+        } else {
+          showMessage(
+            "We could not verify your login or shop approval. " +
+            "Check your connection and ask the administrator to check " +
+            "Firebase permissions if the problem continues."
+          );
+        }
+
+        // Sign-in may have succeeded even if the approval check failed.
+        // Do not leave an unverified owner signed in on this page.
+        if (signedInUser) {
           try {
-            await signInWithEmailAndPassword(
-              auth,
-              document.getElementById("email").value.trim(),
-              document.getElementById("password").value
-            );
-
-            window.location.href = "./owners.html";
-          } catch (error) {
-            message.textContent =
-              "Sign-in failed. Check your email and password.";
-          } finally {
-            button.disabled = false;
-            button.textContent = "Sign in";
+            await auth.signOut();
+          } catch (signOutError) {
+            console.error("Sign-out error:", signOutError);
           }
         }
-      );
-    } catch (error) {
-      message.textContent =
-        "Login setup is incomplete. Check the Firebase configuration.";
-    }
+      } finally {
+        button.disabled = false;
+        button.textContent = "Sign In";
+      }
+    });
   </script>
 </body>
 </html>
