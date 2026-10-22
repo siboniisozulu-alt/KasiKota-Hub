@@ -105,10 +105,23 @@
       <select id="area" required><option value="">Select your area</option><option>Newcastle CBD</option><option>Madadeni Section 1</option><option>Madadeni Section 2</option><option>Madadeni Section 3</option><option>Madadeni Section 4</option><option>Madadeni Section 5</option><option>Madadeni Section 6</option><option>Madadeni Section 7</option><option>Osizweni</option><option>Other Newcastle area</option></select>
       <label for="otherArea">Street, section or other location (optional)</label><input id="otherArea" maxlength="150" placeholder="Enter your street or section">
     </section>
-    <section id="shops">
-      <h2>Our Approved Shops</h2><p class="note">Tap an approved shop to open its menu. Tap a price in that menu to order the item through that shop’s WhatsApp.</p>
-      <div id="approvedShops" aria-live="polite"><p class="message info">Loading approved shops…</p></div>
-    </section>
+   
+<section id="shops">
+  <h2>Our Approved Shops</h2>
+  <p class="note">
+    Browse approved local shops, view their menus and prices,
+    and order through WhatsApp.
+  </p>
+
+  <button type="button" id="openApprovedShops">
+    View Approved Shops
+  </button>
+
+  <p id="approvedShopStatus" class="note" aria-live="polite">
+    Loading approved shops…
+  </p>
+</section>
+
     <section id="order">
       <h2>Place Your Order</h2><p class="note">Prepare your order and send it to the shop on WhatsApp. The shop must confirm availability, delivery coverage and acceptance of your order.</p>
       <form id="orderForm" novalidate>
@@ -157,6 +170,30 @@
     <section id="contact"><h2>Contact &amp; Social Media</h2><p>Questions, business registration or partnership enquiries?</p><p class="note">Official contact details and social media links will be added here when confirmed.</p></section>
   </main>
   <footer><h2>Kota Connect</h2><p>Supporting local businesses in Newcastle, KwaZulu-Natal.</p><p>Local shops. Local jobs. Stronger communities. ❤️</p><p>© <span id="year"></span> Kota Connect</p></footer>
+
+<div class="approved-shops-modal hidden"
+     id="approvedShopsModal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="approvedShopsTitle">
+
+  <div class="approved-shops-panel">
+    <div class="shop-menu-top">
+      <h2 id="approvedShopsTitle">Choose an Approved Shop</h2>
+
+      <button type="button"
+              class="shop-menu-close"
+              id="closeApprovedShops"
+              aria-label="Close approved shops">×</button>
+    </div>
+
+    <p class="shop-card-summary">
+      Choose a shop below to see its menu and prices.
+    </p>
+
+    <div id="approvedShopList" class="approved-shop-list"></div>
+  </div>
+</div>
 
   <div class="shop-menu-modal hidden" id="shopMenuModal" role="dialog" aria-modal="true" aria-labelledby="shopMenuTitle">
     <div class="shop-menu-panel">
@@ -551,20 +588,77 @@
     option.dataset.phone = normalisePhone(shop.phone);
   }
 
-  function renderApprovedShops() {
-    const container = $("approvedShops");
-    container.replaceChildren();
+function renderApprovedShops()
+function closeApprovedShopsModal() {
+  $("approvedShopsModal").classList.add("hidden");
+  document.body.classList.remove("modal-open");
+}
 
-    const all = new Map([...statusShopDocs, ...booleanShopDocs]);
-    let count = 0;
+$("openApprovedShops").addEventListener("click", () => {
+  $("approvedShopsModal").classList.remove("hidden");
+  document.body.classList.add("modal-open");
+});
 
-    all.forEach((shop, id) => {
-      if (
-        String(shop.status || "").toLowerCase() !== "approved" &&
-        shop.approved !== true
-      ) {
-        return;
-      }
+$("closeApprovedShops").addEventListener(
+  "click",
+  closeApprovedShopsModal
+);
+
+$("approvedShopsModal").addEventListener("click", event => {
+  if (event.target === $("approvedShopsModal")) {
+    closeApprovedShopsModal();
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (
+    event.key === "Escape" &&
+    !$("approvedShopsModal").classList.contains("hidden")
+  ) {
+    closeApprovedShopsModal();
+  }
+});
+ {
+  const container = $("approvedShopList");
+  const status = $("approvedShopStatus");
+
+  container.replaceChildren();
+
+  const all = new Map([...statusShopDocs, ...booleanShopDocs]);
+  let count = 0;
+
+  all.forEach((shop, id) => {
+    if (
+      String(shop.status || "").toLowerCase() !== "approved" &&
+      shop.approved !== true
+    ) {
+      return;
+    }
+
+    addApprovedShopCard(shop, id);
+    count++;
+  });
+
+  if (!count) {
+    const note = document.createElement("p");
+    note.className = "message info";
+
+    note.textContent =
+      statusQueryFailed && booleanQueryFailed
+        ? "Approved shops could not load. Check your connection and Firestore read permissions."
+        : "No approved shops are listed yet.";
+
+    container.appendChild(note);
+    status.textContent = note.textContent;
+  } else {
+    status.textContent =
+      count + (count === 1
+        ? " approved shop available. Tap the button to browse."
+        : " approved shops available. Tap the button to browse.");
+  }
+}
+
+ 
 
       addApprovedShopCard(shop, id);
       count++;
