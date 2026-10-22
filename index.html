@@ -30,6 +30,59 @@
     .dashboard-field{margin:10px 0}.dashboard-field label{margin-top:0}.dashboard-actions{display:flex;flex-wrap:wrap;gap:8px}.dashboard-actions button{margin:4px 0}.account-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#e8f5eb;padding:12px;border-radius:10px;overflow-wrap:anywhere}
     @media(max-width:480px){header h1{font-size:27px}main{padding:10px}section{padding:14px}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.register-modal{padding:8px}.register-modal-panel{padding:16px;max-height:94vh}}
     @media(max-width:340px){.kc-shop{padding:11px}.kc-shop h3{font-size:16px}.kc-menu-row{gap:6px;font-size:12px}.kc-menu-row button{min-width:48px;padding:7px 6px}}
+
+.approved-shops-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 850;
+  background: #07130ed9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.approved-shops-panel {
+  width: min(100%, 560px);
+  max-height: 90vh;
+  overflow: auto;
+  background: #141414;
+  color: white;
+  border: 2px solid #d9aa22;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 15px 50px #0006;
+}
+.approved-shops-panel h2 {
+  color: #ffca35;
+}
+.approved-shop-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 15px;
+}
+.approved-shop-option {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 14px;
+  text-align: left;
+  background: #242424;
+  border: 1px solid #d9aa22;
+  color: white;
+  border-radius: 10px;
+}
+.approved-shop-option strong {
+  display: block;
+  color: #ffca35;
+  font-size: 17px;
+}
+.approved-shop-option span {
+  display: block;
+  color: #ddd;
+  font-size: 13px;
+  font-weight: normal;
+  margin-top: 4px;
+}
   </style>
 </head>
 <body>
