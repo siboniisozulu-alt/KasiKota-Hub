@@ -20,7 +20,7 @@
 
     header {
       background: #171717;
-      color: white;
+      color: #fff;
       padding: 18px 15px;
       text-align: center;
       border-bottom: 5px solid #ffb300;
@@ -38,7 +38,7 @@
     }
 
     .card {
-      background: white;
+      background: #fff;
       padding: 18px;
       border-radius: 14px;
       margin-bottom: 18px;
@@ -116,11 +116,17 @@
       font-size: .9rem;
     }
 
-    @media (max-width: 420px) {
-      .actions {
-        flex-direction: column;
-        gap: 2px;
-      }
+    .warning {
+      background: #fff3cd;
+      border: 1px solid #e5c56b;
+      padding: 12px;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 480px) {
+      .actions { flex-direction: column; gap: 2px; }
+      .actions button { width: 100%; }
     }
   </style>
 </head>
@@ -128,7 +134,7 @@
 <body>
 <header>
   <h1>🍔 KOTA CONNECT</h1>
-  <p>Admin Dashboard</p>
+  <p>Administrator Dashboard</p>
 </header>
 
 <main>
@@ -165,6 +171,12 @@
     <h2>Shop Applications</h2>
     <p id="signedInAs" class="muted"></p>
 
+    <p class="warning">
+      Approve only genuine applications. Applications with missing or
+      invalid statuses are placed in Needs Checking and cannot be approved
+      from that view.
+    </p>
+
     <div class="actions">
       <button id="pendingButton" type="button">Pending</button>
       <button id="approvedButton" type="button" class="secondary">
@@ -172,6 +184,9 @@
       </button>
       <button id="rejectedButton" type="button" class="secondary">
         Rejected
+      </button>
+      <button id="unknownButton" type="button" class="secondary">
+        Needs Checking
       </button>
     </div>
 
@@ -196,18 +211,18 @@
 (() => {
   "use strict";
 
-  // This UID must match the administrator UID authorised
-  // by your existing Firestore security rules.
+  // Must match the administrator UID in Firebase Authentication
+  // and the isAdmin() function in Firestore security rules.
   const ADMIN_UID = "4menEfIBN2XqMMi8dZPSrv73HlQ2";
 
-const firebaseConfig = {
-    apiKey:"AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
-  authDomain: "kasikota-hub.firebaseapp.com",
-  projectId: "kasikota-hub",
-  storageBucket: "kasikota-hub.firebasestorage.app",
-  messagingSenderId: "470531130099",
-  appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+    authDomain: "kasikota-hub.firebaseapp.com",
+    projectId: "kasikota-hub",
+    storageBucket: "kasikota-hub.firebasestorage.app",
+    messagingSenderId: "470531130099",
+    appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
+  };
 
   const loginCard = document.getElementById("loginCard");
   const dashboard = document.getElementById("dashboard");
@@ -221,6 +236,8 @@ const firebaseConfig = {
   let db;
   let currentFilter = "pending";
   let busy = false;
+  let loading = false;
+  let authReady = false;
 
   function setMessage(text) {
     message.textContent = text;
@@ -230,59 +247,107 @@ const firebaseConfig = {
     loginMessage.textContent = text;
   }
 
+  function normaliseStatus(value) {
+    if (typeof value !== "string") return "unknown";
+
+    const status = value.trim().toLowerCase();
+
+    if (["pending", "approved", "rejected"].includes(status)) {
+      return status;
+    }
+
+    return "unknown";
+  }
+
   function friendlyError(error) {
     console.error("Kota Connect Admin error:", error);
 
-    if (error && error.code === "permission-denied") {
-      return "Firebase denied access. Check the administrator UID and existing Firestore rules.";
+    const code = error && error.code;
+
+    if (code === "permission-denied" ||
+        code === "firestore/permission-denied") {
+      return "Firebase denied access. Check the administrator UID and published Firestore security rules.";
     }
 
-    if (error && error.code === "unauthenticated") {
+    if (code === "unauthenticated" ||
+        code === "firestore/unauthenticated") {
       return "Your session has expired. Please sign in again.";
     }
 
-    if (error && error.code === "unavailable") {
+    if (code === "unavailable" ||
+        code === "firestore/unavailable") {
       return "Firebase is temporarily unavailable. Check your internet connection and retry.";
     }
 
-    if (error && error.code === "failed-precondition") {
-      return "Firestore reported a failed precondition. Check the Firebase console.";
+    if (code === "auth/invalid-credential" ||
+        code === "auth/wrong-password" ||
+        code === "auth/user-not-found" ||
+        code === "auth/invalid-login-credentials") {
+      return "The email or password is incorrect.";
     }
 
-    return error && error.message
-      ? "Operation failed: " + error.message
-      : "The operation failed. Check your connection and try again.";
+    if (code === "auth/too-many-requests") {
+      return "Too many sign-in attempts. Wait a while before trying again.";
+    }
+
+    if (error && error.message) {
+      return "Operation failed: " + error.message;
+    }
+
+    return "The operation failed. Check your connection and try again.";
   }
 
-  function setBusy(value) {
-    busy = value;
+  function updateButtons() {
+    const disabled = busy || loading || !authReady;
 
     [
       "pendingButton",
       "approvedButton",
       "rejectedButton",
+      "unknownButton",
       "refreshButton",
       "logoutButton"
     ].forEach(id => {
-      document.getElementById(id).disabled = value;
+      document.getElementById(id).disabled = disabled;
     });
 
     applications.querySelectorAll("button").forEach(button => {
-      button.disabled = value;
+      button.disabled = busy || loading;
     });
   }
 
-  // Load applications without requiring a createdAt field.
+  function showFilterButtons() {
+    const filters = {
+      pendingButton: "pending",
+      approvedButton: "approved",
+      rejectedButton: "rejected",
+      unknownButton: "unknown"
+    };
+
+    Object.entries(filters).forEach(([id, filter]) => {
+      const button = document.getElementById(id);
+      const selected = currentFilter === filter;
+
+      button.classList.toggle("secondary", !selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+  }
+
   async function loadApplications() {
-    if (!auth.currentUser ||
-        auth.currentUser.uid !== ADMIN_UID) {
+    if (loading || busy) return;
+
+    const user = auth.currentUser;
+
+    if (!user || user.uid !== ADMIN_UID) {
       applications.replaceChildren();
       setMessage("Administrator sign-in is required.");
       return;
     }
 
+    loading = true;
     applications.replaceChildren();
     setMessage("Loading applications...");
+    updateButtons();
 
     try {
       const snapshot = await db
@@ -290,45 +355,43 @@ const firebaseConfig = {
         .get();
 
       const matching = snapshot.docs
-        .filter(doc => {
-          const status = String(
-            doc.data().status || "pending"
-          ).trim().toLowerCase();
-
-          return status === currentFilter;
-        })
+        .map(doc => ({
+          doc,
+          data: doc.data(),
+          status: normaliseStatus(doc.data().status)
+        }))
+        .filter(item => item.status === currentFilter)
         .sort((a, b) => {
-          const aDate = a.data().createdAt;
-          const bDate = b.data().createdAt;
+          const aDate = a.data.createdAt;
+          const bDate = b.data.createdAt;
 
           const aTime =
             aDate && typeof aDate.toMillis === "function"
-              ? aDate.toMillis()
-              : 0;
+              ? aDate.toMillis() : 0;
 
           const bTime =
             bDate && typeof bDate.toMillis === "function"
-              ? bDate.toMillis()
-              : 0;
+              ? bDate.toMillis() : 0;
 
           return bTime - aTime;
         });
 
       if (matching.length === 0) {
+        const detail = currentFilter === "unknown"
+          ? "No applications with missing or invalid statuses were found."
+          : "No " + currentFilter + " applications found.";
+
         setMessage(
-          "No " + currentFilter +
-          " applications found. Total documents in shopApplications: " +
+          detail + " Total documents in shopApplications: " +
           snapshot.size + "."
         );
         return;
       }
 
-      matching.forEach(doc => {
-        const data = doc.data();
-
-        const applicationStatus = String(
-          data.status || "pending"
-        ).trim().toLowerCase();
+      matching.forEach(item => {
+        const doc = item.doc;
+        const data = item.data;
+        const statusValue = item.status;
 
         const card = document.createElement("article");
         card.className = "application";
@@ -339,7 +402,7 @@ const firebaseConfig = {
 
         const status = document.createElement("span");
         status.className = "status";
-        status.textContent = "Status: " + applicationStatus;
+        status.textContent = "Status: " + statusValue;
         card.appendChild(status);
 
         [
@@ -350,12 +413,16 @@ const firebaseConfig = {
           ["Description", data.description]
         ].forEach(([label, value]) => {
           const p = document.createElement("p");
-          p.textContent =
-            label + ": " + (value || "Not provided");
+          p.textContent = label + ": " + (value || "Not provided");
           card.appendChild(p);
         });
 
-        if (applicationStatus === "pending") {
+        const idLine = document.createElement("p");
+        idLine.className = "muted";
+        idLine.textContent = "Application document ID: " + doc.id;
+        card.appendChild(idLine);
+
+        if (statusValue === "pending") {
           const actions = document.createElement("div");
           actions.className = "actions";
 
@@ -379,6 +446,12 @@ const firebaseConfig = {
 
           actions.append(approve, reject);
           card.appendChild(actions);
+        } else if (statusValue === "unknown") {
+          const warning = document.createElement("p");
+          warning.className = "warning";
+          warning.textContent =
+            "This record has no valid status. Check it in Firestore before taking action.";
+          card.appendChild(warning);
         }
 
         applications.appendChild(card);
@@ -391,11 +464,19 @@ const firebaseConfig = {
 
     } catch (error) {
       setMessage(friendlyError(error));
+    } finally {
+      loading = false;
+      updateButtons();
     }
   }
 
   async function reviewApplication(id, newStatus) {
-    if (busy) return;
+    if (busy || loading) return;
+
+    if (!["approved", "rejected"].includes(newStatus)) {
+      setMessage("Invalid review action.");
+      return;
+    }
 
     const user = auth.currentUser;
 
@@ -410,10 +491,12 @@ const firebaseConfig = {
 
     if (!window.confirm(prompt)) return;
 
-    setBusy(true);
+    busy = true;
     setMessage("Processing application...");
+    updateButtons();
 
     try {
+      // Refresh the sign-in token before the privileged operation.
       await user.getIdToken(true);
 
       if (!auth.currentUser ||
@@ -421,16 +504,15 @@ const firebaseConfig = {
         throw new Error("Administrator identity changed.");
       }
 
-      const applicationRef =
-        db.collection("shopApplications").doc(id);
+      const applicationRef = db
+        .collection("shopApplications")
+        .doc(id);
 
-      // This keeps the original document-ID mapping.
-      // Confirm that your registration uses the owner's UID
-      // as the shopApplications document ID before approving.
+      // This design assumes registration creates each application
+      // using the owner's Firebase UID as the document ID.
       const shopRef = db.collection("shops").doc(id);
 
       await db.runTransaction(async transaction => {
-        // Read all required documents before writing.
         const applicationSnapshot =
           await transaction.get(applicationRef);
 
@@ -440,25 +522,38 @@ const firebaseConfig = {
 
         const data = applicationSnapshot.data();
 
-        const existingStatus = String(
-          data.status || "pending"
-        ).trim().toLowerCase();
-
-        if (existingStatus !== "pending") {
+        // Do not treat a missing or invalid status as pending.
+        if (normaliseStatus(data.status) !== "pending") {
           throw new Error(
-            "This application has already been reviewed."
+            "This application is no longer pending. Refresh the dashboard."
           );
         }
 
         if (newStatus === "approved") {
+          if (!id || !data.shopName || !data.email) {
+            throw new Error(
+              "The application is missing its ID, shop name, or email. Check the record before approving."
+            );
+          }
+
+          // Never silently overwrite an existing public shop record.
+          const existingShop = await transaction.get(shopRef);
+
+          if (existingShop.exists) {
+            throw new Error(
+              "A shop record already exists with this document ID. Check the existing shop and owner UID in Firestore before proceeding."
+            );
+          }
+
+          // The application document ID must be the owner's Firebase UID.
           const ownerUid = applicationSnapshot.id;
 
           const shopRecord = {
             ownerUid: ownerUid,
             ownerName: data.ownerName || "",
-            shopName: data.shopName || "",
-            name: data.shopName || "",
-            email: data.email || "",
+            shopName: data.shopName,
+            name: data.shopName,
+            email: data.email,
             phone: data.phone || "",
             address: data.address || "",
             description: data.description || "",
@@ -480,75 +575,82 @@ const firebaseConfig = {
 
       setMessage(
         newStatus === "approved"
-          ? "Application approved and shop record published. Check the public website to confirm it displays correctly."
+          ? "Application approved and shop record published. Check the public website to confirm the shop appears correctly."
           : "Application rejected."
       );
 
-      await loadApplications();
+      // Show the applications in the current tab after the transaction.
+      currentFilter = newStatus;
+      showFilterButtons();
 
     } catch (error) {
       setMessage(friendlyError(error));
     } finally {
-      setBusy(false);
+      busy = false;
+      updateButtons();
+    }
+
+    // Refresh after the operation has finished.
+    if (auth.currentUser && auth.currentUser.uid === ADMIN_UID) {
+      await loadApplications();
     }
   }
 
   async function signIn(event) {
     event.preventDefault();
 
+    if (!authReady) {
+      setLoginMessage("Firebase is still starting. Please retry.");
+      return;
+    }
+
     loginButton.disabled = true;
     setLoginMessage("");
 
     try {
-      await auth.signInWithEmailAndPassword(
-        document.getElementById("email").value.trim(),
-        document.getElementById("password").value
-      );
-    } catch (error) {
-      console.error("Admin sign-in error:", error);
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
-      setLoginMessage(
-        error && error.code === "auth/invalid-credential"
-          ? "The email or password is incorrect."
-          : "Sign-in failed. Check your credentials and Firebase Authentication."
-      );
+      await auth.signInWithEmailAndPassword(email, password);
+    } catch (error) {
+      setLoginMessage(friendlyError(error));
     } finally {
       loginButton.disabled = false;
     }
   }
 
+  function selectFilter(filter) {
+    if (busy || loading) return;
+
+    currentFilter = filter;
+    showFilterButtons();
+    loadApplications();
+  }
+
   loginForm.addEventListener("submit", signIn);
 
   document.getElementById("pendingButton")
-    .addEventListener("click", () => {
-      if (busy) return;
-      currentFilter = "pending";
-      loadApplications();
-    });
+    .addEventListener("click", () => selectFilter("pending"));
 
   document.getElementById("approvedButton")
-    .addEventListener("click", () => {
-      if (busy) return;
-      currentFilter = "approved";
-      loadApplications();
-    });
+    .addEventListener("click", () => selectFilter("approved"));
 
   document.getElementById("rejectedButton")
-    .addEventListener("click", () => {
-      if (busy) return;
-      currentFilter = "rejected";
-      loadApplications();
-    });
+    .addEventListener("click", () => selectFilter("rejected"));
+
+  document.getElementById("unknownButton")
+    .addEventListener("click", () => selectFilter("unknown"));
 
   document.getElementById("refreshButton")
-    .addEventListener("click", () => {
-      if (!busy) loadApplications();
-    });
+    .addEventListener("click", loadApplications);
 
   document.getElementById("logoutButton")
     .addEventListener("click", async () => {
+      if (busy || loading) return;
+
       try {
         await auth.signOut();
+        setMessage("");
       } catch (error) {
         setMessage("Sign-out failed. Please retry.");
         console.error(error);
@@ -564,12 +666,14 @@ const firebaseConfig = {
     db = firebase.firestore();
 
     auth.onAuthStateChanged(async user => {
+      authReady = true;
       applications.replaceChildren();
       setLoginMessage("");
 
       if (!user) {
         loginCard.hidden = false;
         dashboard.hidden = true;
+        updateButtons();
         return;
       }
 
@@ -587,6 +691,7 @@ const firebaseConfig = {
           console.error("Sign-out error:", error);
         }
 
+        updateButtons();
         return;
       }
 
@@ -596,6 +701,8 @@ const firebaseConfig = {
       document.getElementById("signedInAs").textContent =
         "Signed in as: " + (user.email || "Administrator");
 
+      showFilterButtons();
+      updateButtons();
       await loadApplications();
     });
 
@@ -603,6 +710,8 @@ const firebaseConfig = {
     console.error("Firebase initialization error:", error);
 
     loginCard.hidden = false;
+    dashboard.hidden = true;
+
     setLoginMessage(
       "Firebase could not start. Check the project configuration and reload."
     );
