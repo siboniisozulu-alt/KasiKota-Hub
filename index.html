@@ -171,8 +171,7 @@
     function safeText(value){return String(value??"").replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[character])}
     function normalisePhone(value){let phone=String(value||"").replace(/[^0-9+]/g,"");if(phone.startsWith("+"))phone=phone.slice(1);if(phone.startsWith("0"))phone="27"+phone.slice(1);return/^27\d{9}$/.test(phone)?phone:""}
     let activeMenuShop=null;
-
-function parseShopMenu(shopOrDescription) {
+const menu = parseShopMenu(shop);{
   const menu = [];
 
   function addItem(name, price) {
