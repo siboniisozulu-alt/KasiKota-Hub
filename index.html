@@ -163,8 +163,7 @@
     import {initializeApp,getApp,getApps} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
     import {getFirestore,doc,setDoc,serverTimestamp,collection,query,where,onSnapshot,getDoc,updateDoc} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-    const firebaseConfig={apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
-,authDomain:"kasikota-hub.firebaseapp.com",databaseURL:"https://kasikota-hub-default-rtdb.firebaseio.com",projectId:"kasikota-hub",storageBucket:"kasikota-hub.firebasestorage.app",messagingSenderId:"470531130099",appId:"1:470531130099:web:1bf117b7adf7a3a3d7ed86",measurementId:"G-WKH542B38C"};
+    const firebaseConfig={apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",authDomain:"kasikota-hub.firebaseapp.com",databaseURL:"https://kasikota-hub-default-rtdb.firebaseio.com",projectId:"kasikota-hub",storageBucket:"kasikota-hub.firebasestorage.app",messagingSenderId:"470531130099",appId:"1:470531130099:web:1bf117b7adf7a3a3d7ed86",measurementId:"G-WKH542B38C"};
     const form=$("shopRegisterForm"),message=$("shopRegisterMessage"),submitButton=$("registerSubmit");
     let firebaseReady=false,auth,db,currentOwner=null,currentShopId=null,currentShopData=null,unsubscribeOwnerShop=null;
     function showMessage(element,text,type){element.textContent=text;element.className="message "+type}
