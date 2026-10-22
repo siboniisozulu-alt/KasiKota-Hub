@@ -141,7 +141,7 @@
       const title=document.createElement("h3");title.textContent="🍔 "+shopName;card.appendChild(title);
       const address=document.createElement("p");address.className="sub";address.textContent="📍 "+(shop.address||"Address not provided");card.appendChild(address);
       const description=document.createElement("p");description.style.whiteSpace="pre-line";description.textContent=shop.description||"Menu details have not been added yet.";card.appendChild(description);
-      const menu=shopName.toLowerCase().includes("snethemba")?[{name:"Classic Kota",price:20},{name:"Russian Kota",price:25},{name:"Cheesy Egg Kota",price:25},{name:"Boss Kota",price:35},{name:"Chicken Kota",price:35}]:[];
+const menu = [];
       const pricedItems=/(?:^|[;\n])\s*([^;\n–—-]+?)\s*(?:—|–|-|:)\s*R\s*(\d+(?:\.\d{1,2})?)/gi;
       if(menu.length===0){let match;while((match=pricedItems.exec(shop.description||""))!==null){const name=match[1].trim(),price=Number(match[2]);if(name&&Number.isFinite(price)&&price>0)menu.push({name,price})}}
       const actions=document.createElement("div");actions.className="shop-actions";
@@ -155,7 +155,139 @@
     }
     // Keep both common approval schemas compatible: status: "approved" OR approved: true.
     // Documents are merged by ID so a shop matching both queries appears only once.
-    const approvedShopDocs = new Map();
+  
+const approvedShopDocs = new Map();
+const statusShopDocs = new Map();
+const booleanShopDocs = new Map();
+
+let shopStatusQueryFailed = false;
+let shopBooleanQueryFailed = false;
+
+function renderApprovedShops() {
+  const container = $("approvedShops");
+  const select = $("shopSelect");
+  const previousSelection = select.value;
+
+  container.replaceChildren();
+  select.replaceChildren();
+
+  const first = document.createElement("option");
+  first.value = "";
+  first.textContent = "Choose an approved shop";
+  select.appendChild(first);
+
+  approvedShopDocs.clear();
+
+  // Merge both supported approval formats without duplicating shops.
+  statusShopDocs.forEach((shop, id) => approvedShopDocs.set(id, shop));
+  booleanShopDocs.forEach((shop, id) => approvedShopDocs.set(id, shop));
+
+  let count = 0;
+
+  approvedShopDocs.forEach((shop, id) => {
+    const approved =
+      String(shop.status || "").toLowerCase() === "approved" ||
+      shop.approved === true;
+
+    if (!approved) return;
+
+    const option = document.createElement("option");
+    option.value = "approved:" + id;
+    option.textContent = shop.shopName || "Local shop";
+    option.dataset.phone = normalisePhone(shop.phone);
+    select.appendChild(option);
+
+    addApprovedShopCard(shop, id);
+    count++;
+  });
+
+  // Keep the customer's shop selected if it is still approved.
+  if (
+    previousSelection &&
+    Array.from(select.options).some(
+      option => option.value === previousSelection
+    )
+  ) {
+    select.value = previousSelection;
+  }
+
+  if (!count) {
+    const note = document.createElement("p");
+    note.className =
+      "message " +
+      (shopStatusQueryFailed && shopBooleanQueryFailed ? "error" : "info");
+
+    note.textContent =
+      shopStatusQueryFailed && shopBooleanQueryFailed
+        ? "Approved shops could not load. Check your internet connection and Firestore read permissions."
+        : "No approved shops are listed yet.";
+
+    container.appendChild(note);
+  }
+}
+
+function showShopLoadError(error) {
+  console.error("Could not load approved shops:", error);
+  renderApprovedShops();
+}
+
+function receiveApprovedShopSnapshot(snapshot, targetMap) {
+  // Replace the query's complete current result, removing stale records.
+  targetMap.clear();
+
+  snapshot.forEach(docSnap => {
+    targetMap.set(docSnap.id, docSnap.data());
+  });
+
+  renderApprovedShops();
+}
+
+try {
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+  auth = getAuth(app);
+  db = getFirestore(app);
+  firebaseReady = true;
+
+  const statusQuery = query(
+    collection(db, "shops"),
+    where("status", "==", "approved")
+  );
+
+  const booleanQuery = query(
+    collection(db, "shops"),
+    where("approved", "==", true)
+  );
+
+  onSnapshot(
+    statusQuery,
+    snapshot => {
+      shopStatusQueryFailed = false;
+      receiveApprovedShopSnapshot(snapshot, statusShopDocs);
+    },
+    error => {
+      shopStatusQueryFailed = true;
+      showShopLoadError(error);
+    }
+  );
+
+  onSnapshot(
+    booleanQuery,
+    snapshot => {
+      shopBooleanQueryFailed = false;
+      receiveApprovedShopSnapshot(snapshot, booleanShopDocs);
+    },
+    error => {
+      shopBooleanQueryFailed = true;
+      showShopLoadError(error);
+    }
+  );
+} catch (error) {
+  firebaseReady = false;
+  showShopLoadError(error);
+  showMessage(message, friendlyError(error), "error");
+}
+
     let shopStatusQueryLoaded = false;
     let shopBooleanQueryLoaded = false;
     let shopStatusQueryFailed = false;
@@ -187,12 +319,34 @@
     $("ownerSignOutButton").addEventListener("click",async()=>{try{await signOut(auth)}catch(error){showMessage($("ownerDashboardMessage"),friendlyError(error),"error")}});
     $("ownerReloadShopButton").addEventListener("click",loadOwnerShop);
     $("ownerShopForm").addEventListener("submit",async event=>{event.preventDefault();if(!currentOwner||!currentShopId||!currentShopData){showMessage($("ownerDashboardMessage"),"Your shop is not loaded. Reload your shop and try again.","error");return}const button=$("ownerSaveShopButton");button.disabled=true;try{const updated={shopName:$("ownerEditShopName").value.trim(),phone:$("ownerEditPhone").value.trim(),address:$("ownerEditAddress").value.trim(),description:$("ownerEditDescription").value.trim()};if(!updated.shopName||!updated.phone||!updated.address||!updated.description)throw new Error("Please complete all shop fields.");await updateDoc(doc(db,"shops",currentShopId),updated);currentShopData={...currentShopData,...updated};showMessage($("ownerDashboardMessage"),"Shop details saved successfully.","success")}catch(error){showMessage($("ownerDashboardMessage"),friendlyError(error),"error")}finally{button.disabled=false}});
-    onAuthStateChanged(auth,user=>{currentOwner=user||null;if(user){$("ownerSignedOut").classList.add("hidden");$("ownerSignedIn").classList.remove("hidden");$("ownerAccountEmail").textContent="Signed in: "+(user.email||"account");loadOwnerShop()}else{$("ownerSignedOut").classList.remove("hidden");$("ownerSignedIn").classList.add("hidden");$("ownerShopForm").classList.add("hidden");currentShopId=null;currentShopData=null}});
+ 
+if (firebaseReady && auth) {
+  onAuthStateChanged(auth, user => {
+    currentOwner = user || null;
+
+    if (user) {
+      $("ownerSignedOut").classList.add("hidden");
+      $("ownerSignedIn").classList.remove("hidden");
+      $("ownerAccountEmail").textContent =
+        "Signed in: " + (user.email || "account");
+
+      loadOwnerShop();
+    } else {
+      $("ownerSignedOut").classList.remove("hidden");
+      $("ownerSignedIn").classList.add("hidden");
+      $("ownerShopForm").classList.add("hidden");
+
+      currentShopId = null;
+      currentShopData = null;
+    }
+  });
+}
+
     form.addEventListener("submit",async event=>{event.preventDefault();if(!form.reportValidity())return;if(!firebaseReady){showMessage(message,"Registration is unavailable because Firebase did not initialize.","error");return}const email=$("shopEmail").value.trim().toLowerCase(),ownerName=$("ownerName").value.trim(),shopName=$("shopName").value.trim(),phone=$("shopPhone").value.trim(),address=$("shopAddress").value.trim(),description=$("shopDescription").value.trim(),password=$("shopPassword").value;submitButton.disabled=true;showMessage(message,"Creating your account and submitting your application…","info");let createdUid=null;
       try{const credential=await createUserWithEmailAndPassword(auth,email,password);createdUid=credential.user.uid;await setDoc(doc(db,"shopApplications",createdUid),{ownerName,shopName,email:credential.user.email||email,phone,address,description,status:"pending",createdAt:serverTimestamp()});form.reset();showMessage(message,"Application submitted successfully! Your shop is awaiting administrator approval.","success")}
       catch(error){console.error("Shop registration error:",error);if(createdUid)showMessage(message,"Your account was created, but the application could not be saved. Do not create repeated accounts. Ask the administrator to check Firestore permissions.","error");else showMessage(message,friendlyError(error),"error")}
       finally{submitButton.disabled=false}
-    });
+    });ON
   </script>
   <script>
   if ("serviceWorker" in navigator) {
