@@ -159,102 +159,742 @@
     calculateTotal();
   </script>
 
-  <script type="module">
-    import {initializeApp,getApp,getApps} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import {getFirestore,doc,setDoc,serverTimestamp,collection,query,where,onSnapshot,getDoc,updateDoc} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-    const firebaseConfig={apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",authDomain:"kasikota-hub.firebaseapp.com",databaseURL:"https://kasikota-hub-default-rtdb.firebaseio.com",projectId:"kasikota-hub",storageBucket:"kasikota-hub.firebasestorage.app",messagingSenderId:"470531130099",appId:"1:470531130099:web:1bf117b7adf7a3a3d7ed86",measurementId:"G-WKH542B38C"};
-    const form=$("shopRegisterForm"),message=$("shopRegisterMessage"),submitButton=$("registerSubmit");
-    let firebaseReady=false,auth,db,currentOwner=null,currentShopId=null,currentShopData=null,unsubscribeOwnerShop=null;
-    function showMessage(element,text,type){element.textContent=text;element.className="message "+type}
-    function friendlyError(error){const code=error?.code||"";switch(code){case"auth/email-already-in-use":return"This email already has an account. Please sign in with that account.";case"auth/weak-password":return"Please choose a password with at least 6 characters.";case"auth/invalid-email":return"Please enter a valid email address.";case"auth/operation-not-allowed":return"Email/password sign-in is not enabled in Firebase Authentication.";case"auth/network-request-failed":return"Network connection failed. Check your internet connection.";case"auth/too-many-requests":return"Too many attempts. Please wait a while and try again.";case"auth/invalid-credential":case"auth/wrong-password":case"auth/user-not-found":return"Email or password is incorrect. If needed, use Reset Password.";case"permission-denied":case"firestore/permission-denied":return"Firestore denied this action. Check the security rules and that the correct owner UID is saved.";default:return error?.message||"Something went wrong. Please try again."}}
-    function safeText(value){return String(value??"").replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[character])}
-    function normalisePhone(value){let phone=String(value||"").replace(/[^0-9+]/g,"");if(phone.startsWith("+"))phone=phone.slice(1);if(phone.startsWith("0"))phone="27"+phone.slice(1);return/^27\d{9}$/.test(phone)?phone:""}
-    let activeMenuShop=null;
-const menu = parseShopMenu(shop);{
-  const menu = [];
+<script type="module">
+  import {
+    initializeApp,
+    getApp,
+    getApps
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
-  function addItem(name, price) {
-    name = String(name || "").trim();
-    price = Number(price);
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    sendPasswordResetEmail,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-    if (
-      name &&
-      Number.isFinite(price) &&
-      price > 0 &&
-      !menu.some(item => item.name.toLowerCase() === name.toLowerCase())
-    ) {
-      menu.push({ name, price });
+  import {
+    getFirestore,
+    doc,
+    setDoc,
+    serverTimestamp,
+    collection,
+    query,
+    where,
+    onSnapshot,
+    getDoc,
+    getDocs,
+    updateDoc
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+  const money = value => "R" + Number(value).toFixed(2);
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+    authDomain: "kasikota-hub.firebaseapp.com",
+    databaseURL: "https://kasikota-hub-default-rtdb.firebaseio.com",
+    projectId: "kasikota-hub",
+    storageBucket: "kasikota-hub.firebasestorage.app",
+    messagingSenderId: "470531130099",
+    appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86",
+    measurementId: "G-WKH542B38C"
+  };
+
+  let auth;
+  let db;
+  let firebaseReady = false;
+  let currentOwner = null;
+  let currentShopId = null;
+  let currentShopData = null;
+  let activeMenuShop = null;
+  let unsubscribeOwnerShop = null;
+
+  const statusShopDocs = new Map();
+  const booleanShopDocs = new Map();
+  let statusQueryFailed = false;
+  let booleanQueryFailed = false;
+
+  const form = $("shopRegisterForm");
+  const registerMessage = $("shopRegisterMessage");
+  const registerButton = $("registerSubmit");
+
+  function showMessage(element, text, type = "info") {
+    if (!element) return;
+    element.textContent = text;
+    element.className = "message " + type;
+    element.classList.remove("hidden");
+  }
+
+  function friendlyError(error) {
+    const code = error?.code || "";
+
+    switch (code) {
+      case "auth/api-key-not-valid":
+      case "auth/invalid-api-key":
+        return "Firebase rejected the API key. Check the API key restrictions in Google Cloud Console and make sure this key belongs to the kasikota-hub project.";
+
+      case "auth/email-already-in-use":
+        return "This email already has an account. Please sign in with that account.";
+
+      case "auth/weak-password":
+        return "Please choose a password with at least 6 characters.";
+
+      case "auth/invalid-email":
+        return "Please enter a valid email address.";
+
+      case "auth/operation-not-allowed":
+        return "Email/password sign-in is not enabled in Firebase Authentication.";
+
+      case "auth/network-request-failed":
+        return "Network connection failed. Check your internet connection.";
+
+      case "auth/too-many-requests":
+        return "Too many attempts. Please wait a while and try again.";
+
+      case "auth/invalid-credential":
+      case "auth/wrong-password":
+      case "auth/user-not-found":
+        return "Email or password is incorrect. If needed, use Reset Password.";
+
+      case "permission-denied":
+      case "firestore/permission-denied":
+        return "Firestore denied this action. Check the existing security rules and the shop owner UID.";
+
+      default:
+        return error?.message || "Something went wrong. Please try again.";
     }
   }
 
-  const shop = shopOrDescription &&
-    typeof shopOrDescription === "object"
-    ? shopOrDescription
-    : { description: shopOrDescription };
+  function safeText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[character]);
+  }
 
-  const rawMenu = shop.menu;
+  function normalisePhone(value) {
+    let phone = String(value || "").replace(/[^0-9+]/g, "");
 
-  if (Array.isArray(rawMenu)) {
-    rawMenu.forEach(item => {
-      if (typeof item === "string") {
-        // Text-format menu items are parsed below.
+    if (phone.startsWith("+")) phone = phone.slice(1);
+    if (phone.startsWith("0")) phone = "27" + phone.slice(1);
+
+    return /^27\d{9}$/.test(phone) ? phone : "";
+  }
+
+  // Reads menu entries from a Firestore menu field or the shop description.
+  function parseShopMenu(shopOrDescription) {
+    const menu = [];
+
+    function addItem(name, price) {
+      name = String(name || "").trim();
+      price = Number(price);
+
+      if (
+        name &&
+        Number.isFinite(price) &&
+        price > 0 &&
+        !menu.some(item =>
+          item.name.toLowerCase() === name.toLowerCase()
+        )
+      ) {
+        menu.push({ name, price });
+      }
+    }
+
+    const shop =
+      shopOrDescription && typeof shopOrDescription === "object"
+        ? shopOrDescription
+        : { description: shopOrDescription };
+
+    const rawMenu = shop.menu;
+
+    if (Array.isArray(rawMenu)) {
+      rawMenu.forEach(item => {
+        if (typeof item === "object" && item !== null) {
+          addItem(
+            item.name || item.itemName || item.title,
+            item.price ?? item.amount
+          );
+        } else if (typeof item === "string") {
+          // Text entries are handled by the parser below.
+        }
+      });
+    } else if (rawMenu && typeof rawMenu === "object") {
+      Object.entries(rawMenu).forEach(([name, value]) => {
+        addItem(
+          name,
+          typeof value === "object" && value !== null
+            ? value.price ?? value.amount
+            : value
+        );
+      });
+    }
+
+    const text = [
+      typeof rawMenu === "string" ? rawMenu : "",
+      typeof shop.description === "string" ? shop.description : ""
+    ].join("\n");
+
+    const pattern =
+      /(?:^|[;\n])\s*([^;\n–—-]+?)\s*(?:—|–|-|:)\s*R?\s*(\d+(?:\.\d{1,2})?)/gi;
+
+    let match;
+
+    while ((match = pattern.exec(text)) !== null) {
+      addItem(match[1], match[2]);
+    }
+
+    return menu;
+  }
+
+  function closeShopMenu() {
+    $("shopMenuModal").classList.add("hidden");
+    document.body.classList.remove("modal-open");
+    activeMenuShop = null;
+  }
+
+  function openShopMenu(shop, id) {
+    activeMenuShop = {
+      ...shop,
+      id,
+      phone: normalisePhone(shop.phone),
+      shopName: shop.shopName || "Approved shop"
+    };
+
+    $("shopMenuTitle").textContent = activeMenuShop.shopName;
+    $("shopMenuSubtitle").textContent =
+      (shop.address || "Address not provided") +
+      (activeMenuShop.phone ? " · WhatsApp available" : "");
+
+    const list = $("shopMenuList");
+    list.replaceChildren();
+
+    // IMPORTANT: pass the complete shop document, not only its description.
+    const menu = parseShopMenu(shop);
+
+    if (!menu.length) {
+      const note = document.createElement("p");
+      note.className = "shop-price-note";
+      note.textContent =
+        "No confirmed menu prices were found. The shop owner should add menu items and prices to the menu field or description in Firestore.";
+      list.appendChild(note);
+    } else {
+      menu.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "shop-menu-row";
+
+        const info = document.createElement("div");
+        const name = document.createElement("strong");
+        const details = document.createElement("small");
+
+        name.textContent = item.name;
+        details.textContent = "Tap the price to order this item on WhatsApp.";
+        info.append(name, details);
+
+        const price = document.createElement("button");
+        price.type = "button";
+        price.className = "shop-price-button";
+        price.textContent = money(item.price);
+        price.setAttribute(
+          "aria-label",
+          "Order " + item.name + " for " + money(item.price)
+        );
+
+        price.addEventListener("click", () => {
+          if (!activeMenuShop?.phone) {
+            alert("This shop has no valid WhatsApp number listed yet.");
+            return;
+          }
+
+          const message = [
+            "Hi! I want to order from Kota Connect.",
+            "Shop: " + activeMenuShop.shopName,
+            "Item: " + item.name,
+            "Price per item: " + money(item.price),
+            "Quantity: 1",
+            "Please confirm availability. Thank you!"
+          ].join("\n");
+
+          window.open(
+            "https://wa.me/" + activeMenuShop.phone +
+              "?text=" + encodeURIComponent(message),
+            "_blank",
+            "noopener,noreferrer"
+          );
+        });
+
+        row.append(info, price);
+        list.appendChild(row);
+      });
+    }
+
+    $("shopMenuModal").classList.remove("hidden");
+    document.body.classList.add("modal-open");
+  }
+
+  $("closeShopMenu").addEventListener("click", closeShopMenu);
+
+  $("shopMenuModal").addEventListener("click", event => {
+    if (event.target === $("shopMenuModal")) closeShopMenu();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (
+      event.key === "Escape" &&
+      !$("shopMenuModal").classList.contains("hidden")
+    ) {
+      closeShopMenu();
+    }
+  });
+
+  function addApprovedShopCard(shop, id) {
+    const container = $("approvedShops");
+    const card = document.createElement("article");
+
+    card.className = "kc-shop";
+    card.dataset.approvedShopId = id;
+
+    const shopName = safeText(shop.shopName || "Local shop");
+    const address = safeText(shop.address || "Address not provided");
+
+    card.innerHTML = `
+      <h3>🍔 ${shopName}</h3>
+      <p class="sub">📍 ${address}</p>
+      <p class="shop-card-summary">
+        Open this approved shop to see its menu and prices.
+      </p>
+      <button type="button" class="shop-view-button">
+        View Menu &amp; Prices
+      </button>
+    `;
+
+    card.querySelector(".shop-view-button").addEventListener("click", () => {
+      openShopMenu(shop, id);
+    });
+
+    container.appendChild(card);
+
+    // Also populate the order form's shop selector.
+    const select = $("shopSelect");
+    let option = Array.from(select.options).find(
+      existing => existing.value === id
+    );
+
+    if (!option) {
+      option = document.createElement("option");
+      option.value = id;
+      select.appendChild(option);
+    }
+
+    option.textContent = shop.shopName || "Local shop";
+    option.dataset.phone = normalisePhone(shop.phone);
+  }
+
+  function renderApprovedShops() {
+    const container = $("approvedShops");
+    container.replaceChildren();
+
+    const all = new Map([...statusShopDocs, ...booleanShopDocs]);
+    let count = 0;
+
+    all.forEach((shop, id) => {
+      if (
+        String(shop.status || "").toLowerCase() !== "approved" &&
+        shop.approved !== true
+      ) {
         return;
       }
 
-      if (item && typeof item === "object") {
-        addItem(
-          item.name || item.itemName || item.title,
-          item.price ?? item.amount
+      addApprovedShopCard(shop, id);
+      count++;
+    });
+
+    if (!count) {
+      const note = document.createElement("p");
+      note.className =
+        "message " + (statusQueryFailed && booleanQueryFailed ? "error" : "info");
+
+      note.textContent =
+        statusQueryFailed && booleanQueryFailed
+          ? "Approved shops could not load. Check your connection and Firestore read permissions."
+          : "No approved shops are listed yet. Shops will appear here after an administrator approves and publishes their details.";
+
+      container.appendChild(note);
+    }
+  }
+
+  function updateShopSnapshot(snapshot, target) {
+    target.clear();
+
+    snapshot.forEach(docSnap => {
+      target.set(docSnap.id, docSnap.data());
+    });
+
+    renderApprovedShops();
+  }
+
+  async function loadOwnerShop() {
+    if (!currentOwner || !firebaseReady) return;
+
+    const dashMessage = $("ownerDashboardMessage");
+    const shopForm = $("ownerShopForm");
+    const help = $("ownerDashboardHelp");
+
+    shopForm.classList.add("hidden");
+    help.textContent = "";
+    currentShopId = null;
+    currentShopData = null;
+
+    if (unsubscribeOwnerShop) {
+      unsubscribeOwnerShop();
+      unsubscribeOwnerShop = null;
+    }
+
+    showMessage(dashMessage, "Looking for your shop…", "info");
+
+    try {
+      const shopsQuery = query(
+        collection(db, "shops"),
+        where("ownerUid", "==", currentOwner.uid)
+      );
+
+      const snapshot = await getDocs(shopsQuery);
+
+      if (snapshot.empty) {
+        const appSnap = await getDoc(
+          doc(db, "shopApplications", currentOwner.uid)
         );
+
+        if (appSnap.exists()) {
+          const application = appSnap.data();
+
+          showMessage(
+            dashMessage,
+            "Your account is signed in, but no public shop is linked to it yet. Application status: " +
+              (application.status || "unknown") +
+              ". Ask the administrator to check the shop document and ownerUid.",
+            "info"
+          );
+        } else {
+          showMessage(
+            dashMessage,
+            "We could not find a shop linked to this account. Ask the administrator to check ownerUid in Firestore.",
+            "error"
+          );
+        }
+
+        return;
+      }
+
+      const match = snapshot.docs.find(
+        document => document.data().ownerUid === currentOwner.uid
+      );
+
+      if (!match) {
+        showMessage(dashMessage, "No shop linked to this account was found.", "error");
+        return;
+      }
+
+      currentShopId = match.id;
+      currentShopData = match.data();
+
+      $("ownerEditShopName").value = currentShopData.shopName || "";
+      $("ownerEditPhone").value = currentShopData.phone || "";
+      $("ownerEditAddress").value = currentShopData.address || "";
+      $("ownerEditDescription").value = currentShopData.description || "";
+
+      shopForm.classList.remove("hidden");
+
+      showMessage(
+        dashMessage,
+        "Your shop is connected. Status: " +
+          (currentShopData.status || "unknown") + ".",
+        "success"
+      );
+
+      help.textContent =
+        "For safety, this dashboard does not allow changing approval status or owner UID.";
+    } catch (error) {
+      console.error("Could not load owner's shop:", error);
+      showMessage(dashMessage, friendlyError(error), "error");
+    }
+  }
+
+  // Initialise Firebase and listen for approved public shop documents.
+  try {
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+    auth = getAuth(app);
+    db = getFirestore(app);
+    firebaseReady = true;
+
+    onSnapshot(
+      query(collection(db, "shops"), where("status", "==", "approved")),
+      snapshot => {
+        statusQueryFailed = false;
+        updateShopSnapshot(snapshot, statusShopDocs);
+      },
+      error => {
+        statusQueryFailed = true;
+        console.error("Could not load approved shops:", error);
+        renderApprovedShops();
+      }
+    );
+
+    onSnapshot(
+      query(collection(db, "shops"), where("approved", "==", true)),
+      snapshot => {
+        booleanQueryFailed = false;
+        updateShopSnapshot(snapshot, booleanShopDocs);
+      },
+      error => {
+        booleanQueryFailed = true;
+        console.error("Could not load approved=true shops:", error);
+        renderApprovedShops();
+      }
+    );
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
+
+    showMessage(
+      registerMessage,
+      "Firebase could not initialise. Check the Firebase configuration and browser console.",
+      "error"
+    );
+
+    showMessage(
+      $("ownerSignInMessage"),
+      friendlyError(error),
+      "error"
+    );
+  }
+
+  $("ownerSignInForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const signInMessage = $("ownerSignInMessage");
+
+    if (!firebaseReady) {
+      showMessage(signInMessage, "Firebase is not ready. Check the Firebase configuration.", "error");
+      return;
+    }
+
+    const button = $("ownerSignInButton");
+    button.disabled = true;
+
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        $("ownerLoginEmail").value.trim(),
+        $("ownerLoginPassword").value
+      );
+
+      showMessage(signInMessage, "Signed in successfully. Loading your shop…", "success");
+    } catch (error) {
+      showMessage(signInMessage, friendlyError(error), "error");
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  $("forgotPasswordButton").addEventListener("click", async () => {
+    const email = $("ownerLoginEmail").value.trim();
+    const element = $("ownerSignInMessage");
+
+    if (!email) {
+      showMessage(element, "Enter your email address first, then tap Reset Password.", "error");
+      return;
+    }
+
+    if (!firebaseReady) {
+      showMessage(element, "Firebase is not ready. Check the Firebase configuration.", "error");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+
+      showMessage(
+        element,
+        "If an account exists for that email, Firebase will send a password reset email.",
+        "success"
+      );
+    } catch (error) {
+      console.error("Password reset failed:", error);
+      showMessage(element, friendlyError(error), "error");
+    }
+  });
+
+  $("ownerSignOutButton").addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      showMessage($("ownerDashboardMessage"), friendlyError(error), "error");
+    }
+  });
+
+  $("ownerReloadShopButton").addEventListener("click", loadOwnerShop);
+
+  $("ownerShopForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!currentOwner || !currentShopId || !currentShopData) {
+      showMessage(
+        $("ownerDashboardMessage"),
+        "Your shop is not loaded. Reload your shop and try again.",
+        "error"
+      );
+      return;
+    }
+
+    const button = $("ownerSaveShopButton");
+    button.disabled = true;
+
+    try {
+      const updated = {
+        shopName: $("ownerEditShopName").value.trim(),
+        phone: $("ownerEditPhone").value.trim(),
+        address: $("ownerEditAddress").value.trim(),
+        description: $("ownerEditDescription").value.trim()
+      };
+
+      if (!updated.shopName || !updated.phone || !updated.address || !updated.description) {
+        throw new Error("Please complete all shop fields.");
+      }
+
+      await updateDoc(doc(db, "shops", currentShopId), updated);
+
+      currentShopData = { ...currentShopData, ...updated };
+
+      showMessage(
+        $("ownerDashboardMessage"),
+        "Shop details saved successfully.",
+        "success"
+      );
+    } catch (error) {
+      console.error("Saving shop details failed:", error);
+      showMessage($("ownerDashboardMessage"), friendlyError(error), "error");
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  if (firebaseReady) {
+    onAuthStateChanged(auth, user => {
+      currentOwner = user || null;
+
+      if (user) {
+        $("ownerSignedOut").classList.add("hidden");
+        $("ownerSignedIn").classList.remove("hidden");
+        $("ownerAccountEmail").textContent =
+          "Signed in: " + (user.email || "account");
+
+        loadOwnerShop();
+      } else {
+        $("ownerSignedOut").classList.remove("hidden");
+        $("ownerSignedIn").classList.add("hidden");
+        $("ownerShopForm").classList.add("hidden");
+
+        if (unsubscribeOwnerShop) {
+          unsubscribeOwnerShop();
+          unsubscribeOwnerShop = null;
+        }
+
+        currentShopId = null;
+        currentShopData = null;
       }
     });
-  } else if (rawMenu && typeof rawMenu === "object") {
-    Object.entries(rawMenu).forEach(([name, value]) => {
-      addItem(
-        name,
-        typeof value === "object" && value !== null
-          ? value.price ?? value.amount
-          : value
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    if (!firebaseReady) {
+      showMessage(
+        registerMessage,
+        "Registration is unavailable because Firebase did not initialise.",
+        "error"
       );
-    });
-  }
+      return;
+    }
 
-  const text = [
-    typeof rawMenu === "string" ? rawMenu : "",
-    typeof shop.description === "string" ? shop.description : ""
-  ].join("\n");
+    const email = $("shopEmail").value.trim().toLowerCase();
+    const ownerName = $("ownerName").value.trim();
+    const shopName = $("shopName").value.trim();
+    const phone = $("shopPhone").value.trim();
+    const address = $("shopAddress").value.trim();
+    const description = $("shopDescription").value.trim();
+    const password = $("shopPassword").value;
 
-  const pattern =
-    /(?:^|[;\n])\s*([^;\n–—-]+?)\s*(?:—|–|-|:)\s*R?\s*(\d+(?:\.\d{1,2})?)/gi;
+    if (!ownerName || !shopName || !email || !phone || !address || !description || !password) {
+      showMessage(registerMessage, "Please complete every field before submitting.", "error");
+      return;
+    }
 
-  let match;
+    registerButton.disabled = true;
 
-  while ((match = pattern.exec(text)) !== null) {
-    addItem(match[1], match[2]);
-  }
+    showMessage(
+      registerMessage,
+      "Creating your account and submitting your application…",
+      "info"
+    );
 
-  return menu;
-}
+    let createdUid = null;
 
-   const menu=parseShopMenu(shop); ;if(!menu.length){const note=document.createElement("p");note.className="shop-price-note";note.textContent="This shop has not added confirmed menu prices yet. Please check back later or contact the shop owner.";list.appendChild(note)}else{menu.forEach(item=>{const row=document.createElement("div");row.className="shop-menu-row";const info=document.createElement("div"),name=document.createElement("strong"),details=document.createElement("small");name.textContent=item.name;details.textContent="Tap the price to order this item on WhatsApp.";info.append(name,details);const price=document.createElement("button");price.type="button";price.className="shop-price-button";price.textContent=money(item.price);price.setAttribute("aria-label","Order "+item.name+" for "+money(item.price));price.addEventListener("click",()=>{if(!activeMenuShop||!activeMenuShop.phone){alert("This shop has no valid WhatsApp number listed yet.");return}const message=["Hi! I want to order from Kota Connect.","Shop: "+(activeMenuShop.shopName||"Approved shop"),"Item: "+item.name,"Price per item: "+money(item.price),"Quantity: 1","Please confirm availability. Thank you!"].join("\n");window.open("https://wa.me/"+activeMenuShop.phone+"?text="+encodeURIComponent(message),"_blank","noopener,noreferrer")});row.append(info,price);list.appendChild(row)})}modal.classList.remove("hidden");document.body.classList.add("modal-open")}
-    function closeShopMenu(){$("shopMenuModal").classList.add("hidden");document.body.classList.remove("modal-open");activeMenuShop=null}
-    $("closeShopMenu").addEventListener("click",closeShopMenu);$("shopMenuModal").addEventListener("click",event=>{if(event.target===$("shopMenuModal"))closeShopMenu()});document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("shopMenuModal").classList.contains("hidden"))closeShopMenu()});
-    function addApprovedShopCard(shop,id){const container=$("approvedShops"),card=document.createElement("article");card.className="kc-shop";card.dataset.approvedShopId=id;const shopName=safeText(shop.shopName||"Local shop"),address=safeText(shop.address||"Address not provided"),phone=normalisePhone(shop.phone);card.innerHTML=`<h3>🍔 ${shopName}</h3><p class="sub">📍 ${address}</p><p class="shop-card-summary">Open this approved shop to see its menu and prices.</p><button type="button" class="shop-view-button">View Menu &amp; Prices</button>`;card.querySelector(".shop-view-button").addEventListener("click",()=>openShopMenu(shop,id));container.appendChild(card)}
-    const statusShopDocs=new Map(),booleanShopDocs=new Map();let statusQueryFailed=false,booleanQueryFailed=false;
-    function renderApprovedShops(){const container=$("approvedShops");container.replaceChildren();const all=new Map([...statusShopDocs,...booleanShopDocs]);let count=0;all.forEach((shop,id)=>{if(String(shop.status||"").toLowerCase()!=="approved"&&shop.approved!==true)return;addApprovedShopCard(shop,id);count++});if(!count){const note=document.createElement("p");note.className="message "+(statusQueryFailed&&booleanQueryFailed?"error":"info");note.textContent=statusQueryFailed&&booleanQueryFailed?"Approved shops could not load. Check your internet connection and Firestore read permissions.":"No approved shops are listed yet. Shops will appear here after an administrator approves and publishes their details.";container.appendChild(note)}}
-    function updateShopSnapshot(snapshot,target){target.clear();snapshot.forEach(docSnap=>target.set(docSnap.id,docSnap.data()));renderApprovedShops()}
-    async function loadOwnerShop(){if(!currentOwner)return;const dashMessage=$("ownerDashboardMessage"),shopForm=$("ownerShopForm"),help=$("ownerDashboardHelp");shopForm.classList.add("hidden");help.textContent="";currentShopId=null;currentShopData=null;if(unsubscribeOwnerShop){unsubscribeOwnerShop();unsubscribeOwnerShop=null}showMessage(dashMessage,"Looking for your shop…","info");try{const shopsQuery=query(collection(db,"shops"),where("ownerUid","==",currentOwner.uid));const snapshot=await getDocsCompat(shopsQuery);if(snapshot.empty){const appSnap=await getDoc(doc(db,"shopApplications",currentOwner.uid));if(appSnap.exists()){const app=appSnap.data();showMessage(dashMessage,"Your account is signed in, but no public shop is linked to it yet. Application status: "+(app.status||"unknown")+". An administrator must publish the shop document in the shops collection and set ownerUid to your UID.","info")}else{showMessage(dashMessage,"We could not find a shop linked to this account. Ask the administrator to check the ownerUid field in Firestore.","error")}return}const match=snapshot.docs.find(d=>d.data().ownerUid===currentOwner.uid);if(!match){showMessage(dashMessage,"No shop linked to this account was found.","error");return}currentShopId=match.id;currentShopData=match.data();$("ownerEditShopName").value=currentShopData.shopName||"";$("ownerEditPhone").value=currentShopData.phone||"";$("ownerEditAddress").value=currentShopData.address||"";$("ownerEditDescription").value=currentShopData.description||"";shopForm.classList.remove("hidden");showMessage(dashMessage,"Your shop is connected. Status: "+(currentShopData.status||"unknown")+".","success");help.textContent="For safety, the dashboard does not let you change approval status or owner UID."}catch(error){console.error("Could not load owner's shop:",error);showMessage(dashMessage,friendlyError(error),"error")}}
-    // A small wrapper keeps the query/read logic explicit.
-    async function getDocsCompat(q){const {getDocs}=await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");return getDocs(q)}
-    try{const app=getApps().length?getApp():initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);firebaseReady=true;onSnapshot(query(collection(db,"shops"),where("status","==","approved")),snapshot=>{statusQueryFailed=false;updateShopSnapshot(snapshot,statusShopDocs)},error=>{statusQueryFailed=true;console.error("Could not load shops with status=approved:",error);renderApprovedShops()});onSnapshot(query(collection(db,"shops"),where("approved","==",true)),snapshot=>{booleanQueryFailed=false;updateShopSnapshot(snapshot,booleanShopDocs)},error=>{booleanQueryFailed=true;console.error("Could not load shops with approved=true:",error);renderApprovedShops()});}catch(error){console.error("Firebase initialization error:",error);showMessage(message,"Firebase could not initialize. Check the Firebase configuration and serve this page from a web server.","error")}
-    $("ownerSignInForm").addEventListener("submit",async event=>{event.preventDefault();const signInMessage=$("ownerSignInMessage");signInMessage.classList.add("hidden");if(!firebaseReady){showMessage(signInMessage,"Firebase is not ready. Check the Firebase configuration.","error");return}const button=$("ownerSignInButton");button.disabled=true;try{await signInWithEmailAndPassword(auth,$("ownerLoginEmail").value.trim(),$("ownerLoginPassword").value);showMessage(signInMessage,"Signed in successfully. Loading your shop…","success")}catch(error){showMessage(signInMessage,friendlyError(error),"error")}finally{button.disabled=false}});
-    $("forgotPasswordButton").addEventListener("click",async()=>{const email=$("ownerLoginEmail").value.trim(),el=$("ownerSignInMessage");if(!email){showMessage(el,"Enter your email address first, then tap Reset Password.","error");return}try{await sendPasswordResetEmail(auth,email);showMessage(el,"If an account exists for that email, Firebase will send a password reset email.","success")}catch(error){showMessage(el,friendlyError(error),"error")}});
-    $("ownerSignOutButton").addEventListener("click",async()=>{try{await signOut(auth)}catch(error){showMessage($("ownerDashboardMessage"),friendlyError(error),"error")}});
-    $("ownerReloadShopButton").addEventListener("click",loadOwnerShop);
-    $("ownerShopForm").addEventListener("submit",async event=>{event.preventDefault();if(!currentOwner||!currentShopId||!currentShopData){showMessage($("ownerDashboardMessage"),"Your shop is not loaded. Reload your shop and try again.","error");return}const button=$("ownerSaveShopButton");button.disabled=true;try{const updated={shopName:$("ownerEditShopName").value.trim(),phone:$("ownerEditPhone").value.trim(),address:$("ownerEditAddress").value.trim(),description:$("ownerEditDescription").value.trim()};if(!updated.shopName||!updated.phone||!updated.address||!updated.description)throw new Error("Please complete all shop fields.");await updateDoc(doc(db,"shops",currentShopId),updated);currentShopData={...currentShopData,...updated};showMessage($("ownerDashboardMessage"),"Shop details saved successfully.","success")}catch(error){console.error("Saving shop details failed:",error);showMessage($("ownerDashboardMessage"),friendlyError(error),"error")}finally{button.disabled=false}});
-    onAuthStateChanged(auth,user=>{currentOwner=user||null;if(user){$("ownerSignedOut").classList.add("hidden");$("ownerSignedIn").classList.remove("hidden");$("ownerAccountEmail").textContent="Signed in: "+(user.email||"account");loadOwnerShop()}else{$("ownerSignedOut").classList.remove("hidden");$("ownerSignedIn").classList.add("hidden");$("ownerShopForm").classList.add("hidden");if(unsubscribeOwnerShop){unsubscribeOwnerShop();unsubscribeOwnerShop=null}currentShopId=null;currentShopData=null}});
-    form.addEventListener("submit",async event=>{event.preventDefault();if(!form.reportValidity())return;if(!firebaseReady){showMessage(message,"Registration is unavailable because Firebase did not initialize.","error");return}const email=$("shopEmail").value.trim().toLowerCase(),ownerName=$("ownerName").value.trim(),shopName=$("shopName").value.trim(),phone=$("shopPhone").value.trim(),address=$("shopAddress").value.trim(),description=$("shopDescription").value.trim(),password=$("shopPassword").value;if(!ownerName||!shopName||!email||!phone||!address||!description||!password){showMessage(message,"Please complete every field before submitting.","error");return}submitButton.disabled=true;showMessage(message,"Creating your account and submitting your application…","info");let createdUid=null;try{const credential=await createUserWithEmailAndPassword(auth,email,password);createdUid=credential.user.uid;await setDoc(doc(db,"shopApplications",createdUid),{ownerName,shopName,email:credential.user.email||email,phone,address,description,status:"pending",createdAt:serverTimestamp()});form.reset();showMessage(message,"Application submitted successfully! Your shop is awaiting administrator approval.","success")}catch(error){console.error("Shop registration error:",error);if(createdUid)showMessage(message,"Your Firebase account was created, but the application could not be saved. Ask the administrator to check Firestore permissions before trying again.","error");else showMessage(message,friendlyError(error),"error")}finally{submitButton.disabled=false}});
-  </script>
+    try {
+      const credential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      createdUid = credential.user.uid;
+
+      await setDoc(doc(db, "shopApplications", createdUid), {
+        ownerName,
+        shopName,
+        email: credential.user.email || email,
+        phone,
+        address,
+        description,
+        status: "pending",
+        createdAt: serverTimestamp()
+      });
+
+      form.reset();
+
+      showMessage(
+        registerMessage,
+        "Application submitted successfully! Your shop is awaiting administrator approval.",
+        "success"
+      );
+    } catch (error) {
+      console.error("Shop registration error:", error);
+
+      if (createdUid) {
+        showMessage(
+          registerMessage,
+          "Your Firebase account was created, but the application could not be saved. Ask the administrator to check Firestore permissions before trying again.",
+          "error"
+        );
+      } else {
+        showMessage(registerMessage, friendlyError(error), "error");
+      }
+    } finally {
+      registerButton.disabled = false;
+    }
+  });
+</script>
+
 </body>
 </html>
