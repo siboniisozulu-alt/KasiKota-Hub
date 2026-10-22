@@ -179,7 +179,15 @@ renderOverview();renderMenu();renderReports();
       }
 
       const shopData = shopSnapshot.data();
+      
+if (shopData.ownerUid !== user.uid) {
+  showAccessError(
+    "The shop owner verification failed. Please contact the site administrator."
+  );
+  return;
+}
 
+    
       if (
         typeof shopData.status === "string" &&
         shopData.status.toLowerCase() !== "approved"
@@ -197,17 +205,27 @@ renderOverview();renderMenu();renderReports();
           applicationData.shopName.trim()) ||
         "Your Shop";
 
-      const nameElement = document.getElementById("shopName");
+    
+const topNameElement = document.getElementById("top-shop-name");
+if (topNameElement) {
+  topNameElement.replaceChildren(document.createTextNode(shopName));
 
-      if (nameElement) {
-        nameElement.textContent = shopName;
-      }
+  const sub = document.createElement("span");
+  sub.className = "sub";
+  sub.textContent = "Shop owner";
+  topNameElement.appendChild(sub);
+}
 
-      const profileElement = document.getElementById("profileShopName");
+const sidebarNameElement = document.getElementById("sidebar-shop-name");
+if (sidebarNameElement) {
+  sidebarNameElement.textContent = shopName;
+}
 
-      if (profileElement) {
-        profileElement.textContent = shopName;
-      }
+const profileNameInput = document.getElementById("shop-name");
+if (profileNameInput) {
+  profileNameInput.value = shopName;
+}
+
 
       document.body.style.visibility = "visible";
     } catch (error) {
@@ -218,10 +236,22 @@ renderOverview();renderMenu();renderReports();
     }
   });
 
-  window.logout = async function () {
+  
+window.logout = async function () {
+  try {
     await signOut(auth);
     window.location.replace("./owner-login.html");
-  };
+  } catch (error) {
+    console.error("Sign out failed:", error);
+    alert("Could not sign out. Please try again.");
+  }
+};
+
+  
+document.getElementById("sign-out-button")?.addEventListener("click", () => {
+  window.logout();
+});
+
 </script>
 
 </body>
