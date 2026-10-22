@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#176b42">
+<title>Kota Connect | Owners Dashboard</title>
+<style>
+:root{--green:#176b42;--dark:#173729;--cream:#fffaf0;--line:#d7e0d9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--dark);font:16px/1.5 Arial,sans-serif}
+header{background:var(--dark);color:white;text-align:center;padding:22px 14px}
+header h1{margin:0;color:#ffc857}
+main{max-width:680px;margin:22px auto;padding:0 14px}
+.card{background:white;padding:20px;border-radius:14px;margin-bottom:18px;box-shadow:0 2px 10px #17372912}
+h2{color:var(--green);margin-top:0}
+label{display:block;font-weight:bold;margin:12px 0 5px}
+input,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font:inherit}
+textarea{resize:vertical}
+button,.link{display:inline-block;border:0;border-radius:8px;padding:12px 15px;margin:8px 5px 0 0;background:var(--green);color:white;font-weight:bold;font-size:15px;text-decoration:none;cursor:pointer}
+.secondary{background:var(--dark)}
+button:disabled{opacity:.6}
+.note{font-size:14px;color:#66736b}
+.message{padding:12px;border-radius:8px;overflow-wrap:anywhere;background:#fff4d6;color:#5b4300}
+.success{background:#e8f5eb;color:#176b42}
+.error{background:#fff0f0;color:#9b1c1c}
+.hidden{display:none!important}
+.account{background:#e8f5eb;padding:12px;border-radius:8px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header>
+  <h1>🥪 KOTA CONNECT</h1>
+  <p>Owners Dashboard</p>
+</header>
+<main>
+  <p><a class="link secondary" href="./">← Back to Kota Connect</a></p>
+
+  <section class="card">
+    <h2>Owner Sign In</h2>
+    <p class="note">Use the email and password you used to register your shop.</p>
+    <form id="signInForm">
+      <label for="email">Email address</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button id="signInButton" type="submit">Sign In</button>
+      <button id="resetButton" class="secondary" type="button">Reset Password</button>
+    </form>
+    <p id="signInMessage" class="message hidden" role="status"></p>
+  </section>
+
+  <section id="dashboard" class="card hidden">
+    <h2>My Shop</h2>
+    <div class="account">
+      <span id="accountEmail"></span>
+      <button id="signOutButton" class="secondary" type="button">Sign Out</button>
+    </div>
+    <p id="shopMessage" class="message" role="status">Loading your shop…</p>
+
+    <form id="shopForm" class="hidden">
+      <label for="shopName">Shop name</label>
+      <input id="shopName" maxlength="100" required>
+
+      <label for="phone">WhatsApp / phone number</label>
+      <input id="phone" type="tel" maxlength="25" required>
+
+      <label for="address">Shop address</label>
+      <input id="address" maxlength="200" required>
+
+      <label for="description">Shop and menu description</label>
+      <textarea id="description" rows="7" maxlength="1500" required></textarea>
+
+      <p class="note">Only enter information intended to be shown publicly. Shop approval and ownership cannot be changed here.</p>
+      <button id="saveButton" type="submit">Save Shop Details</button>
+      <button id="reloadButton" class="secondary" type="button">Reload My Shop</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <p class="note">This page uses your existing Kota Connect Firebase project. Shop updates remain subject to your Firestore security rules.</p>
+  </section>
+</main>
+
+<script type="module">
+import {initializeApp, getApps, getApp}
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut,
+  sendPasswordResetEmail, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {
+  getFirestore, collection, query, where, getDocs,
+  getDoc, doc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+  authDomain: "kasikota-hub.firebaseapp.com",
+  databaseURL: "https://kasikota-hub-default-rtdb.firebaseio.com",
+  projectId: "kasikota-hub",
+  storageBucket: "kasikota-hub.firebasestorage.app",
+  messagingSenderId: "470531130099",
+  appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86",
+  measurementId: "G-WKH542B38C"
+};
+
+let auth, db, owner = null, shopId = null, shopData = null;
+
+function message(element, text, type = "") {
+  element.textContent = text;
+  element.className = "message" + (type ? " " + type : "");
+}
+
+function errorText(error) {
+  console.error("Kota Connect:", error);
+  if (error.code === "auth/invalid-credential")
+    return "Email or password is incorrect. Try Reset Password if needed.";
+  if (error.code === "auth/too-many-requests")
+    return "Too many attempts. Please wait and try again.";
+  if (error.code === "auth/network-request-failed")
+    return "Connection failed. Check your internet.";
+  if (error.code === "permission-denied" ||
+      error.code === "firestore/permission-denied")
+    return "Firebase access denied. Your current Firestore rules may block this action.";
+  return error.message || "Something went wrong. Please try again.";
+}
+
+async function loadShop() {
+  if (!owner) return;
+
+  shopId = null;
+  shopData = null;
+  $("shopForm").classList.add("hidden");
+  message($("shopMessage"), "Looking for your shop…");
+
+  try {
+    const shopQuery = query(
+      collection(db, "shops"),
+      where("ownerUid", "==", owner.uid)
+    );
+    const result = await getDocs(shopQuery);
+
+    if (result.empty) {
+      const application = await getDoc(
+        doc(db, "shopApplications", owner.uid)
+      );
+      if (application.exists()) {
+        message(
+          $("shopMessage"),
+          "No published shop is linked to this account yet. Application status: " +
+          (application.data().status || "unknown") +
+          ". Please ask the administrator to check your shop link."
+        );
+      } else {
+        message(
+          $("shopMessage"),
+          "No shop is linked to this account. Ask the administrator to check the owner UID.",
+          "error"
+        );
+      }
+      return;
+    }
+
+    const resultDoc = result.docs[0];
+    shopId = resultDoc.id;
+    shopData = resultDoc.data();
+
+    $("shopName").value = shopData.shopName || "";
+    $("phone").value = shopData.phone || "";
+    $("address").value = shopData.address || "";
+    $("description").value = shopData.description || "";
+
+    $("shopForm").classList.remove("hidden");
+    message(
+      $("shopMessage"),
+      "Your shop is connected. Status: " +
+      (shopData.status || "unknown") + ".",
+      "success"
+    );
+  } catch (error) {
+    message($("shopMessage"), errorText(error), "error");
+  }
+}
+
+try {
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+} catch (error) {
+  message($("signInMessage"), errorText(error), "error");
+}
+
+$("signInForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  $("signInButton").disabled = true;
+  try {
+    await signInWithEmailAndPassword(
+      auth, $("email").value.trim(), $("password").value
+    );
+    message($("signInMessage"), "Sign-in successful.", "success");
+  } catch (error) {
+    message($("signInMessage"), errorText(error), "error");
+  } finally {
+    $("signInButton").disabled = false;
+  }
+});
+
+$("resetButton").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+  if (!email) {
+    message($("signInMessage"), "Enter your email address first.", "error");
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    message(
+      $("signInMessage"),
+      "If the account exists, Firebase will send a password reset email.",
+      "success"
+    );
+  } catch (error) {
+    message($("signInMessage"), errorText(error), "error");
+  }
+});
+
+$("signOutButton").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    message($("shopMessage"), errorText(error), "error");
+  }
+});
+
+$("reloadButton").addEventListener("click", loadShop);
+
+$("shopForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!owner || !shopId || !shopData) {
+    message($("shopMessage"), "Reload your shop before saving.", "error");
+    return;
+  }
+
+  const updated = {
+    shopName: $("shopName").value.trim(),
+    phone: $("phone").value.trim(),
+    address: $("address").value.trim(),
+    description: $("description").value.trim()
+  };
+
+  if (Object.values(updated).some(value => !value)) {
+    message($("shopMessage"), "Please complete every field.", "error");
+    return;
+  }
+
+  $("saveButton").disabled = true;
+  try {
+    await updateDoc(doc(db, "shops", shopId), updated);
+    shopData = { ...shopData, ...updated };
+    message($("shopMessage"), "Shop details saved successfully.", "success");
+  } catch (error) {
+    message($("shopMessage"), errorText(error), "error");
+  } finally {
+    $("saveButton").disabled = false;
+  }
+});
+
+onAuthStateChanged(auth, user => {
+  owner = user || null;
+  $("dashboard").classList.toggle("hidden", !user);
+
+  if (user) {
+    $("accountEmail").textContent = "Signed in: " + (user.email || "");
+    loadShop();
+  } else {
+    $("shopForm").classList.add("hidden");
+    shopId = null;
+    shopData = null;
+  }
+});
+</script>
+</body>
+</html>
