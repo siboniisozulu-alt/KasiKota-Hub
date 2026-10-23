@@ -62,6 +62,19 @@
     <div class="actions"><button id="save" class="btn primary" type="submit">Save shop changes</button><button id="reload" class="btn light" type="button">Reload saved details</button></div>
   </form>
 
+  <div class="card" id="commission-report-card">
+    <h2>Commission report</h2>
+    <p class="muted">Planning rate: R0.50 per completed order with a confirmed final total. Only explicitly marked live orders are included. Incomplete records, test orders and unconfirmed totals are excluded. This report does not collect money or record a payment.</p>
+    <div class="row">
+      <div class="field"><label>Completed orders</label><strong id="commission-completed-count">0</strong></div>
+      <div class="field"><label>Confirmed completed sales</label><strong id="commission-sales-total">R0.00</strong></div>
+      <div class="field"><label>Commission accrued (unpaid status not verified)</label><strong id="commission-accrued-total">R0.00</strong></div>
+      <div class="field"><label>Collection threshold</label><strong>R20.00</strong></div>
+    </div>
+    <p id="commission-threshold-message" class="notice">Commission report will update when orders load.</p>
+    <p class="muted">Only orders marked Completed count. Sales totals use the shop-confirmed final total where available. Commission is estimated from the number of completed orders. Record any cash commission payments separately until a secure payment ledger is added.</p>
+  </div>
+
   <div class="card" id="real-orders-card">
     <h2>Live customer orders</h2>
     <p class="muted">Orders saved by customers in Firebase appear here. You can update status and confirm the final total. Do not mark an order completed until it has been fulfilled.</p>
@@ -300,6 +313,7 @@ function renderOrderCard(orderDoc) {
     const status=select.value, note=noteInput.value.trim(), totalText=totalInput.value.trim();
     if(status==="rejected"&&!note){msg.textContent="Add a rejection reason before saving.";return}
     if(totalText!==""&&(!Number.isFinite(Number(totalText))||Number(totalText)<0)){msg.textContent="Enter a valid confirmed total.";return}
+    if(status==="completed"&&totalText===""&&(typeof order.confirmedTotal!=="number"||!Number.isFinite(order.confirmedTotal)||order.confirmedTotal<0)){msg.textContent="Enter the confirmed final total before marking this order completed.";return}
     if(status==="delayed"&&!["15","30","45"].includes(delaySelect.value)){msg.textContent="Choose a delay of 15, 30 or 45 minutes.";return}
     save.disabled=true;msg.textContent="Saving…";
     const changes={orderStatus:status,ownerNote:note,delayMinutes:status==="delayed"?Number(delaySelect.value):0,updatedAt:serverTimestamp()};
@@ -316,6 +330,29 @@ function renderOrderCard(orderDoc) {
   card.append(title,summary,customer,place,quoted,state,totalWrap,noteWrap,delayWrap,save,msg);
   return card;
 }
+
+function isVerifiedLiveOrder(data){
+  if(!data || data.testOrder!==false) return false;
+  const requiredStrings=[data.orderNumber,data.shopId,data.ownerUid,data.customerUid,data.customerName,data.customerPhone];
+  if(!requiredStrings.every(value=>typeof value==="string"&&value.trim().length>0)) return false;
+  if(!Array.isArray(data.items)||data.items.length===0) return false;
+  if(typeof data.totalQuote!=="number"||!Number.isFinite(data.totalQuote)||data.totalQuote<0) return false;
+  if(!ORDER_STATUSES.some(([value])=>value===data.orderStatus)) return false;
+  // Exclude the legacy test note used during setup, even if its old testOrder flag was false.
+  if(/test order only|test only.{0,40}do not prepare food|do not prepare food/i.test(orderText(data.ownerNote))) return false;
+  return true;
+}
+function renderCommissionReport(docs){
+  // Accrue the planned R0.50 only for explicitly live, completed orders with a confirmed final total.
+  const completed=docs.filter(d=>String(d.data.orderStatus||"").toLowerCase()==="completed"&&typeof d.data.confirmedTotal==="number"&&Number.isFinite(d.data.confirmedTotal)&&d.data.confirmedTotal>=0);
+  const confirmedSales=completed.reduce((sum,d)=>sum+d.data.confirmedTotal,0);
+  const commission=Math.round(completed.length*50)/100;
+  $("commission-completed-count").textContent=String(completed.length);
+  $("commission-sales-total").textContent=moneyZar(confirmedSales);
+  $("commission-accrued-total").textContent=moneyZar(commission);
+  $("commission-threshold-message").textContent=commission>=20?"The planned R20 collection threshold has been reached. This is not proof of payment; arrange and record payment manually.":"R"+(20-commission).toFixed(2)+" more commission is needed to reach the planned R20 collection threshold. No money has been collected.";
+}
+
 async function loadRealOrders(){
   if(!currentUser)return;
   const list=$("real-orders-list"),status=$("orders-message");
@@ -323,8 +360,9 @@ async function loadRealOrders(){
   try{
     const q=query(collection(db,"orders"),where("ownerUid","==",currentUser.uid));
     const snap=await getDocs(q);
-    const docs=snap.docs.filter(d=>d.data().testOrder!==true).map(d=>({id:d.id,data:d.data()}));
+    const docs=snap.docs.map(d=>({id:d.id,data:d.data()})).filter(d=>isVerifiedLiveOrder(d.data)).filter(d=>!selectedShop || d.data.shopId===selectedShop.id);
     docs.sort((a,b)=>{const ta=a.data.createdAt?.toMillis?.()||0,tb=b.data.createdAt?.toMillis?.()||0;return tb-ta});
+    renderCommissionReport(docs);
     if(!docs.length){status.textContent="No live customer orders for this shop yet.";return}
     status.textContent=docs.length+" order(s) found.";
     docs.forEach(d=>list.appendChild(renderOrderCard(d)));
