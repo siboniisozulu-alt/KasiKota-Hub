@@ -128,12 +128,21 @@ function fillShop(data) {
   $("selected-shop-heading").textContent = safeString(data.shopName || data.name || "Shop details");
   message("save-message", "Loaded saved details. No changes have been made yet.");
 }
+
 function selectShop(shop) {
   selectedShop = shop;
-  document.querySelectorAll(".shop-choice").forEach(b => b.classList.toggle("active", b.dataset.id === shop.id));
+
+  document.querySelectorAll(".shop-choice").forEach(button => {
+    button.classList.toggle("active", button.dataset.id === shop.id);
+  });
+
   $("shop-form").classList.remove("hidden");
   fillShop(shop.data);
+
+  // Automatically load orders for the selected shop.
+  loadRealOrders();
 }
+
 function renderShopChoices() {
   const picker = $("shop-picker");
   picker.replaceChildren();
@@ -272,7 +281,17 @@ const ORDER_STATUSES = [
   ["completed", "Completed"], ["rejected", "Rejected"], ["delayed", "Delayed"]
 ];
 function orderText(value) { return typeof value === "string" ? value : (value == null ? "" : String(value)); }
-function moneyZar(value) { const n=Number(value); return Number.isFinite(n) ? "R"+n.toFixed(2) : "Not confirmed"; }
+function moneyZar(value) {
+  if (value === null || value === undefined || value === "") {
+    return "Not confirmed";
+  }
+
+  const n = Number(value);
+
+  return Number.isFinite(n) && n >= 0
+    ? "R" + n.toFixed(2)
+    : "Not confirmed";
+}
 function renderOrderCard(orderDoc) {
   const order=orderDoc.data, id=orderDoc.id, card=document.createElement("article");
   card.className="order-card";
