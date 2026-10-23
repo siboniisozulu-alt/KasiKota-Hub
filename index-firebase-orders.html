@@ -1,319 +1,1338 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#176b42">
-  <meta name="description" content="Kota Connect connects customers with local kota shops in Newcastle, KwaZulu-Natal.">
-  <title>Kota Connect | Support Local</title>
-  <style>
-    :root{--green:#176b42;--dark:#173729;--gold:#ffc857;--cream:#fffaf0;--white:#fff;--muted:#66736b;--border:#dbe5dc;--danger:#9b1c1c;--success:#176b42}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--cream);color:var(--dark);line-height:1.5}
-    header{background:var(--green);color:white;padding:22px 16px;text-align:center}header h1{margin:0 0 8px;font-size:32px}header p{margin:6px 0}
-    nav{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;padding:13px;background:var(--dark)}nav a{color:white;text-decoration:none;font-weight:bold;padding:8px 10px;border-radius:8px}nav a.register-nav{background:var(--gold);color:var(--dark)}
-    a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #e09b00;outline-offset:3px}
-    main{max-width:1000px;margin:auto;padding:16px}section{background:white;padding:18px;border-radius:16px;margin:16px 0;box-shadow:0 2px 10px #17372912}
-    h2{color:var(--green);margin-top:0}label{display:block;font-weight:bold;margin:12px 0 6px}input,select,textarea{display:block;width:100%;padding:12px;border:1px solid #cbd5ce;border-radius:9px;font:inherit;background:white;color:#17251d}textarea{resize:vertical}
-    button,.button{display:inline-block;background:var(--green);color:white;padding:12px 16px;border:0;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer;text-decoration:none;margin:5px 4px 5px 0}button:disabled{opacity:.6;cursor:not-allowed}button.secondary{background:var(--dark)}button.gold{background:var(--gold);color:var(--dark)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.shop{border:1px solid var(--border);border-radius:13px;padding:15px;background:#fffefb}.shop h3{margin:0 0 8px}.tag{display:inline-block;background:#e8f5eb;color:var(--green);padding:5px 9px;border-radius:20px;font-size:12px}.price{color:var(--green);font-weight:bold}.note{color:var(--muted);font-size:14px;line-height:1.5}.notice{padding:12px;background:#fff4d6;border-radius:10px;line-height:1.5;overflow-wrap:anywhere}
-    .message{margin:12px 0 0;padding:11px;border-radius:8px;overflow-wrap:anywhere}.message.error{background:#fff0f0;color:var(--danger);border:1px solid #e8b4b4}.message.success{background:#e8f5eb;color:var(--success);border:1px solid #b8d9c0}.message.info{background:#fff4d6;color:#5b4300}.hidden{display:none!important}
-    footer{background:var(--dark);color:white;padding:25px 16px;text-align:center;margin-top:25px}footer h2{color:white}footer a{color:var(--gold)}
-    .kota-brand{--brand-gold:#ffbd19;--gold-light:#ffe47a;width:min(100%,440px);margin:20px auto;padding:26px 14px;text-align:center;color:white;background:radial-gradient(ellipse at top,#30200a 0%,#090909 55%);border:3px solid var(--brand-gold);border-radius:48% 48% 44% 44% / 15% 15% 20% 20%;box-shadow:0 0 22px #ffbd1940,inset 0 0 18px #ffbd1920;overflow:hidden}
-    .kota-food{font-size:clamp(58px,16vw,90px);line-height:1.2}.kota-name{margin:8px 0 0;font-size:clamp(34px,10vw,56px);line-height:1;font-weight:900;letter-spacing:-2px;color:var(--brand-gold);text-shadow:0 2px 0 #8d5200,0 0 15px #ffbd1930}
-    .kota-connect{margin:5px 0 12px;font-size:clamp(25px,7.5vw,39px);font-weight:900;letter-spacing:3px;color:#fff}.kota-connect span{color:var(--brand-gold)}.kota-line{height:2px;width:82%;margin:12px auto;background:linear-gradient(90deg,transparent,var(--brand-gold),transparent)}.kota-tagline{color:var(--gold-light);font-size:11px;font-weight:bold;letter-spacing:1.4px;line-height:1.8}.kota-symbols{margin-top:15px;font-size:25px;letter-spacing:8px}.kota-footer{margin:14px 0 0;font-size:12px;color:#ddd;letter-spacing:1px}
-    .kc-shop{max-width:600px;width:100%;margin:16px auto;padding:16px;border:1px solid #d9aa22;border-radius:15px;background:#141414;color:#fff;font:14px/1.5 Arial,sans-serif}.kc-shop h3{color:#ffca35;font-size:19px;margin:0 0 6px}.kc-shop p{margin:5px 0}.kc-shop .sub{color:#ccc;font-size:12px}
-    .kc-menu-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #383838}.kc-menu-row b{color:#ffca35;white-space:nowrap}.kc-menu-row button{background:#ffca35;color:#171717;padding:7px 10px;min-width:56px;margin:0}
-    .kc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.kc-actions a,.kc-actions button{flex:1;padding:11px 6px;border-radius:8px;text-align:center;text-decoration:none;font-weight:bold}.kc-wa{background:#25d366;color:#102015}.kc-call{background:#ffca35;color:#171717}
-    .register-link{display:block;background:linear-gradient(135deg,#ffb300,#ff7b00);color:#171717;padding:15px;margin:15px auto;max-width:320px;text-align:center;text-decoration:none;font-weight:bold;font-size:17px;border-radius:12px;box-shadow:0 4px 10px #0002}
-    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.form-grid .full{grid-column:1/-1}.total-panel{margin:16px 0;padding:14px;background:#e8f5eb;border-radius:10px}.total-panel p{margin:4px 0}
-    .approved-shops-modal{position:fixed;inset:0;z-index:850;background:#07130ed9;display:flex;align-items:center;justify-content:center;padding:16px}.approved-shops-panel{position:relative;width:min(100%,600px);max-height:90vh;overflow:auto;background:var(--cream);color:var(--dark);border:2px solid #d9aa22;border-radius:18px;padding:20px;box-shadow:0 15px 50px #0006}.approved-shops-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.approved-shops-top h2{margin:0}.approved-shops-close{background:var(--dark);color:white;font-size:24px;line-height:1;padding:6px 12px;margin:0}.approved-shop-option{display:block;width:100%;text-align:left;background:#141414;color:#fff;border:1px solid #d9aa22;border-radius:12px;margin:10px 0;padding:14px}.approved-shop-option strong,.approved-shop-option span{display:block}.approved-shop-option strong{color:#ffca35;font-size:17px}.approved-shop-option span{color:#ddd;font-size:13px;margin-top:4px}.approved-shops-status{margin-top:10px}.shop-menu-modal{position:fixed;inset:0;z-index:900;background:#07130ed9;display:flex;align-items:center;justify-content:center;padding:16px}.shop-menu-panel{position:relative;width:min(100%,600px);max-height:90vh;overflow:auto;background:#141414;color:#fff;border:2px solid #d9aa22;border-radius:18px;padding:20px;box-shadow:0 15px 50px #0006}.shop-menu-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.shop-menu-top h2{color:#ffca35;margin:0}.shop-menu-close{background:#fff;color:#171717;font-size:24px;line-height:1;padding:6px 12px;margin:0}.shop-menu-list{margin-top:12px}.shop-menu-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:13px 0;border-top:1px solid #383838}.shop-menu-row strong{display:block;color:#fff}.shop-menu-row small{display:block;color:#ccc;margin-top:4px}.shop-price-button{background:#ffca35;color:#171717;padding:10px 13px;min-width:88px;margin:0}.shop-view-button{width:100%;margin-top:12px;background:#ffca35;color:#171717}.shop-card-summary{color:#ddd;font-size:13px}.shop-price-note{color:#f5d994;font-size:13px}.register-modal{position:fixed;inset:0;z-index:1000;background:#07130ed9;display:flex;align-items:center;justify-content:center;padding:16px}.register-modal-panel{position:relative;width:min(100%,760px);max-height:90vh;overflow:auto;background:var(--cream);border-radius:18px;padding:22px;box-shadow:0 15px 50px #0006}.register-modal-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.register-modal-top h2{margin:0}.register-modal-close{background:var(--dark);color:#fff;font-size:23px;line-height:1;padding:8px 13px;margin:0}body.modal-open{overflow:hidden}
-    .dashboard-field{margin:10px 0}.dashboard-field label{margin-top:0}.dashboard-actions{display:flex;flex-wrap:wrap;gap:8px}.dashboard-actions button{margin:4px 0}.account-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#e8f5eb;padding:12px;border-radius:10px;overflow-wrap:anywhere}
-    @media(max-width:480px){header h1{font-size:27px}main{padding:10px}section{padding:14px}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.register-modal{padding:8px}.register-modal-panel{padding:16px;max-height:94vh}}
-    @media(max-width:340px){.kc-shop{padding:11px}.kc-shop h3{font-size:16px}.kc-menu-row{gap:6px;font-size:12px}.kc-menu-row button{min-width:48px;padding:7px 6px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#176b42">
+<meta name="description" content="Kota Connect connects customers with approved local kota shops in Newcastle, KwaZulu-Natal.">
+<title>Kota Connect | Support Local</title>
+
+<style>
+:root {
+  --green:#176b42;
+  --dark:#173729;
+  --gold:#ffc857;
+  --cream:#fffaf0;
+  --white:#fff;
+  --muted:#66736b;
+  --border:#dbe5dc;
+  --danger:#9b1c1c;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--cream);
+  color:var(--dark);
+  line-height:1.5;
+}
+header {
+  background:var(--green);
+  color:white;
+  padding:22px 16px;
+  text-align:center;
+}
+header h1 { margin:0 0 8px; }
+nav {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:12px;
+  background:var(--dark);
+}
+nav a {
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  padding:8px;
+  border-radius:8px;
+}
+nav .register-nav { background:var(--gold); color:var(--dark); }
+main { max-width:1000px; margin:auto; padding:16px; }
+section {
+  background:white;
+  padding:18px;
+  border-radius:15px;
+  margin:16px 0;
+  box-shadow:0 2px 10px #17372912;
+}
+h2 { color:var(--green); margin-top:0; }
+label { display:block; font-weight:bold; margin:12px 0 6px; }
+input,select,textarea {
+  display:block;
+  width:100%;
+  padding:12px;
+  border:1px solid #cbd5ce;
+  border-radius:9px;
+  font:inherit;
+  background:white;
+  color:#17251d;
+}
+textarea { resize:vertical; }
+button,.button {
+  display:inline-block;
+  background:var(--green);
+  color:white;
+  padding:12px 16px;
+  border:0;
+  border-radius:9px;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+  text-decoration:none;
+  margin:5px 4px 5px 0;
+}
+button:disabled { opacity:.6; cursor:not-allowed; }
+button.secondary { background:var(--dark); }
+button.gold { background:var(--gold); color:var(--dark); }
+.note { color:var(--muted); font-size:14px; }
+.message,.notice {
+  margin:12px 0;
+  padding:12px;
+  border-radius:9px;
+  overflow-wrap:anywhere;
+}
+.info { background:#fff4d6; color:#5b4300; }
+.error { background:#fff0f0; color:var(--danger); }
+.success { background:#e8f5eb; color:var(--green); }
+.hidden { display:none!important; }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+}
+.shop-card {
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  background:#fffefb;
+}
+.shop-card h3 { margin-top:0; }
+.shop-card button { width:100%; }
+.total-panel {
+  margin:16px 0;
+  padding:14px;
+  background:#e8f5eb;
+  border-radius:10px;
+}
+.total-panel p { margin:5px 0; }
+footer {
+  background:var(--dark);
+  color:white;
+  padding:25px 16px;
+  text-align:center;
+  margin-top:25px;
+}
+.brand {
+  max-width:440px;
+  margin:18px auto;
+  padding:20px 12px;
+  text-align:center;
+  background:#111;
+  color:var(--gold);
+  border:3px solid var(--gold);
+  border-radius:20px;
+}
+.brand .food { font-size:55px; }
+.brand .name { font-size:42px; font-weight:900; }
+.brand .connect { font-size:27px; font-weight:900; color:white; }
+.modal {
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:#07130ed9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+}
+.panel {
+  width:min(100%,650px);
+  max-height:92vh;
+  overflow:auto;
+  background:var(--cream);
+  color:var(--dark);
+  border:2px solid var(--gold);
+  border-radius:16px;
+  padding:18px;
+}
+.panel-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.panel-top h2 { margin:0; }
+.close { font-size:22px; padding:5px 12px; }
+.menu-row {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  padding:12px 0;
+  border-top:1px solid #ddd;
+}
+.menu-row button { background:var(--gold); color:#171717; }
+.menu-row strong { display:block; }
+.menu-row small { color:var(--muted); }
+.account-bar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:12px;
+  background:#e8f5eb;
+  border-radius:9px;
+}
+@media(max-width:480px) {
+  main { padding:10px; }
+  section { padding:14px; }
+  .brand .name { font-size:35px; }
+}
+</style>
 </head>
+
 <body>
-  <div class="kota-brand" aria-label="Kota Connect brand">
-    <div class="kota-food" aria-label="Kota sandwich">🥪 <span style="color:#ff3535">📍</span></div>
-    <div class="kota-name">KOTA</div><div class="kota-connect"><span>◉</span> CONNECT</div><div class="kota-line"></div>
-    <div class="kota-tagline">LOCAL SHOPS • GREAT FOOD<br>FAST &amp; EASY</div><div class="kota-symbols" aria-hidden="true">🍴 🛒 📍</div><div class="kota-line"></div>
-    <p class="kota-footer">YOUR COMMUNITY. YOUR KOTA. ONE CONNECTION.</p>
-  </div>
-  <header><h1>🍔 Kota Connect</h1><p><strong>Support Local. Eat Local. Grow Together.</strong></p><p>Discover Newcastle's local kota businesses.</p></header>
-  <nav aria-label="Main navigation">
-    <a href="#shops">Approved Shops</a><a href="#order">Order</a>
-    <a class="register-nav register-form-trigger" href="#register">Register Your Shop</a><a href="#ownerDashboard">Owner Dashboard</a><a href="#contact">Contact</a>
-  </nav>
-  <main>
-    <section id="welcome">
-      <h2>Welcome to Kota Connect</h2>
-      <p>Choose an approved local shop, view its menu, select your area and order for pickup or delivery. Help local businesses reach more customers.</p>
-      <label for="area">Choose your location</label>
-      <select id="area" required><option value="">Select your area</option><option>Newcastle CBD</option><option>Madadeni Section 1</option><option>Madadeni Section 2</option><option>Madadeni Section 3</option><option>Madadeni Section 4</option><option>Madadeni Section 5</option><option>Madadeni Section 6</option><option>Madadeni Section 7</option><option>Osizweni</option><option>Other Newcastle area</option></select>
-      <label for="otherArea">Street, section or other location (optional)</label><input id="otherArea" maxlength="150" placeholder="Enter your street or section">
-    </section>
-    <section id="shops">
-      <h2>Our Approved Shops</h2><p class="note">Tap an approved shop to open its menu. Tap a price in that menu to order the item through that shop’s WhatsApp.</p>
-      <p id="approvedShopStatus" class="message info" aria-live="polite">Loading approved shops…</p>
-      <button type="button" id="openApprovedShops" class="gold">Browse Approved Shops</button>
-    </section>
-    <section id="order">
-      <h2>Place Your Order</h2><p class="note">Prepare your order and send it to the shop on WhatsApp. The shop must confirm availability, delivery coverage and acceptance of your order.</p>
-      <form id="orderForm" novalidate>
-        <label for="shopSelect">Choose a shop</label><select id="shopSelect" required><option value="">Choose an approved shop first</option></select>
-        <label for="itemName">Menu item</label><select id="itemName" required><option value="">Choose a shop first</option></select>
-        <label for="itemPrice">Price per item (R)</label><input id="itemPrice" type="number" readonly aria-readonly="true" placeholder="Selected from shop menu" required>
-        <label for="quantity">Quantity (1–50)</label><input id="quantity" type="number" min="1" max="50" step="1" value="1" inputmode="numeric" required>
-        <label for="service">Pickup or delivery</label><select id="service"><option value="Pickup">Pickup</option><option value="Delivery">Delivery (+R15.00)</option></select><p class="note">Delivery fee: R15 per order, subject to the shop's delivery coverage and confirmation.</p>
-        <label for="customerName">Your name</label><input id="customerName" autocomplete="name" maxlength="100" placeholder="Enter your name" required>
-        <label for="customerPhone">Your phone number</label><input id="customerPhone" type="tel" autocomplete="tel" maxlength="30" placeholder="Enter your phone number" required>
-        <label for="orderAddress">Pickup details or delivery address</label><textarea id="orderAddress" rows="3" maxlength="300" placeholder="Enter the details needed by the shop"></textarea>
-        <div class="total-panel" aria-live="polite"><p>Food subtotal: <strong id="foodSubtotal">R25.00</strong></p><p>Delivery fee: <strong id="deliveryTotal">R0.00</strong></p><p>Total: <strong id="orderTotal">R25.00</strong></p><p id="priceNote" class="note hidden">The Special Kota price must be confirmed by the shop. A final total cannot be calculated yet.</p></div>
-        <button id="prepareOrder" type="submit">Prepare Order</button>
-      </form>
-      <div id="orderError" class="message error hidden" role="alert"></div><div id="orderSummary" class="notice hidden" aria-live="polite" style="white-space:pre-line"></div><button id="sendOrder" class="secondary hidden" type="button">Send to Shop on WhatsApp</button>
-      <p class="note">Submitting saves a pending order in Firebase and prepares a WhatsApp message for the shop. Prices and delivery are quotes until the shop confirms them. No online payment is collected.</p>
-      <a class="register-link register-form-trigger" href="#register">Register Your Shop</a>
-    </section>
-    <section id="ownerDashboard">
-      <h2>Shop Owner Dashboard</h2>
-      <p class="note">Sign in with the same email and password you used when registering your shop. Owners can edit their own public shop details, but only an administrator can approve or reject applications.</p>
-      <div id="ownerSignedOut">
-        <form id="ownerSignInForm">
-          <label for="ownerLoginEmail">Email address</label><input id="ownerLoginEmail" type="email" autocomplete="username" required maxlength="254" placeholder="Your registration email">
-          <label for="ownerLoginPassword">Password</label><input id="ownerLoginPassword" type="password" autocomplete="current-password" required placeholder="Your password">
-          <div class="dashboard-actions"><button id="ownerSignInButton" type="submit">Sign In</button><button id="forgotPasswordButton" type="button" class="secondary">Reset Password</button></div>
-        </form>
-        <p id="ownerSignInMessage" class="message hidden" role="status" aria-live="polite"></p>
-        <p class="note">New to Kota Connect? Use “Register Your Shop” above to create an account and submit an application.</p>
+<div class="brand">
+  <div class="food">🥪 📍</div>
+  <div class="name">KOTA</div>
+  <div class="connect">◉ CONNECT</div>
+  <p>LOCAL SHOPS • GREAT FOOD • FAST &amp; EASY</p>
+  <p class="note">YOUR COMMUNITY. YOUR KOTA. ONE CONNECTION.</p>
+</div>
+
+<header>
+  <h1>🍔 Kota Connect</h1>
+  <p><strong>Support Local. Eat Local. Grow Together.</strong></p>
+  <p>Discover Newcastle's local kota businesses.</p>
+</header>
+
+<nav>
+  <a href="#shops">Approved Shops</a>
+  <a href="#order">Order</a>
+  <a class="register-nav register-trigger" href="#register">Register Your Shop</a>
+  <a href="#ownerDashboard">Owner Dashboard</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<main>
+  <section id="welcome">
+    <h2>Welcome to Kota Connect</h2>
+    <p>Choose an approved shop, view its menu and order for pickup or delivery.</p>
+
+    <label for="area">Your location</label>
+    <select id="area" required>
+      <option value="">Select your area</option>
+      <option>Newcastle CBD</option>
+      <option>Madadeni Section 1</option>
+      <option>Madadeni Section 2</option>
+      <option>Madadeni Section 3</option>
+      <option>Madadeni Section 4</option>
+      <option>Madadeni Section 5</option>
+      <option>Madadeni Section 6</option>
+      <option>Madadeni Section 7</option>
+      <option>Osizweni</option>
+      <option>Other Newcastle area</option>
+    </select>
+
+    <label for="otherArea">Street or additional location (optional)</label>
+    <input id="otherArea" maxlength="150" placeholder="Enter your street or section">
+  </section>
+
+  <section id="shops">
+    <h2>Approved Local Shops</h2>
+    <p class="note">Choose a shop to view its menu and prices.</p>
+    <p id="approvedShopStatus" class="message info" aria-live="polite">Connecting to Kota Connect shops…</p>
+    <button type="button" id="openApprovedShops" class="gold">Browse Approved Shops</button>
+    <div id="shopCards" class="grid"></div>
+  </section>
+
+  <section id="order">
+    <h2>Place Your Order</h2>
+    <p class="note">Your order is saved as pending before you notify the shop on WhatsApp. The shop must confirm the order and final price.</p>
+
+    <form id="orderForm" novalidate>
+      <label for="shopSelect">Choose a shop</label>
+      <select id="shopSelect" required>
+        <option value="">Choose an approved shop</option>
+      </select>
+
+      <label for="itemName">Menu item</label>
+      <select id="itemName" required>
+        <option value="">Choose a shop first</option>
+      </select>
+
+      <label for="itemPrice">Price per item (R)</label>
+      <input id="itemPrice" type="number" readonly placeholder="Choose a priced menu item">
+
+      <label for="quantity">Quantity (1–50)</label>
+      <input id="quantity" type="number" min="1" max="50" step="1" value="1" required>
+
+      <label for="service">Pickup or delivery</label>
+      <select id="service">
+        <option value="Pickup">Pickup</option>
+        <option value="Delivery">Delivery (+R15.00)</option>
+      </select>
+      <p class="note">Delivery costs R15 per order, subject to shop confirmation.</p>
+
+      <label for="customerName">Your name</label>
+      <input id="customerName" maxlength="100" autocomplete="name" required>
+
+      <label for="customerPhone">Your phone number</label>
+      <input id="customerPhone" type="tel" maxlength="30" autocomplete="tel" required>
+
+      <label for="orderAddress">Pickup details or delivery address</label>
+      <textarea id="orderAddress" rows="3" maxlength="300"></textarea>
+
+      <div class="total-panel" aria-live="polite">
+        <p>Food subtotal: <strong id="foodSubtotal">—</strong></p>
+        <p>Delivery fee: <strong id="deliveryTotal">R0.00</strong></p>
+        <p>Total: <strong id="orderTotal">—</strong></p>
       </div>
-      <div id="ownerSignedIn" class="hidden">
-        <div class="account-bar"><span id="ownerAccountEmail"></span><button id="ownerSignOutButton" class="secondary" type="button">Sign Out</button></div>
-        <div id="ownerDashboardMessage" class="message info" role="status" aria-live="polite">Loading your shop…</div>
-        <form id="ownerShopForm" class="hidden">
-          <div class="dashboard-field"><label for="ownerEditShopName">Shop name</label><input id="ownerEditShopName" required maxlength="100"></div>
-          <div class="dashboard-field"><label for="ownerEditPhone">WhatsApp / phone number</label><input id="ownerEditPhone" type="tel" required maxlength="25" placeholder="e.g. 0700000000"></div>
-          <div class="dashboard-field"><label for="ownerEditAddress">Shop address</label><input id="ownerEditAddress" required maxlength="200"></div>
-          <div class="dashboard-field"><label for="ownerEditDescription">Shop and menu description</label><textarea id="ownerEditDescription" required maxlength="1500" rows="5"></textarea></div>
-          <p class="note">Menu items and prices are entered in the shop/menu description for now. Customers will use the existing order form and WhatsApp. Only save details you want customers to see publicly.</p>
-          <div class="dashboard-actions"><button id="ownerSaveShopButton" type="submit">Save Shop Details</button><button id="ownerReloadShopButton" type="button" class="secondary">Reload My Shop</button></div>
-        </form>
-        <p id="ownerDashboardHelp" class="note"></p>
-      </div>
-    </section>
-    <section id="schedule"><h2>Shop Operating Schedule</h2><p class="note">Opening hours will be displayed here when approved shops provide their schedules.</p></section>
-    <section id="contact"><h2>Contact &amp; Social Media</h2><p>Questions, business registration or partnership enquiries?</p><p class="note">Official contact details and social media links will be added here when confirmed.</p></section>
-  </main>
-  <footer><h2>Kota Connect</h2><p>Supporting local businesses in Newcastle, KwaZulu-Natal.</p><p>Local shops. Local jobs. Stronger communities. ❤️</p><p>© <span id="year"></span> Kota Connect</p></footer>
 
-  <div class="approved-shops-modal hidden" id="approvedShopsModal" role="dialog" aria-modal="true" aria-labelledby="approvedShopsTitle">
-    <div class="approved-shops-panel">
-      <div class="approved-shops-top"><h2 id="approvedShopsTitle">Approved Local Shops</h2><button type="button" class="approved-shops-close" id="closeApprovedShops" aria-label="Close approved shops">×</button></div>
-      <p class="note">Choose a shop to view its menu and confirmed prices.</p>
-      <div id="approvedShopList" aria-live="polite"><p class="message info">Loading approved shops…</p></div>
+      <button id="prepareOrder" type="submit">Save Order &amp; Prepare WhatsApp</button>
+    </form>
+
+    <p id="orderError" class="message error hidden" role="alert"></p>
+    <div id="orderSummary" class="notice hidden" aria-live="polite" style="white-space:pre-line"></div>
+    <button id="sendOrder" type="button" class="secondary hidden">Notify Shop on WhatsApp</button>
+
+    <div id="adminTestArea" class="notice hidden">
+      <strong>Administrator testing only</strong>
+      <p class="note">This creates a clearly marked test record. It must not be prepared as a real customer order.</p>
+      <button type="button" id="adminTestOrderButton" class="secondary">Create Test Order</button>
+      <p id="adminTestOrderMessage" class="message info hidden" aria-live="polite"></p>
     </div>
-  </div>
 
-  <div class="shop-menu-modal hidden" id="shopMenuModal" role="dialog" aria-modal="true" aria-labelledby="shopMenuTitle">
-    <div class="shop-menu-panel">
-      <div class="shop-menu-top"><div><h2 id="shopMenuTitle">Approved Shop Menu</h2><p id="shopMenuSubtitle" class="sub"></p></div><button type="button" class="shop-menu-close" id="closeShopMenu" aria-label="Close shop menu">×</button></div>
-      <p class="shop-price-note">Tap a price to select the item in the order form, save the order, then notify the shop on WhatsApp.</p>
-      <div id="shopMenuList" class="shop-menu-list"></div>
-    </div>
-  </div>
+    <p class="note">No online payment is collected by this website. A pending order is not an accepted order.</p>
+  </section>
 
-  <div class="register-modal hidden" id="registerModal" role="dialog" aria-modal="true" aria-labelledby="registerModalTitle">
-    <div class="register-modal-panel">
-      <div class="register-modal-top"><h2 id="registerModalTitle">Register Your Shop</h2><button type="button" class="register-modal-close" id="closeRegisterModal" aria-label="Close registration form">×</button></div>
-      <p>Join Kota Connect and submit your business for administrator approval. Use an email address you can access. Your password is handled by Firebase Authentication and is not saved in the shop application document.</p>
-      <form id="shopRegisterForm">
-        <div class="form-grid">
-          <div><label for="ownerName">Owner's full name</label><input id="ownerName" required maxlength="100" autocomplete="name" placeholder="Your full name"></div>
-          <div><label for="shopName">Shop name</label><input id="shopName" required maxlength="100" placeholder="Your shop name"></div>
-          <div><label for="shopEmail">Email address</label><input id="shopEmail" type="email" required maxlength="254" autocomplete="email" placeholder="you@example.com"></div>
-          <div><label for="shopPassword">Create password</label><input id="shopPassword" type="password" required minlength="6" autocomplete="new-password" placeholder="At least 6 characters"></div>
-          <div><label for="shopPhone">WhatsApp / phone number</label><input id="shopPhone" type="tel" required maxlength="25" autocomplete="tel" placeholder="e.g. 27..."></div>
-          <div><label for="shopAddress">Shop address</label><input id="shopAddress" required maxlength="200" placeholder="Section, town or city"></div>
-          <div class="full"><label for="shopDescription">Shop and menu description</label><textarea id="shopDescription" required maxlength="1500" rows="4" placeholder="Example: Classic Kota — R25; Cheese Kota — R30"></textarea></div>
-        </div>
-        <button id="registerSubmit" type="submit">Create Account &amp; Submit Application</button>
-        <p class="note">Submitting creates a Firebase Authentication account and stores a pending application. An administrator must approve the application and publish the shop's public details before it appears in the listings.</p>
+  <section id="ownerDashboard">
+    <h2>Shop Owner Dashboard</h2>
+    <p class="note">Sign in using the email and password associated with your shop account.</p>
+
+    <div id="ownerSignedOut">
+      <form id="ownerSignInForm">
+        <label for="ownerLoginEmail">Email address</label>
+        <input id="ownerLoginEmail" type="email" autocomplete="username" required>
+
+        <label for="ownerLoginPassword">Password</label>
+        <input id="ownerLoginPassword" type="password" autocomplete="current-password" required>
+
+        <button id="ownerSignInButton" type="submit">Sign In</button>
+        <button id="forgotPasswordButton" type="button" class="secondary">Reset Password</button>
       </form>
-      <p id="shopRegisterMessage" class="message hidden" role="status" aria-live="polite"></p>
+      <p id="ownerSignInMessage" class="message hidden" role="status"></p>
     </div>
+
+    <div id="ownerSignedIn" class="hidden">
+      <div class="account-bar">
+        <span id="ownerAccountEmail"></span>
+        <button id="ownerSignOutButton" class="secondary" type="button">Sign Out</button>
+      </div>
+
+      <p id="ownerDashboardMessage" class="message info" role="status">Loading your shop…</p>
+
+      <form id="ownerShopForm" class="hidden">
+        <label for="ownerEditShopName">Shop name</label>
+        <input id="ownerEditShopName" required maxlength="100">
+
+        <label for="ownerEditPhone">WhatsApp / phone number</label>
+        <input id="ownerEditPhone" type="tel" required maxlength="25">
+
+        <label for="ownerEditAddress">Shop address</label>
+        <input id="ownerEditAddress" required maxlength="200">
+
+        <label for="ownerEditDescription">Shop menu and description</label>
+        <textarea id="ownerEditDescription" required maxlength="1500" rows="5"></textarea>
+
+        <p class="note">Enter priced items like: Classic Kota — R25; Cheese Kota — R30. Changes are subject to your Firestore rules.</p>
+
+        <button id="ownerSaveShopButton" type="submit">Save Shop Details</button>
+        <button id="ownerReloadShopButton" type="button" class="secondary">Reload My Shop</button>
+      </form>
+
+      <p id="ownerDashboardHelp" class="note"></p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Kota Connect</h2>
+    <p>Supporting local businesses in Newcastle, KwaZulu-Natal.</p>
+    <p class="note">Official contact and social media details can be added once confirmed.</p>
+  </section>
+</main>
+
+<footer>
+  <h2>Kota Connect</h2>
+  <p>Local shops. Local jobs. Stronger communities. ❤️</p>
+  <p>© <span id="year"></span> Kota Connect</p>
+</footer>
+
+<div id="approvedShopsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="approvedShopsTitle">
+  <div class="panel">
+    <div class="panel-top">
+      <h2 id="approvedShopsTitle">Approved Shops</h2>
+      <button type="button" id="closeApprovedShops" class="close secondary" aria-label="Close">×</button>
+    </div>
+    <div id="approvedShopList"><p class="message info">Loading shops…</p></div>
   </div>
+</div>
 
-  <script>
-    "use strict";
-    const DELIVERY_FEE=15,$=id=>document.getElementById(id),money=value=>"R"+Number(value).toFixed(2);
-    let preparedWhatsAppMessage="";
-    function currentItem(){const option=$("itemName").selectedOptions[0];if(!option||!option.value)return{name:"",price:null,itemId:""};const price=Number(option.dataset.price);$("itemPrice").value=Number.isFinite(price)?price.toFixed(2):"";return{name:option.dataset.name||option.textContent.split(" — ")[0],price:Number.isFinite(price)&&price>0?price:null,itemId:option.value}}
-    function selectedShop(){const select=$("shopSelect"),option=select.options[select.selectedIndex];return{name:option?option.textContent.trim():"Selected shop",phone:option?.dataset.phone||""}}
-    function getQuantity(){const raw=Number($("quantity").value);return Number.isInteger(raw)&&raw>=1&&raw<=50?raw:null}
-    function calculateTotal(){const item=currentItem(),quantity=getQuantity(),delivery=$("service").value==="Delivery"?DELIVERY_FEE:0;if(!$("shopSelect").value){$("foodSubtotal").textContent="—";$("deliveryTotal").textContent=money(delivery);$("orderTotal").textContent="—";$("priceNote").classList.add("hidden");return null}if(item.price===null){$("foodSubtotal").textContent="To be confirmed";$("deliveryTotal").textContent=money(delivery);$("orderTotal").textContent="To be confirmed";$("priceNote").classList.remove("hidden");return null}if(quantity===null){$("foodSubtotal").textContent="Check quantity";$("deliveryTotal").textContent=money(delivery);$("orderTotal").textContent="Check quantity";$("priceNote").classList.add("hidden");return null}const foodSubtotal=item.price*quantity,total=foodSubtotal+delivery;$("foodSubtotal").textContent=money(foodSubtotal);$("deliveryTotal").textContent=money(delivery);$("orderTotal").textContent=money(total);$("priceNote").classList.add("hidden");return{foodSubtotal,delivery,total,quantity,item}}
-    function quickOrder(itemName,itemPrice){const option=Array.from($("itemName").options).find(o=>o.dataset.name===itemName);if(option)$("itemName").value=option.value;$("itemPrice").value=itemPrice||"";calculateTotal();$("order").scrollIntoView({behavior:"smooth"});$("quantity").focus({preventScroll:true})}
-    $("shopSelect").addEventListener("change",()=>fillOrderMenu($("shopSelect").value));
-    ["shopSelect","itemName","itemPrice","quantity","service"].forEach(id=>{ $(id).addEventListener("input",()=>{if(id==="shopSelect")fillOrderMenu($("shopSelect").value);calculateTotal();$("orderSummary").classList.add("hidden");$("sendOrder").classList.add("hidden");$("orderError").classList.add("hidden");preparedWhatsAppMessage=""});$(id).addEventListener("change",calculateTotal)});
-    $("year").textContent=new Date().getFullYear();
+<div id="shopMenuModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="shopMenuTitle">
+  <div class="panel">
+    <div class="panel-top">
+      <h2 id="shopMenuTitle">Shop Menu</h2>
+      <button type="button" id="closeShopMenu" class="close secondary" aria-label="Close">×</button>
+    </div>
+    <p id="shopMenuSubtitle" class="note"></p>
+    <div id="shopMenuList"></div>
+  </div>
+</div>
 
-    const modal=$("registerModal");
-    function openRegisterModal(event){if(event)event.preventDefault();modal.classList.remove("hidden");document.body.classList.add("modal-open");window.setTimeout(()=>$("ownerName").focus({preventScroll:true}),50)}
-    function closeRegisterModal(){modal.classList.add("hidden");document.body.classList.remove("modal-open")}
-    document.querySelectorAll(".register-form-trigger").forEach(link=>link.addEventListener("click",openRegisterModal));
-    $("closeRegisterModal").addEventListener("click",closeRegisterModal);
-    modal.addEventListener("click",event=>{if(event.target===modal)closeRegisterModal()});
-    document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!modal.classList.contains("hidden"))closeRegisterModal()});
+<div id="registerModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="registerModalTitle">
+  <div class="panel">
+    <div class="panel-top">
+      <h2 id="registerModalTitle">Register Your Shop</h2>
+      <button type="button" id="closeRegisterModal" class="close secondary" aria-label="Close">×</button>
+    </div>
 
-    $("orderForm").addEventListener("submit",event=>{event.preventDefault();$("orderError").classList.add("hidden");$("orderSummary").classList.add("hidden");$("sendOrder").classList.add("hidden");preparedWhatsAppMessage="";const item=currentItem(),calculation=calculateTotal(),quantity=getQuantity(),area=$("area").value.trim(),extraArea=$("otherArea").value.trim(),name=$("customerName").value.trim(),phone=$("customerPhone").value.trim(),address=$("orderAddress").value.trim(),service=$("service").value;let error="";if(!$("shopSelect").value)error="Please choose an approved shop.";else if(!area)error="Please choose your location.";else if(!quantity)error="Please enter a whole-number quantity from 1 to 50.";else if(!name)error="Please enter your name.";else if(!phone)error="Please enter your phone number.";else if(service==="Delivery"&&!address)error="Please enter your delivery address.";else if(!item.name)error="Please enter a menu item name.";else if(!calculation)error=item.price===null?"Please enter a valid item price from the shop menu before preparing this order.":"Please check the quantity and try again.";if(error){$("orderError").textContent=error;$("orderError").classList.remove("hidden");return}const shop=selectedShop(),location=area+(extraArea?" — "+extraArea:"");preparedWhatsAppMessage=["KOTA CONNECT ORDER","Shop: "+shop.name,"Item: "+item.name,"Quantity: "+quantity,"Customer: "+name,"Customer phone: "+phone,"Area: "+location,"Pickup/delivery: "+service,"Address/details: "+(address||"Not supplied"),"Food subtotal: "+money(calculation.foodSubtotal),"Delivery fee: "+money(calculation.delivery),"TOTAL: "+money(calculation.total),"Please confirm availability, delivery coverage and acceptance of this order."].join("\n");$("orderSummary").textContent="Your order is ready to send:\n\n"+preparedWhatsAppMessage;$("orderSummary").classList.remove("hidden");$("sendOrder").classList.remove("hidden")});
-    $("sendOrder").addEventListener("click",()=>{if(!preparedWhatsAppMessage)return;const shop=selectedShop();if(!shop.phone){$("orderError").textContent="This shop has not provided a valid WhatsApp number yet. Please contact Kota Connect or choose another shop.";$("orderError").classList.remove("hidden");return}window.open("https://wa.me/"+shop.phone+"?text="+encodeURIComponent(preparedWhatsAppMessage),"_blank","noopener,noreferrer")});
-    calculateTotal();
-  </script>
+    <p>Register your account and submit your shop for administrator approval. Your password is handled by Firebase Authentication.</p>
 
-  <script type="module">
-    import {initializeApp,getApp,getApps} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,onAuthStateChanged,signInAnonymously} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import {getFirestore,doc,setDoc,serverTimestamp,collection,query,where,onSnapshot,getDoc,updateDoc,getDocs} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-    const firebaseConfig={apiKey:"AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",authDomain:"kasikota-hub.firebaseapp.com",databaseURL:"https://kasikota-hub-default-rtdb.firebaseio.com",projectId:"kasikota-hub",storageBucket:"kasikota-hub.firebasestorage.app",messagingSenderId:"470531130099",appId:"1:470531130099:web:1bf117b7adf7a3a3d7ed86",measurementId:"G-WKH542B38C"};
-    const form=$("shopRegisterForm"),message=$("shopRegisterMessage"),submitButton=$("registerSubmit");
-    let firebaseReady=false,auth,db,guestAuth,guestDb,currentOwner=null,currentShopId=null,currentShopData=null,unsubscribeOwnerShop=null;
-    const approvedShopData = new Map();
-    function showMessage(element,text,type){element.textContent=text;element.className="message "+type}
-    function friendlyError(error){const code=error?.code||"";switch(code){case"auth/email-already-in-use":return"This email already has an account. Please sign in with that account.";case"auth/weak-password":return"Please choose a password with at least 6 characters.";case"auth/invalid-email":return"Please enter a valid email address.";case"auth/operation-not-allowed":return"Email/password sign-in is not enabled in Firebase Authentication.";case"auth/network-request-failed":return"Network connection failed. Check your internet connection.";case"auth/too-many-requests":return"Too many attempts. Please wait a while and try again.";case"auth/invalid-credential":case"auth/wrong-password":case"auth/user-not-found":return"Email or password is incorrect. If needed, use Reset Password.";case"permission-denied":case"firestore/permission-denied":return"Firestore denied this action. Check the security rules and that the correct owner UID is saved.";default:return error?.message||"Something went wrong. Please try again."}}
-    function safeText(value){return String(value??"").replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[character])}
-    function normalisePhone(value){let phone=String(value||"").replace(/[^0-9+]/g,"");if(phone.startsWith("+"))phone=phone.slice(1);if(phone.startsWith("0"))phone="27"+phone.slice(1);return/^27\d{9}$/.test(phone)?phone:""}
-    let activeMenuShop=null;
-    function parseShopMenu(source){
-      const menu=[];
-      const add=(name,price,itemId)=>{name=String(name||"").trim();price=Number(price);if(name&&Number.isFinite(price)&&price>0&&!menu.some(item=>item.name.toLowerCase()===name.toLowerCase()))menu.push({name,price,itemId:String(itemId||name.toLowerCase().replace(/[^a-z0-9]+/g,"-"))})};
-      const parseLines=text=>{const pattern=/(?:^|[;\n])\s*([^;\n–—-]+?)\s*(?:—|–|-|:)\s*R?\s*(\d+(?:\.\d{1,2})?)/gi;let match;while((match=pattern.exec(String(text||"")))!==null)add(match[1],match[2])};
-      if(Array.isArray(source)){source.forEach(item=>{if(item&&typeof item==="object")add(item.name||item.itemName,item.price,item.itemId||item.id);else if(typeof item==="string")parseLines(item)});return menu}
-      if(source&&typeof source==="object"){if(Array.isArray(source.items))return parseShopMenu(source.items);return menu}
-      parseLines(source);return menu
-    }
-    function menuForShop(shop){const parsed=parseShopMenu(shop?.menu);return parsed.length?parsed:parseShopMenu(shop?.description||"")}
-    function fillOrderMenu(shopId){const select=$("itemName"),shop=approvedShopData.get(shopId);select.replaceChildren();const placeholder=document.createElement("option");placeholder.value="";placeholder.textContent=shop?"Choose a menu item":"Choose an approved shop first";select.appendChild(placeholder);if(shop){menuForShop(shop).forEach(item=>{const option=document.createElement("option");option.value=item.itemId;option.textContent=item.name+" — "+money(item.price);option.dataset.name=item.name;option.dataset.price=String(item.price);select.appendChild(option)})}$("itemPrice").value="";calculateTotal()}
-    function selectedMenuItem(){const option=$("itemName").selectedOptions[0];if(!option||!option.value)return{name:"",price:null,itemId:""};const price=Number(option.dataset.price);$("itemPrice").value=Number.isFinite(price)?price.toFixed(2):"";return{name:option.dataset.name||option.textContent.split(" — ")[0],price:Number.isFinite(price)&&price>0?price:null,itemId:option.value}}
-    function openShopMenu(shop,id){activeMenuShop={...shop,id,phone:normalisePhone(shop.phone)};const modal=$("shopMenuModal"),title=$("shopMenuTitle"),sub=$("shopMenuSubtitle"),list=$("shopMenuList");title.textContent=shop.shopName||"Approved Shop";sub.textContent=(shop.address||"Address not provided")+(activeMenuShop.phone?" · WhatsApp: "+(shop.phone||""):" · WhatsApp number not available");list.replaceChildren();const menu=menuForShop(shop);if(!menu.length){const note=document.createElement("p");note.className="shop-price-note";note.textContent="This shop has not added confirmed menu prices yet. Please check back later or contact the shop owner.";list.appendChild(note)}else{menu.forEach(item=>{const row=document.createElement("div");row.className="shop-menu-row";const info=document.createElement("div"),name=document.createElement("strong"),details=document.createElement("small");name.textContent=item.name;details.textContent="Tap the price to order this item on WhatsApp.";info.append(name,details);const price=document.createElement("button");price.type="button";price.className="shop-price-button";price.textContent=money(item.price);price.setAttribute("aria-label","Order "+item.name+" for "+money(item.price));price.addEventListener("click",()=>{if(!activeMenuShop)return;const select=$("shopSelect");select.value=activeMenuShop.id;fillOrderMenu(activeMenuShop.id);const option=Array.from($("itemName").options).find(o=>o.dataset.name===item.name);if(option){$("itemName").value=option.value;$("itemPrice").value=String(item.price)}$("quantity").value="1";calculateTotal();closeShopMenu();$("order").scrollIntoView({behavior:"smooth"});$("customerName").focus({preventScroll:true})});row.append(info,price);list.appendChild(row)})}modal.classList.remove("hidden");document.body.classList.add("modal-open")}
-    function closeShopMenu(){$("shopMenuModal").classList.add("hidden");document.body.classList.remove("modal-open");activeMenuShop=null}
-    $("closeShopMenu").addEventListener("click",closeShopMenu);$("shopMenuModal").addEventListener("click",event=>{if(event.target===$("shopMenuModal"))closeShopMenu()});document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("shopMenuModal").classList.contains("hidden"))closeShopMenu()});
-    function addApprovedShopCard(shop,id){
-      const container=$("approvedShopList");
-      const button=document.createElement("button");
-      button.type="button";
-      button.className="approved-shop-option";
-      const name=document.createElement("strong");
-      name.textContent=shop.shopName||shop.name||"Local shop";
-      const address=document.createElement("span");
-      address.textContent="📍 "+(shop.address||"Address not provided");
-      button.append(name,address);
-      button.addEventListener("click",()=>{
-        const select=$("shopSelect");
-        let option=Array.from(select.options).find(item=>item.value===id);
-        if(!option){option=document.createElement("option");option.value=id;select.appendChild(option)}
-        option.textContent=shop.shopName||shop.name||"Local shop";
-        option.dataset.phone=normalisePhone(shop.phone);
-        select.value=id;
-        fillOrderMenu(id);
-        calculateTotal();
-        closeApprovedShopsModal();
-        openShopMenu(shop,id);
+    <form id="shopRegisterForm">
+      <label for="ownerName">Owner's full name</label>
+      <input id="ownerName" required maxlength="100" autocomplete="name">
+
+      <label for="shopName">Shop name</label>
+      <input id="shopName" required maxlength="100">
+
+      <label for="shopEmail">Email address</label>
+      <input id="shopEmail" type="email" required maxlength="254" autocomplete="email">
+
+      <label for="shopPassword">Create password</label>
+      <input id="shopPassword" type="password" required minlength="6" autocomplete="new-password">
+
+      <label for="shopPhone">WhatsApp / phone number</label>
+      <input id="shopPhone" type="tel" required maxlength="25">
+
+      <label for="shopAddress">Shop address</label>
+      <input id="shopAddress" required maxlength="200">
+
+      <label for="shopDescription">Menu and shop description</label>
+      <textarea id="shopDescription" required maxlength="1500" rows="4" placeholder="Classic Kota — R25; Cheese Kota — R30"></textarea>
+
+      <button id="registerSubmit" type="submit">Create Account &amp; Submit Application</button>
+    </form>
+    <p id="shopRegisterMessage" class="message hidden" role="status"></p>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const DELIVERY_FEE = 15;
+let preparedWhatsAppMessage = "";
+
+function money(value) {
+  return "R" + Number(value).toFixed(2);
+}
+
+function normalisePhone(value) {
+  let phone = String(value || "").replace(/[^0-9+]/g, "");
+  if (phone.startsWith("+")) phone = phone.slice(1);
+  if (phone.startsWith("0")) phone = "27" + phone.slice(1);
+  return /^27\d{9}$/.test(phone) ? phone : "";
+}
+
+function showMessage(element, text, type) {
+  element.textContent = text;
+  element.className = "message " + type;
+}
+
+function friendlyError(error) {
+  const code = error && error.code ? error.code : "";
+  switch (code) {
+    case "auth/email-already-in-use":
+      return "This email already has an account. Please sign in.";
+    case "auth/weak-password":
+      return "Choose a password with at least 6 characters.";
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+    case "auth/operation-not-allowed":
+      return "Enable Email/Password sign-in in Firebase Authentication.";
+    case "auth/network-request-failed":
+      return "Network connection failed. Check your internet connection.";
+    case "auth/too-many-requests":
+      return "Too many attempts. Please wait and try again.";
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "Email or password is incorrect. You can use Reset Password.";
+    case "permission-denied":
+    case "firestore/permission-denied":
+      return "Firebase denied this action. Check the Firestore security rules.";
+    default:
+      return error && error.message ? error.message : "Something went wrong. Please try again.";
+  }
+}
+
+function parseShopMenu(source) {
+  const menu = [];
+
+  function add(name, price, itemId) {
+    name = String(name || "").trim();
+    price = Number(price);
+
+    if (
+      name &&
+      Number.isFinite(price) &&
+      price > 0 &&
+      !menu.some(item => item.name.toLowerCase() === name.toLowerCase())
+    ) {
+      menu.push({
+        name,
+        price,
+        itemId: String(itemId || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"))
       });
-      container.appendChild(button);
-      const select=$("shopSelect");
-      let option=Array.from(select.options).find(item=>item.value===id);
-      if(!option){option=document.createElement("option");option.value=id;select.appendChild(option)}
-      option.textContent=shop.shopName||shop.name||"Local shop";
-      option.dataset.phone=normalisePhone(shop.phone);
     }
-    const statusShopDocs=new Map(),booleanShopDocs=new Map();let statusQueryFailed=false,booleanQueryFailed=false;
-    function renderApprovedShops(){
-      const container=$("approvedShopList"),status=$("approvedShopStatus");
-      container.replaceChildren();
-      const all=new Map([...statusShopDocs,...booleanShopDocs]);
-      const select=$("shopSelect");
-      const placeholder=select.options[0];
-      select.replaceChildren();
-      if(placeholder){select.appendChild(placeholder);placeholder.value="";placeholder.textContent="Choose an approved shop first"}
-      let count=0;
-      all.forEach((shop,id)=>{
-        approvedShopData.set(id,shop);
-        if(String(shop.status||"").toLowerCase()!=="approved"&&shop.approved!==true)return;
-        addApprovedShopCard(shop,id);count++;
-      });
-      if(!count){
-        const note=document.createElement("p");
-        note.className="message "+(statusQueryFailed&&booleanQueryFailed?"error":"info");
-        note.textContent=statusQueryFailed&&booleanQueryFailed
-          ?"Approved shops could not load. Check your internet connection and Firestore read permissions."
-          :"No approved shops are listed yet. Shops will appear here after an administrator approves and publishes their details.";
-        container.appendChild(note);status.textContent=note.textContent;
-      }else{
-        status.textContent=count+(count===1?" approved shop is available. Tap Browse Approved Shops to view it.":" approved shops are available. Tap Browse Approved Shops to view them.");
+  }
+
+  function parseLines(text) {
+    const lines = String(text || "").split(/[;\n]+/);
+
+    lines.forEach(line => {
+      const match = line.trim().match(/^(.+?)\s*(?:—|–|-|:)\s*R?\s*(\d+(?:\.\d{1,2})?)\s*$/i);
+      if (match) add(match[1], match[2]);
+    });
+  }
+
+  if (Array.isArray(source)) {
+    source.forEach(item => {
+      if (item && typeof item === "object") {
+        add(item.name || item.itemName, item.price, item.itemId || item.id);
+      } else if (typeof item === "string") {
+        parseLines(item);
       }
+    });
+    return menu;
+  }
+
+  if (source && typeof source === "object") {
+    if (Array.isArray(source.items)) return parseShopMenu(source.items);
+    return menu;
+  }
+
+  parseLines(source);
+  return menu;
+}
+
+function shopMenu(shop) {
+  const menu = parseShopMenu(shop.menu);
+  return menu.length ? menu : parseShopMenu(shop.description || "");
+}
+
+function currentItem() {
+  const option = $("itemName").selectedOptions[0];
+  if (!option || !option.value) return {name:"", price:null, itemId:""};
+
+  const price = Number(option.dataset.price);
+  $("itemPrice").value = Number.isFinite(price) ? price.toFixed(2) : "";
+
+  return {
+    name: option.dataset.name || option.textContent.split(" — ")[0],
+    price: Number.isFinite(price) && price > 0 ? price : null,
+    itemId: option.value
+  };
+}
+
+function getQuantity() {
+  const quantity = Number($("quantity").value);
+  return Number.isInteger(quantity) && quantity >= 1 && quantity <= 50 ? quantity : null;
+}
+
+function selectedShop() {
+  const option = $("shopSelect").options[$("shopSelect").selectedIndex];
+  return {
+    id: $("shopSelect").value,
+    name: option ? option.textContent.trim() : "",
+    phone: option ? option.dataset.phone || "" : ""
+  };
+}
+
+function calculateTotal() {
+  const item = currentItem();
+  const quantity = getQuantity();
+  const delivery = $("service").value === "Delivery" ? DELIVERY_FEE : 0;
+
+  $("deliveryTotal").textContent = money(delivery);
+
+  if (!$("shopSelect").value || item.price === null) {
+    $("foodSubtotal").textContent = item.price === null && $("itemName").value
+      ? "Price unavailable"
+      : "—";
+    $("orderTotal").textContent = "—";
+    return null;
+  }
+
+  if (quantity === null) {
+    $("foodSubtotal").textContent = "Check quantity";
+    $("orderTotal").textContent = "Check quantity";
+    return null;
+  }
+
+  const foodSubtotal = item.price * quantity;
+  const total = foodSubtotal + delivery;
+
+  $("foodSubtotal").textContent = money(foodSubtotal);
+  $("orderTotal").textContent = money(total);
+
+  return {item, quantity, foodSubtotal, delivery, total};
+}
+
+$("year").textContent = new Date().getFullYear();
+
+["shopSelect", "itemName", "quantity", "service"].forEach(id => {
+  $(id).addEventListener("change", () => {
+    if (id === "shopSelect") fillOrderMenu();
+    calculateTotal();
+    $("orderSummary").classList.add("hidden");
+    $("sendOrder").classList.add("hidden");
+    $("orderError").classList.add("hidden");
+    preparedWhatsAppMessage = "";
+  });
+  $(id).addEventListener("input", calculateTotal);
+});
+
+function openModal(id) {
+  $(id).classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(id) {
+  $(id).classList.add("hidden");
+  if (!document.querySelector(".modal:not(.hidden)")) {
+    document.body.style.overflow = "";
+  }
+}
+
+document.querySelectorAll(".register-trigger").forEach(link => {
+  link.addEventListener("click", event => {
+    event.preventDefault();
+    openModal("registerModal");
+  });
+});
+
+$("closeRegisterModal").addEventListener("click", () => closeModal("registerModal"));
+$("openApprovedShops").addEventListener("click", () => openModal("approvedShopsModal"));
+$("closeApprovedShops").addEventListener("click", () => closeModal("approvedShopsModal"));
+$("closeShopMenu").addEventListener("click", () => closeModal("shopMenuModal"));
+
+["approvedShopsModal", "shopMenuModal", "registerModal"].forEach(id => {
+  $(id).addEventListener("click", event => {
+    if (event.target === $(id)) closeModal(id);
+  });
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    ["approvedShopsModal", "shopMenuModal", "registerModal"].forEach(id => closeModal(id));
+  }
+});
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  signOut, sendPasswordResetEmail, onAuthStateChanged, signInAnonymously
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {
+  getFirestore, doc, setDoc, updateDoc, collection, query, where,
+  onSnapshot, getDoc, getDocs, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+  authDomain: "kasikota-hub.firebaseapp.com",
+  databaseURL: "https://kasikota-hub-default-rtdb.firebaseio.com",
+  projectId: "kasikota-hub",
+  storageBucket: "kasikota-hub.firebasestorage.app",
+  messagingSenderId: "470531130099",
+  appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86",
+  measurementId: "G-WKH542B38C"
+};
+
+const ADMIN_UID = "4menEfIBN2XqMMi8dZPSrv73HlQ2";
+const TEST_NOTE = "TEST ONLY — DO NOT PREPARE FOOD";
+
+let auth, db, guestAuth, guestDb;
+let firebaseReady = false;
+let currentOwner = null;
+let currentShopId = null;
+let currentShopData = null;
+let preparedOrderRef = null;
+const approvedShopData = new Map();
+const shopDocuments = new Map();
+
+function showFirebaseError(element, error) {
+  console.error(error);
+  showMessage(element, friendlyError(error), "error");
+}
+
+function isApproved(shop) {
+  return String(shop.status || "").toLowerCase() === "approved"
+    || shop.approved === true;
+}
+
+function renderApprovedShops() {
+  const cards = $("shopCards");
+  const modalList = $("approvedShopList");
+  const select = $("shopSelect");
+  const oldValue = select.value;
+
+  cards.replaceChildren();
+  modalList.replaceChildren();
+
+  const approved = [...approvedShopData.entries()]
+    .filter(([, shop]) => isApproved(shop));
+
+  select.replaceChildren();
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Choose an approved shop";
+  select.appendChild(placeholder);
+
+  approved.forEach(([id, shop]) => {
+    const name = shop.shopName || shop.name || "Local shop";
+    const phone = normalisePhone(shop.phone);
+
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = name;
+    option.dataset.phone = phone;
+    select.appendChild(option);
+
+    const card = document.createElement("article");
+    card.className = "shop-card";
+
+    const title = document.createElement("h3");
+    title.textContent = name;
+
+    const address = document.createElement("p");
+    address.textContent = "📍 " + (shop.address || "Address not provided");
+
+    const menuButton = document.createElement("button");
+    menuButton.type = "button";
+    menuButton.textContent = "View Menu & Prices";
+    menuButton.addEventListener("click", () => openShopMenu(id, shop));
+
+    card.append(title, address, menuButton);
+    cards.appendChild(card);
+
+    const modalButton = document.createElement("button");
+    modalButton.type = "button";
+    modalButton.className = "shop-option";
+    modalButton.style.width = "100%";
+    modalButton.style.textAlign = "left";
+    modalButton.textContent = name + " — " + (shop.address || "Address not provided");
+    modalButton.addEventListener("click", () => {
+      $("shopSelect").value = id;
+      fillOrderMenu();
+      closeModal("approvedShopsModal");
+      openShopMenu(id, shop);
+    });
+    modalList.appendChild(modalButton);
+  });
+
+  if (approved.length === 0) {
+    $("approvedShopStatus").textContent =
+      "No approved shops were found. Check the shops collection and its approval fields.";
+    $("approvedShopList").textContent = "No approved shops are available yet.";
+  } else {
+    $("approvedShopStatus").textContent =
+      approved.length + (approved.length === 1
+        ? " approved shop is available."
+        : " approved shops are available.");
+  }
+
+  if (approved.some(([id]) => id === oldValue)) {
+    select.value = oldValue;
+  }
+}
+
+function fillOrderMenu() {
+  const id = $("shopSelect").value;
+  const select = $("itemName");
+  const oldValue = select.value;
+  select.replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = id ? "Choose a menu item" : "Choose a shop first";
+  select.appendChild(placeholder);
+
+  const shop = approvedShopData.get(id);
+  if (shop) {
+    shopMenu(shop).forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.itemId;
+      option.textContent = item.name + " — " + money(item.price);
+      option.dataset.name = item.name;
+      option.dataset.price = String(item.price);
+      select.appendChild(option);
+    });
+  }
+
+  if ([...select.options].some(option => option.value === oldValue)) {
+    select.value = oldValue;
+  }
+
+  $("itemPrice").value = "";
+  calculateTotal();
+}
+
+function openShopMenu(id, shop) {
+  $("shopMenuTitle").textContent = shop.shopName || shop.name || "Shop Menu";
+  $("shopMenuSubtitle").textContent =
+    (shop.address || "Address not provided") +
+    (shop.phone ? " · WhatsApp: " + shop.phone : "");
+
+  const list = $("shopMenuList");
+  list.replaceChildren();
+  const items = shopMenu(shop);
+
+  if (!items.length) {
+    const note = document.createElement("p");
+    note.className = "message info";
+    note.textContent = "This shop has not added menu prices in a readable format yet.";
+    list.appendChild(note);
+  } else {
+    items.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "menu-row";
+
+      const info = document.createElement("div");
+      const name = document.createElement("strong");
+      name.textContent = item.name;
+      const description = document.createElement("small");
+      description.textContent = "Select this price to start an order.";
+      info.append(name, description);
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = money(item.price);
+      button.addEventListener("click", () => {
+        $("shopSelect").value = id;
+        fillOrderMenu();
+        const option = [...$("itemName").options]
+          .find(itemOption => itemOption.dataset.name === item.name);
+
+        if (option) $("itemName").value = option.value;
+
+        $("quantity").value = "1";
+        calculateTotal();
+        closeModal("shopMenuModal");
+        $("order").scrollIntoView({behavior:"smooth"});
+      });
+
+      row.append(info, button);
+      list.appendChild(row);
+    });
+  }
+
+  openModal("shopMenuModal");
+}
+
+function listenForShops() {
+  const shopsQuery = query(collection(db, "shops"));
+
+  onSnapshot(shopsQuery, snapshot => {
+    approvedShopData.clear();
+    snapshot.forEach(shopDoc => {
+      approvedShopData.set(shopDoc.id, shopDoc.data());
+    });
+    renderApprovedShops();
+    fillOrderMenu();
+  }, error => {
+    console.error("Shop loading failed:", error);
+    $("approvedShopStatus").textContent =
+      "Could not load shops. Check your internet connection and Firestore read rules.";
+  });
+}
+
+function makeWhatsAppMessage(order, orderNumber) {
+  return [
+    "KOTA CONNECT ORDER " + orderNumber,
+    "Shop: " + order.shopName,
+    "Item: " + order.items[0].name,
+    "Quantity: " + order.items[0].quantity,
+    "Customer: " + order.customerName,
+    "Customer phone: " + order.customerPhone,
+    "Area: " + order.area,
+    "Pickup/delivery: " + order.fulfillmentType,
+    "Address/details: " + (order.deliveryAddress || order.pickupDetails || "Not supplied"),
+    "Food subtotal quote: " + money(order.foodSubtotalQuote),
+    "Delivery fee quote: " + money(order.deliveryFeeQuote),
+    "TOTAL QUOTE: " + money(order.totalQuote),
+    "Firebase order saved as PENDING. Please confirm availability and the final total."
+  ].join("\n");
+}
+
+$("orderForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  $("orderError").classList.add("hidden");
+  $("orderSummary").classList.add("hidden");
+  $("sendOrder").classList.add("hidden");
+  preparedOrderRef = null;
+
+  const shopId = $("shopSelect").value;
+  const shop = approvedShopData.get(shopId);
+  const calculation = calculateTotal();
+  const quantity = getQuantity();
+  const area = $("area").value.trim();
+  const extraArea = $("otherArea").value.trim();
+  const customerName = $("customerName").value.trim();
+  const customerPhone = $("customerPhone").value.trim();
+  const address = $("orderAddress").value.trim();
+  const service = $("service").value;
+
+  let error = "";
+  if (!firebaseReady) error = "Firebase did not initialize. Refresh and try again.";
+  else if (!shop || !isApproved(shop)) error = "Choose an approved shop.";
+  else if (!shop.ownerUid) error = "This shop needs an ownerUid field before orders can be placed.";
+  else if (!calculation) error = "Choose a priced menu item and a valid quantity.";
+  else if (!area) error = "Choose your location.";
+  else if (!customerName || !customerPhone) error = "Enter your name and phone number.";
+  else if (service === "Delivery" && !address) error = "Enter your delivery address.";
+
+  if (error) {
+    showMessage($("orderError"), error, "error");
+    return;
+  }
+
+  const button = $("prepareOrder");
+  button.disabled = true;
+  button.textContent = "Saving order…";
+
+  try {
+    if (!guestAuth.currentUser) await signInAnonymously(guestAuth);
+
+    const orderRef = doc(collection(guestDb, "orders"));
+    const orderNumber = "KC-" + orderRef.id.slice(-8).toUpperCase();
+    const location = area + (extraArea ? " — " + extraArea : "");
+    const phone = normalisePhone(shop.phone);
+
+    const order = {
+      orderNumber,
+      shopId,
+      shopName: String(shop.shopName || shop.name || "Approved shop"),
+      ownerUid: shop.ownerUid,
+      customerUid: guestAuth.currentUser.uid,
+      customerName,
+      customerPhone,
+      area: location,
+      fulfillmentType: service.toLowerCase(),
+      deliveryAddress: service === "Delivery" ? address : "",
+      pickupDetails: service === "Pickup" ? address : "",
+      items: [{
+        itemId: calculation.item.itemId,
+        name: calculation.item.name,
+        quantity,
+        unitPriceQuote: calculation.item.price,
+        lineTotalQuote: calculation.item.price * quantity
+      }],
+      foodSubtotalQuote: calculation.foodSubtotal,
+      deliveryFeeQuote: calculation.delivery,
+      totalQuote: calculation.total,
+      confirmedTotal: null,
+      paymentMethod: "not_selected",
+      paymentStatus: "unpaid",
+      orderStatus: "pending",
+      ownerNote: "",
+      delayMinutes: 0,
+      testOrder: false,
+      priceVerification: "shop_confirmation_required",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+
+    await setDoc(orderRef, order);
+    preparedOrderRef = {id:orderRef.id, order, phone};
+
+    preparedWhatsAppMessage = makeWhatsAppMessage(order, orderNumber);
+    $("orderSummary").textContent =
+      "Order saved in Firebase as pending.\nReference: " + orderNumber +
+      "\nThe shop must confirm availability and the final price.\n\n" +
+      preparedWhatsAppMessage;
+
+    $("orderSummary").classList.remove("hidden");
+    $("sendOrder").classList.remove("hidden");
+  } catch (error) {
+    console.error("Order save failed:", error);
+    showMessage(
+      $("orderError"),
+      "Order could not be saved (" + (error.code || error.message) +
+      "). Check Anonymous Authentication and the Firestore /orders rules. Do not assume an order was placed.",
+      "error"
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = "Save Order & Prepare WhatsApp";
+  }
+}, true);
+
+$("sendOrder").addEventListener("click", () => {
+  if (!preparedOrderRef) return;
+
+  if (!preparedOrderRef.phone) {
+    showMessage(
+      $("orderError"),
+      "This shop has no valid South African WhatsApp number. Please contact the shop.",
+      "error"
+    );
+    return;
+  }
+
+  const url = "https://wa.me/" + preparedOrderRef.phone +
+    "?text=" + encodeURIComponent(preparedWhatsAppMessage);
+
+  window.open(url, "_blank", "noopener,noreferrer");
+});
+
+async function loadOwnerShop() {
+  if (!currentOwner) return;
+
+  const message = $("ownerDashboardMessage");
+  const form = $("ownerShopForm");
+  form.classList.add("hidden");
+  currentShopId = null;
+  currentShopData = null;
+
+  showMessage(message, "Looking for your shop…", "info");
+
+  try {
+    const q = query(
+      collection(db, "shops"),
+      where("ownerUid", "==", currentOwner.uid)
+    );
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      const application = await getDoc(doc(db, "shopApplications", currentOwner.uid));
+      if (application.exists()) {
+        const data = application.data();
+        showMessage(
+          message,
+          "Your application exists with status " + (data.status || "unknown") +
+          ", but your public shop is not linked to this account yet. An administrator must publish the shop and set ownerUid.",
+          "info"
+        );
+      } else {
+        showMessage(
+          message,
+          "No shop is linked to this account. Ask the administrator to check the ownerUid field.",
+          "error"
+        );
+      }
+      return;
     }
-    function closeApprovedShopsModal(){$("approvedShopsModal").classList.add("hidden");document.body.classList.remove("modal-open")}
-    $("openApprovedShops").addEventListener("click",()=>{$("approvedShopsModal").classList.remove("hidden");document.body.classList.add("modal-open")});
-    $("closeApprovedShops").addEventListener("click",closeApprovedShopsModal);
-    $("approvedShopsModal").addEventListener("click",event=>{if(event.target===$("approvedShopsModal"))closeApprovedShopsModal()});
-    document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("approvedShopsModal").classList.contains("hidden"))closeApprovedShopsModal()});
-    function updateShopSnapshot(snapshot,target){target.clear();snapshot.forEach(docSnap=>{target.set(docSnap.id,docSnap.data());approvedShopData.set(docSnap.id,docSnap.data())});renderApprovedShops()}
-    async function loadOwnerShop(){if(!currentOwner)return;const dashMessage=$("ownerDashboardMessage"),shopForm=$("ownerShopForm"),help=$("ownerDashboardHelp");shopForm.classList.add("hidden");help.textContent="";currentShopId=null;currentShopData=null;if(unsubscribeOwnerShop){unsubscribeOwnerShop();unsubscribeOwnerShop=null}showMessage(dashMessage,"Looking for your shop…","info");try{const shopsQuery=query(collection(db,"shops"),where("ownerUid","==",currentOwner.uid));const snapshot=await getDocsCompat(shopsQuery);if(snapshot.empty){const appSnap=await getDoc(doc(db,"shopApplications",currentOwner.uid));if(appSnap.exists()){const app=appSnap.data();showMessage(dashMessage,"Your account is signed in, but no public shop is linked to it yet. Application status: "+(app.status||"unknown")+". An administrator must publish the shop document in the shops collection and set ownerUid to your UID.","info")}else{showMessage(dashMessage,"We could not find a shop linked to this account. Ask the administrator to check the ownerUid field in Firestore.","error")}return}const match=snapshot.docs.find(d=>d.data().ownerUid===currentOwner.uid);if(!match){showMessage(dashMessage,"No shop linked to this account was found.","error");return}currentShopId=match.id;currentShopData=match.data();$("ownerEditShopName").value=currentShopData.shopName||"";$("ownerEditPhone").value=currentShopData.phone||"";$("ownerEditAddress").value=currentShopData.address||"";$("ownerEditDescription").value=currentShopData.description||"";shopForm.classList.remove("hidden");showMessage(dashMessage,"Your shop is connected. Status: "+(currentShopData.status||"unknown")+".","success");help.textContent="For safety, the dashboard does not let you change approval status or owner UID."}catch(error){console.error("Could not load owner's shop:",error);showMessage(dashMessage,friendlyError(error),"error")}}
-    // A small wrapper keeps the query/read logic explicit.
-    async function getDocsCompat(q){const {getDocs}=await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");return getDocs(q)}
-    try{const app=getApps().length?getApp():initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);
-      const guestApp=getApps().find(item=>item.name==="KotaConnectGuestOrders")||initializeApp(firebaseConfig,"KotaConnectGuestOrders");
-      guestAuth=getAuth(guestApp);guestDb=getFirestore(guestApp);firebaseReady=true;onSnapshot(query(collection(db,"shops"),where("status","==","approved")),snapshot=>{statusQueryFailed=false;updateShopSnapshot(snapshot,statusShopDocs)},error=>{statusQueryFailed=true;console.error("Could not load shops with status=approved:",error);renderApprovedShops()});onSnapshot(query(collection(db,"shops"),where("approved","==",true)),snapshot=>{booleanQueryFailed=false;updateShopSnapshot(snapshot,booleanShopDocs)},error=>{booleanQueryFailed=true;console.error("Could not load shops with approved=true:",error);renderApprovedShops()});}catch(error){console.error("Firebase initialization error:",error);showMessage(message,"Firebase could not initialize. Check the Firebase configuration and serve this page from a web server.","error")}
-    // Firebase order integration. Guest authentication is isolated from the owner's login session.
-    $("orderForm").addEventListener("submit",async event=>{
-      event.preventDefault();event.stopImmediatePropagation();
-      const errorEl=$("orderError"),summary=$("orderSummary"),sendButton=$("sendOrder");
-      errorEl.classList.add("hidden");summary.classList.add("hidden");sendButton.classList.add("hidden");preparedWhatsAppMessage="";
-      const shopId=$("shopSelect").value,shopData=approvedShopData.get(shopId),item=selectedMenuItem(),calculation=calculateTotal(),quantity=getQuantity();
-      const area=$("area").value.trim(),extraArea=$("otherArea").value.trim(),name=$("customerName").value.trim(),phone=$("customerPhone").value.trim(),address=$("orderAddress").value.trim(),service=$("service").value;
-      let validation="";
-      if(!firebaseReady)validation="Firebase is not connected. Please try again later.";
-      else if(!shopId||!shopData||String(shopData.status||"").toLowerCase()!=="approved")validation="Please choose an approved shop.";
-      else if(!item.name||!item.price)validation="Choose a priced item from this shop's menu.";
-      else if(!quantity)validation="Enter a whole-number quantity from 1 to 50.";
-      else if(!area)validation="Choose your location.";
-      else if(!name||!phone)validation="Enter your name and phone number.";
-      else if(service==="Delivery"&&!address)validation="Enter the delivery address.";
-      else if(!shopData.ownerUid)validation="This shop is missing its owner link. Please contact Kota Connect.";
-      if(validation){errorEl.textContent=validation;errorEl.classList.remove("hidden");return}
-      const button=$("prepareOrder");button.disabled=true;button.textContent="Saving order…";
-      try{
-        if(!guestAuth.currentUser)await signInAnonymously(guestAuth);
-        const customerUid=guestAuth.currentUser.uid;
-        const orderRef=doc(collection(guestDb,"orders"));
-        const orderNumber="KC-"+orderRef.id.slice(-8).toUpperCase();
-        const deliveryFee=service==="Delivery"?DELIVERY_FEE:0;
-        const location=area+(extraArea?" — "+extraArea:"");
-        const orderPayload={
-          orderNumber,shopId,shopName:String(shopData.shopName||shopData.name||"Approved shop"),
-          ownerUid:shopData.ownerUid,customerUid,
-          customerName:name,customerPhone:phone,area:location,
-          fulfillmentType:service.toLowerCase(),deliveryAddress:service==="Delivery"?address:"",
-          pickupDetails:service==="Pickup"?address:"",
-          items:[{itemId:item.itemId,name:item.name,quantity,unitPriceQuote:item.price,lineTotalQuote:item.price*quantity}],
-          foodSubtotalQuote:calculation.foodSubtotal,deliveryFeeQuote:deliveryFee,totalQuote:calculation.total,
-          confirmedTotal:null,paymentMethod:"not_selected",paymentStatus:"unpaid",
-          orderStatus:"pending",ownerNote:"",delayMinutes:0,testOrder:false,
-          priceVerification:"shop_confirmation_required",createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-        };
-        await setDoc(orderRef,orderPayload);
-        preparedWhatsAppMessage=["KOTA CONNECT ORDER "+orderNumber,"Shop: "+orderPayload.shopName,"Item: "+item.name,"Quantity: "+quantity,"Customer: "+name,"Customer phone: "+phone,"Area: "+location,"Pickup/delivery: "+service,"Address/details: "+(address||"Not supplied"),"Food subtotal quote: "+money(calculation.foodSubtotal),"Delivery fee quote: "+money(deliveryFee),"TOTAL QUOTE: "+money(calculation.total),"Firebase order saved as PENDING. Please confirm item availability and final total before accepting."].join("\\n");
-        summary.textContent="Order saved in Firebase as pending. Reference: "+orderNumber+"\\nThe shop must confirm availability and the final price.\\n\\n"+preparedWhatsAppMessage;
-        summary.classList.remove("hidden");sendButton.classList.remove("hidden");
-      }catch(err){console.error("Could not save order:",err);errorEl.textContent="Order could not be saved to Firebase ("+(err.code||err.message)+"). Check Anonymous sign-in is enabled and the Firestore /orders rules are published. No order was submitted.";errorEl.classList.remove("hidden")}
-      finally{button.disabled=false;button.textContent="Prepare Order"}
-    },true);
-    $("ownerSignInForm").addEventListener("submit",async event=>{event.preventDefault();const signInMessage=$("ownerSignInMessage");signInMessage.classList.add("hidden");if(!firebaseReady){showMessage(signInMessage,"Firebase is not ready. Check the Firebase configuration.","error");return}const button=$("ownerSignInButton");button.disabled=true;try{await signInWithEmailAndPassword(auth,$("ownerLoginEmail").value.trim(),$("ownerLoginPassword").value);showMessage(signInMessage,"Signed in successfully. Loading your shop…","success")}catch(error){showMessage(signInMessage,friendlyError(error),"error")}finally{button.disabled=false}});
-    $("forgotPasswordButton").addEventListener("click",async()=>{const email=$("ownerLoginEmail").value.trim(),el=$("ownerSignInMessage");if(!email){showMessage(el,"Enter your email address first, then tap Reset Password.","error");return}try{await sendPasswordResetEmail(auth,email);showMessage(el,"If an account exists for that email, Firebase will send a password reset email.","success")}catch(error){showMessage(el,friendlyError(error),"error")}});
-    $("ownerSignOutButton").addEventListener("click",async()=>{try{await signOut(auth)}catch(error){showMessage($("ownerDashboardMessage"),friendlyError(error),"error")}});
-    $("ownerReloadShopButton").addEventListener("click",loadOwnerShop);
-    $("ownerShopForm").addEventListener("submit",async event=>{event.preventDefault();if(!currentOwner||!currentShopId||!currentShopData){showMessage($("ownerDashboardMessage"),"Your shop is not loaded. Reload your shop and try again.","error");return}const button=$("ownerSaveShopButton");button.disabled=true;try{const updated={shopName:$("ownerEditShopName").value.trim(),phone:$("ownerEditPhone").value.trim(),address:$("ownerEditAddress").value.trim(),description:$("ownerEditDescription").value.trim()};if(!updated.shopName||!updated.phone||!updated.address||!updated.description)throw new Error("Please complete all shop fields.");await updateDoc(doc(db,"shops",currentShopId),updated);currentShopData={...currentShopData,...updated};showMessage($("ownerDashboardMessage"),"Shop details saved successfully.","success")}catch(error){console.error("Saving shop details failed:",error);showMessage($("ownerDashboardMessage"),friendlyError(error),"error")}finally{button.disabled=false}});
-    onAuthStateChanged(auth,user=>{currentOwner=user||null;if(user){$("ownerSignedOut").classList.add("hidden");$("ownerSignedIn").classList.remove("hidden");$("ownerAccountEmail").textContent="Signed in: "+(user.email||"account");loadOwnerShop()}else{$("ownerSignedOut").classList.remove("hidden");$("ownerSignedIn").classList.add("hidden");$("ownerShopForm").classList.add("hidden");if(unsubscribeOwnerShop){unsubscribeOwnerShop();unsubscribeOwnerShop=null}currentShopId=null;currentShopData=null}});
-    form.addEventListener("submit",async event=>{event.preventDefault();if(!form.reportValidity())return;if(!firebaseReady){showMessage(message,"Registration is unavailable because Firebase did not initialize.","error");return}const email=$("shopEmail").value.trim().toLowerCase(),ownerName=$("ownerName").value.trim(),shopName=$("shopName").value.trim(),phone=$("shopPhone").value.trim(),address=$("shopAddress").value.trim(),description=$("shopDescription").value.trim(),password=$("shopPassword").value;if(!ownerName||!shopName||!email||!phone||!address||!description||!password){showMessage(message,"Please complete every field before submitting.","error");return}submitButton.disabled=true;showMessage(message,"Creating your account and submitting your application…","info");let createdUid=null;try{const credential=await createUserWithEmailAndPassword(auth,email,password);createdUid=credential.user.uid;await setDoc(doc(db,"shopApplications",createdUid),{ownerName,shopName,email:credential.user.email||email,phone,address,description,status:"pending",createdAt:serverTimestamp()});form.reset();showMessage(message,"Application submitted successfully! Your shop is awaiting administrator approval.","success")}catch(error){console.error("Shop registration error:",error);if(createdUid)showMessage(message,"Your Firebase account was created, but the application could not be saved. Ask the administrator to check Firestore permissions before trying again.","error");else showMessage(message,friendlyError(error),"error")}finally{submitButton.disabled=false}});
-  </script>
+
+    const match = snapshot.docs[0];
+    currentShopId = match.id;
+    currentShopData = match.data();
+
+    $("ownerEditShopName").value = currentShopData.shopName || "";
+    $("ownerEditPhone").value = currentShopData.phone || "";
+    $("ownerEditAddress").value = currentShopData.address || "";
+    $("ownerEditDescription").value = currentShopData.description || "";
+
+    form.classList.remove("hidden");
+    showMessage(
+      message,
+      "Your shop is connected. Status: " + (currentShopData.status || "unknown") + ".",
+      "success"
+    );
+
+    $("ownerDashboardHelp").textContent =
+      "The dashboard cannot approve shops or change the owner UID.";
+  } catch (error) {
+    showFirebaseError(message, error);
+  }
+}
+
+$("ownerSignInForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const message = $("ownerSignInMessage");
+  message.classList.add("hidden");
+
+  if (!firebaseReady) {
+    showMessage(message, "Firebase is not ready.", "error");
+    return;
+  }
+
+  const button = $("ownerSignInButton");
+  button.disabled = true;
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      $("ownerLoginEmail").value.trim(),
+      $("ownerLoginPassword").value
+    );
+    showMessage(message, "Signed in. Loading your shop…", "success");
+  } catch (error) {
+    showFirebaseError(message, error);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("forgotPasswordButton").addEventListener("click", async () => {
+  const email = $("ownerLoginEmail").value.trim();
+  const message = $("ownerSignInMessage");
+
+  if (!email) {
+    showMessage(message, "Enter your email address first.", "error");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showMessage(
+      message,
+      "If an account exists for this email, Firebase will send a reset message.",
+      "success"
+    );
+  } catch (error) {
+    showFirebaseError(message, error);
+  }
+});
+
+$("ownerSignOutButton").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    showFirebaseError($("ownerDashboardMessage"), error);
+  }
+});
+
+$("ownerReloadShopButton").addEventListener("click", loadOwnerShop);
+
+$("ownerShopForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!currentOwner || !currentShopId || !currentShopData) {
+    showMessage($("ownerDashboardMessage"), "Reload your shop and try again.", "error");
+    return;
+  }
+
+  const button = $("ownerSaveShopButton");
+  button.disabled = true;
+
+  try {
+    const updated = {
+      shopName: $("ownerEditShopName").value.trim(),
+      phone: $("ownerEditPhone").value.trim(),
+      address: $("ownerEditAddress").value.trim(),
+      description: $("ownerEditDescription").value.trim()
+    };
+
+    if (!updated.shopName || !updated.phone || !updated.address || !updated.description) {
+      throw new Error("Complete all shop fields.");
+    }
+
+    await updateDoc(doc(db, "shops", currentShopId), updated);
+    currentShopData = {...currentShopData, ...updated};
+
+    showMessage($("ownerDashboardMessage"), "Shop details saved successfully.", "success");
+  } catch (error) {
+    showFirebaseError($("ownerDashboardMessage"), error);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("shopRegisterForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const message = $("shopRegisterMessage");
+  const button = $("registerSubmit");
+
+  if (!firebaseReady) {
+    showMessage(message, "Firebase is not ready. Please refresh and try again.", "error");
+    return;
+  }
+
+  const ownerName = $("ownerName").value.trim();
+  const shopName = $("shopName").value.trim();
+  const email = $("shopEmail").value.trim().toLowerCase();
+  const password = $("shopPassword").value;
+  const phone = $("shopPhone").value.trim();
+  const address = $("shopAddress").value.trim();
+  const description = $("shopDescription").value.trim();
+
+  button.disabled = true;
+  showMessage(message, "Creating your account and submitting your application…", "info");
+
+  let createdUid = null;
+
+  try {
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
+    createdUid = credential.user.uid;
+
+    await setDoc(doc(db, "shopApplications", createdUid), {
+      ownerName,
+      shopName,
+      email: credential.user.email || email,
+      phone,
+      address,
+      description,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    $("shopRegisterForm").reset();
+    showMessage(
+      message,
+      "Application submitted successfully. Your shop is awaiting administrator approval.",
+      "success"
+    );
+  } catch (error) {
+    console.error("Registration failed:", error);
+
+    if (createdUid) {
+      showMessage(
+        message,
+        "Your account was created, but the application could not be saved. Ask the administrator to check Firestore permissions. Do not register again with another email until this is checked.",
+        "error"
+      );
+    } else {
+      showFirebaseError(message, error);
+    }
+  } finally {
+    button.disabled = false;
+  }
+});
+
+/* Administrator-only test order.
+   This must also be permitted by your published Firestore security rules. */
+$("adminTestOrderButton").addEventListener("click", async () => {
+  const message = $("adminTestOrderMessage");
+  const shopId = $("shopSelect").value;
+  const shop = approvedShopData.get(shopId);
+  const item = currentItem();
+
+  if (!currentOwner || currentOwner.uid !== ADMIN_UID) {
+    showMessage(message, "Administrator sign-in is required.", "error");
+    return;
+  }
+
+  if (!shop || !isApproved(shop) || !shop.ownerUid || !item.name || !item.price) {
+    showMessage(message, "Select an approved shop with an ownerUid and a priced menu item first.", "error");
+    return;
+  }
+
+  const button = $("adminTestOrderButton");
+  button.disabled = true;
+
+  try {
+    const testRef = doc(collection(db, "orders"));
+
+    await setDoc(testRef, {
+      orderNumber: "TEST-" + testRef.id.slice(-8).toUpperCase(),
+      shopId,
+      shopName: shop.shopName || shop.name || "Approved shop",
+      ownerUid: shop.ownerUid,
+      customerUid: currentOwner.uid,
+      customerName: "Kota Connect Administrator TEST",
+      customerPhone: "",
+      area: "TEST ONLY",
+      fulfillmentType: "pickup",
+      deliveryAddress: "",
+      pickupDetails: "TEST ONLY — DO NOT PREPARE FOOD",
+      items: [{
+        itemId: item.itemId,
+        name: item.name,
+        quantity: 1,
+        unitPriceQuote: item.price,
+        lineTotalQuote: item.price
+      }],
+      foodSubtotalQuote: item.price,
+      deliveryFeeQuote: 0,
+      totalQuote: item.price,
+      confirmedTotal: null,
+      paymentMethod: "not_selected",
+      paymentStatus: "unpaid",
+      orderStatus: "test",
+      ownerNote: TEST_NOTE,
+      delayMinutes: 0,
+      testOrder: true,
+      priceVerification: "test_only",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    showMessage(
+      message,
+      "Test record saved. Reference: " + testRef.id +
+      ". Check Firestore > orders. This is not a real food order.",
+      "success"
+    );
+  } catch (error) {
+    showFirebaseError(message, error);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+try {
+  const existingApp = getApps().find(app => app.name === "[DEFAULT]");
+  const app = existingApp || initializeApp(firebaseConfig);
+
+  auth = getAuth(app);
+  db = getFirestore(app);
+
+  const guestApp =
+    getApps().find(appItem => appItem.name === "KotaConnectGuestOrders") ||
+    initializeApp(firebaseConfig, "KotaConnectGuestOrders");
+
+  guestAuth = getAuth(guestApp);
+  guestDb = getFirestore(guestApp);
+
+  firebaseReady = true;
+  listenForShops();
+
+  onAuthStateChanged(auth, user => {
+    currentOwner = user || null;
+
+    const isAdmin = !!user && user.uid === ADMIN_UID;
+    $("adminTestArea").classList.toggle("hidden", !isAdmin);
+
+    if (user) {
+      $("ownerSignedOut").classList.add("hidden");
+      $("ownerSignedIn").classList.remove("hidden");
+      $("ownerAccountEmail").textContent = "Signed in: " + (user.email || "account");
+      loadOwnerShop();
+    } else {
+      $("ownerSignedOut").classList.remove("hidden");
+      $("ownerSignedIn").classList.add("hidden");
+      $("ownerShopForm").classList.add("hidden");
+      currentShopId = null;
+      currentShopData = null;
+    }
+  });
+} catch (error) {
+  console.error("Firebase initialization failed:", error);
+  firebaseReady = false;
+  $("approvedShopStatus").textContent =
+    "Firebase could not start. Check the Firebase configuration and browser console.";
+}
+</script>
 </body>
 </html>
