@@ -1,1 +1,368 @@
 
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#176b45">
+<title>Kota Connect | Commission Report</title>
+<style>
+:root{--g:#176b45;--ink:#17221c;--muted:#66736b;--line:#e1e8e2;--bg:#f5f8f5;--red:#a62d26}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1000px;margin:auto;padding:16px}
+.top{background:#123d2b;color:#fff;padding:18px;border-radius:14px;margin-bottom:16px}
+.top h1{font-size:23px;margin:0 0 5px}
+.top p{margin:0;color:#d7e7dc;font-size:13px}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;margin:13px 0}
+.card h2{font-size:18px;margin:0 0 13px}
+.field{display:grid;gap:6px;margin:12px 0}
+.field label{font-size:13px;font-weight:700}
+.field input{width:100%;padding:11px;border:1px solid #cfd9d1;border-radius:8px}
+.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:700}
+.primary{background:var(--g);color:white}
+.light{background:#edf4ef;color:#17442c}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+.status{font-size:13px;color:var(--muted);margin-top:8px;white-space:pre-wrap}
+.error{color:var(--red);white-space:pre-wrap}
+.hidden{display:none!important}
+.notice{background:#fff7e6;border:1px solid #eeddb3;padding:12px;border-radius:9px;font-size:13px;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:13px;background:#fbfdfb}
+.stat span{display:block;font-size:12px;color:var(--muted)}
+.stat strong{display:block;font-size:23px;margin-top:4px;overflow-wrap:anywhere}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);background:#f7faf7}
+.right{text-align:right}
+.bottom{font-size:12px;color:var(--muted);text-align:center;padding:15px}
+@media(max-width:560px){
+ .wrap{padding:10px}.card{padding:13px}
+ .stats{grid-template-columns:1fr}
+ .stat strong{font-size:21px}.top h1{font-size:21px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+<h1>💰 Kota Connect Commission Report</h1>
+<p>Administrator report · Newcastle, KwaZulu-Natal</p>
+</header>
+
+<section id="login-card" class="card">
+<h2>Administrator sign in</h2>
+<p class="muted">Sign in using your Kota Connect administrator Firebase account.</p>
+<form id="login-form">
+<div class="field">
+<label for="email">Email address</label>
+<input id="email" type="email" autocomplete="username" required>
+</div>
+<div class="field">
+<label for="password">Password</label>
+<input id="password" type="password" autocomplete="current-password" required>
+</div>
+<button class="btn primary" type="submit">Sign in</button>
+</form>
+<p id="login-message" class="status" role="status"></p>
+</section>
+
+<section id="report" class="hidden">
+<div class="card">
+<div style="display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap">
+<div>
+<strong id="signed-in">Administrator</strong>
+<div class="muted">Signed in to Firebase</div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button id="refresh" class="btn primary" type="button">Refresh report</button>
+<button id="logout" class="btn light" type="button">Sign out</button>
+</div>
+</div>
+<p id="report-message" class="status" role="status">Waiting to load orders…</p>
+</div>
+
+<div class="notice">
+<strong>Important:</strong> This is an informational report, not a payment ledger. It counts R0.50 for each order whose status is exactly <code>completed</code>, excluding orders marked as tests. Confirm that each order was fulfilled before collecting commission. This page does not collect money or verify cash payments.
+</div>
+
+<div class="card">
+<h2>Commission summary</h2>
+<div class="stats">
+<div class="stat">
+<span>Completed orders counted</span>
+<strong id="completed-count">0</strong>
+</div>
+<div class="stat">
+<span>Estimated commission due</span>
+<strong id="commission-total">R0.00</strong>
+</div>
+<div class="stat">
+<span>Shops reaching R20 threshold</span>
+<strong id="threshold-count">0</strong>
+</div>
+</div>
+<p class="muted">Rate: R0.50 per completed order. Collection threshold: R20.00 per shop, equivalent to 40 completed orders. Totals are calculated in this browser from Firestore records.</p>
+</div>
+
+<div class="card">
+<h2>Commission by shop</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Shop</th>
+<th class="right">Completed orders</th>
+<th class="right">Commission due</th>
+<th>Collection threshold</th>
+<th class="right">Confirmed sales total*</th>
+</tr>
+</thead>
+<tbody id="shop-rows">
+<tr><td colspan="5">No report loaded yet.</td></tr>
+</tbody>
+</table>
+</div>
+<p class="muted">*Confirmed sales total adds numeric confirmedTotal values from completed orders only. It is for reference and does not determine commission.</p>
+</div>
+
+<div class="card">
+<h2>Completed orders included</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Order number</th>
+<th>Shop</th>
+<th class="right">Commission</th>
+<th>Confirmed total</th>
+</tr>
+</thead>
+<tbody id="order-rows">
+<tr><td colspan="4">No report loaded yet.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<p id="page-error" class="error" role="alert"></p>
+<div class="bottom">Kota Connect · Commission report</div>
+</div>
+
+<script type="module">
+import {initializeApp,getApps}
+ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut}
+ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import {getFirestore,collection,getDocs}
+ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
+  authDomain: "kasikota-hub.firebaseapp.com",
+  projectId: "kasikota-hub",
+  appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
+};
+
+const ADMIN_UID = "4menEfIBN2XqMMi8dZPSrv73HlQ2";
+const COMMISSION_RATE = 0.50;
+const MINIMUM_COLLECTION = 20.00;
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+function message(id,text,isError=false){
+  $(id).textContent=text;
+  $(id).classList.toggle("error",isError);
+}
+function textValue(value,fallback="—"){
+  if(typeof value==="string" && value.trim()) return value.trim();
+  return fallback;
+}
+function money(value){
+  const n=Number(value);
+  return Number.isFinite(n) ? "R"+n.toFixed(2) : "Not confirmed";
+}
+function addCell(row,value,className=""){
+  const td=document.createElement("td");
+  td.textContent=value;
+  if(className) td.className=className;
+  row.appendChild(td);
+}
+function emptyRow(tbodyId,text,colspan){
+  const tr=document.createElement("tr");
+  const td=document.createElement("td");
+  td.textContent=text;
+  td.colSpan=colspan;
+  tr.appendChild(td);
+  $(tbodyId).replaceChildren(tr);
+}
+
+async function loadReport(){
+  const user=auth.currentUser;
+  if(!user) return;
+
+  if(user.uid!==ADMIN_UID){
+    message("report-message",
+      "Access blocked. This account is not the configured administrator account.",true);
+    return;
+  }
+
+  $("refresh").disabled=true;
+  message("report-message","Loading orders from Firebase…");
+
+  try{
+    const snapshot=await getDocs(collection(db,"orders"));
+    const allOrders=snapshot.docs.map(d=>({id:d.id,...d.data()}));
+
+    const completed=allOrders.filter(order=>
+      order.testOrder!==true &&
+      String(order.orderStatus||"").toLowerCase()==="completed"
+    );
+
+    const shopMap=new Map();
+
+    completed.forEach(order=>{
+      const shopId=textValue(order.shopId,textValue(order.ownerUid,"unknown-shop"));
+      const shopName=textValue(order.shopName,"Shop name not saved");
+
+      if(!shopMap.has(shopId)){
+        shopMap.set(shopId,{
+          shopId,shopName,count:0,commission:0,
+          confirmedSales:0,confirmedCount:0
+        });
+      }
+
+      const shop=shopMap.get(shopId);
+      shop.count++;
+      shop.commission=Number((shop.count*COMMISSION_RATE).toFixed(2));
+
+      const total=order.confirmedTotal;
+      if(total!==undefined && total!==null && total!=="" &&
+         Number.isFinite(Number(total)) && Number(total)>=0){
+        shop.confirmedSales=Number((shop.confirmedSales+Number(total)).toFixed(2));
+        shop.confirmedCount++;
+      }
+    });
+
+    const shops=[...shopMap.values()].sort((a,b)=>
+      a.shopName.localeCompare(b.shopName)
+    );
+
+    $("completed-count").textContent=String(completed.length);
+    $("commission-total").textContent=money(completed.length*COMMISSION_RATE);
+    $("threshold-count").textContent=String(
+      shops.filter(shop=>shop.commission>=MINIMUM_COLLECTION).length
+    );
+
+    $("shop-rows").replaceChildren();
+    if(!shops.length){
+      emptyRow("shop-rows","No completed non-test orders found.",5);
+    }else{
+      shops.forEach(shop=>{
+        const tr=document.createElement("tr");
+        addCell(tr,shop.shopName);
+        addCell(tr,String(shop.count),"right");
+        addCell(tr,money(shop.commission),"right");
+        addCell(tr,shop.commission>=MINIMUM_COLLECTION
+          ?"Reached — verify before collection"
+          :"Below R20");
+        addCell(tr,shop.confirmedCount
+          ?money(shop.confirmedSales)
+          :"No confirmed totals","right");
+        $("shop-rows").appendChild(tr);
+      });
+    }
+
+    completed.sort((a,b)=>{
+      const ta=a.createdAt?.toMillis?.()||0;
+      const tb=b.createdAt?.toMillis?.()||0;
+      return tb-ta;
+    });
+
+    $("order-rows").replaceChildren();
+    if(!completed.length){
+      emptyRow("order-rows","No completed non-test orders found.",4);
+    }else{
+      completed.forEach(order=>{
+        const tr=document.createElement("tr");
+        addCell(tr,textValue(order.orderNumber,order.id));
+        addCell(tr,textValue(order.shopName,"Shop name not saved"));
+        addCell(tr,money(COMMISSION_RATE),"right");
+        const total=order.confirmedTotal;
+        addCell(tr,total!==undefined && total!==null && total!=="" &&
+          Number.isFinite(Number(total)) && Number(total)>=0
+          ?money(total):"Not confirmed");
+        $("order-rows").appendChild(tr);
+      });
+    }
+
+    message("report-message",
+      `Report refreshed. Read ${allOrders.length} order record(s); `+
+      `${completed.length} completed non-test order(s) counted. `+
+      "No payments have been collected.");
+  }catch(error){
+    console.error(error);
+    message("report-message",
+      "Could not load orders: "+(error.code||error.message)+
+      ". Check that Firestore rules allow the administrator to read orders.",true);
+  }finally{
+    $("refresh").disabled=false;
+  }
+}
+
+$("login-form").addEventListener("submit",async event=>{
+  event.preventDefault();
+  message("login-message","Signing in…");
+  try{
+    await signInWithEmailAndPassword(
+      auth,$("email").value.trim(),$("password").value
+    );
+    message("login-message","");
+  }catch(error){
+    console.error(error);
+    message("login-message",
+      "Sign-in failed: "+(error.code||error.message)+
+      ". Check your email, password and Firebase Authentication settings.",true);
+  }
+});
+
+$("logout").addEventListener("click",async()=>{
+  try{
+    await signOut(auth);
+  }catch(error){
+    message("page-error","Could not sign out: "+error.message,true);
+  }
+});
+
+$("refresh").addEventListener("click",loadReport);
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){
+    $("login-card").classList.remove("hidden");
+    $("report").classList.add("hidden");
+    return;
+  }
+
+  $("login-card").classList.add("hidden");
+  $("report").classList.remove("hidden");
+  $("signed-in").textContent=user.email||"Signed-in account";
+
+  if(user.uid!==ADMIN_UID){
+    message("report-message",
+      "You are signed in, but this account is not the configured administrator. Sign out and use the administrator account.",true);
+    return;
+  }
+
+  await loadReport();
+});
+</script>
+</body>
+</html>
