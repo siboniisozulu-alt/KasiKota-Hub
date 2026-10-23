@@ -165,7 +165,8 @@
     document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!modal.classList.contains("hidden"))closeRegisterModal()});
 
     $("orderForm").addEventListener("submit",event=>{event.preventDefault();$("orderError").classList.add("hidden");$("orderSummary").classList.add("hidden");$("sendOrder").classList.add("hidden");preparedWhatsAppMessage="";const item=currentItem(),calculation=calculateTotal(),quantity=getQuantity(),area=$("area").value.trim(),extraArea=$("otherArea").value.trim(),name=$("customerName").value.trim(),phone=$("customerPhone").value.trim(),address=$("orderAddress").value.trim(),service=$("service").value;let error="";if(!$("shopSelect").value)error="Please choose an approved shop.";else if(!area)error="Please choose your location.";else if(!quantity)error="Please enter a whole-number quantity from 1 to 50.";else if(!name)error="Please enter your name.";else if(!phone)error="Please enter your phone number.";else if(service==="Delivery"&&!address)error="Please enter your delivery address.";else if(!item.name)error="Please enter a menu item name.";else if(!calculation)error=item.price===null?"Please enter a valid item price from the shop menu before preparing this order.":"Please check the quantity and try again.";if(error){$("orderError").textContent=error;$("orderError").classList.remove("hidden");return}const shop=selectedShop(),location=area+(extraArea?" — "+extraArea:"");preparedWhatsAppMessage=["KOTA CONNECT ORDER","Shop: "+shop.name,"Item: "+item.name,"Quantity: "+quantity,"Customer: "+name,"Customer phone: "+phone,"Area: "+location,"Pickup/delivery: "+service,"Address/details: "+(address||"Not supplied"),"Food subtotal: "+money(calculation.foodSubtotal),"Delivery fee: "+money(calculation.delivery),"TOTAL: "+money(calculation.total),"Please confirm availability, delivery coverage and acceptance of this order."].join("\n");$("orderSummary").textContent="Your order is ready to send:\n\n"+preparedWhatsAppMessage;$("orderSummary").classList.remove("hidden");$("sendOrder").classList.remove("hidden")});
-    $("sendOrder").addEventListener("click",()=>{if(!preparedWhatsAppMessage)return;const shop=selectedShop();if(!shop.phone){$("orderError").textContent="This shop has not provided a valid WhatsApp number yet. Please contact Kota Connect or choose another shop.";$("orderError").classList.remove("hidden");return}window.open("https://wa.me/"+shop.phone+"?text="+encodeURIComponent(preparedWhatsAppMessage),"_blank","noopener,noreferrer");$("confirmWhatsAppSent").classList.remove("hidden")});
+    // The Firebase module below handles the Send to WhatsApp button and saves first.
+    $("sendOrder").addEventListener("click",event=>{event.preventDefault()});
     calculateTotal();
   </script>
 
@@ -264,7 +265,7 @@
     try{const app=getApps().length?getApp():initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);
       const guestApp=getApps().find(item=>item.name==="KotaConnectGuestOrders")||initializeApp(firebaseConfig,"KotaConnectGuestOrders");
       guestAuth=getAuth(guestApp);guestDb=getFirestore(guestApp);firebaseReady=true;onSnapshot(query(collection(db,"shops"),where("status","==","approved")),snapshot=>{statusQueryFailed=false;updateShopSnapshot(snapshot,statusShopDocs)},error=>{statusQueryFailed=true;console.error("Could not load shops with status=approved:",error);renderApprovedShops()});onSnapshot(query(collection(db,"shops"),where("approved","==",true)),snapshot=>{booleanQueryFailed=false;updateShopSnapshot(snapshot,booleanShopDocs)},error=>{booleanQueryFailed=true;console.error("Could not load shops with approved=true:",error);renderApprovedShops()});}catch(error){console.error("Firebase initialization error:",error);showMessage(message,"Firebase could not initialize. Check the Firebase configuration and serve this page from a web server.","error")}
-    // WhatsApp-first order integration: do not write an order until the customer returns and confirms sending.
+    // Auto-save order integration: tapping Send to Shop saves to Firestore first, then opens WhatsApp.
     $("orderForm").addEventListener("submit",event=>{
       event.preventDefault();event.stopImmediatePropagation();
       const errorEl=$("orderError"),summary=$("orderSummary"),sendButton=$("sendOrder"),confirmButton=$("confirmWhatsAppSent");
@@ -288,23 +289,34 @@
         customerName:name,customerPhone:phone,area:location,fulfillmentType:service.toLowerCase(),deliveryAddress:service==="Delivery"?address:"",
         pickupDetails:service==="Pickup"?address:"",items:[{itemId:item.itemId,name:item.name,quantity,unitPriceQuote:item.price,lineTotalQuote:item.price*quantity}],
         foodSubtotalQuote:calculation.foodSubtotal,deliveryFeeQuote:deliveryFee,totalQuote:calculation.total};
-      preparedWhatsAppMessage=["KOTA CONNECT ORDER "+preparedOrderReference,"Shop: "+preparedFirebaseOrder.shopName,"Item: "+item.name,"Quantity: "+quantity,"Customer: "+name,"Customer phone: "+phone,"Area: "+location,"Pickup/delivery: "+service,"Address/details: "+(address||"Not supplied"),"Food subtotal quote: "+money(calculation.foodSubtotal),"Delivery fee quote: "+money(deliveryFee),"TOTAL QUOTE: "+money(calculation.total),"Please confirm availability and final total. The customer will confirm sending before this order is registered in Kota Connect."].join("\n");
-      summary.textContent="Step 1: Send this order to the shop on WhatsApp.\n\n"+preparedWhatsAppMessage+"\n\nAfter pressing Send in WhatsApp, return here and tap ‘I sent the WhatsApp message — save order’.";
+      preparedWhatsAppMessage=["KOTA CONNECT ORDER "+preparedOrderReference,"Shop: "+preparedFirebaseOrder.shopName,"Item: "+item.name,"Quantity: "+quantity,"Customer: "+name,"Customer phone: "+phone,"Area: "+location,"Pickup/delivery: "+service,"Address/details: "+(address||"Not supplied"),"Food subtotal quote: "+money(calculation.foodSubtotal),"Delivery fee quote: "+money(deliveryFee),"TOTAL QUOTE: "+money(calculation.total),"Please confirm availability and final total."].join("\n");
+      summary.textContent="Your order is ready. Tap ‘Send to Shop on WhatsApp’ to save it to Kota Connect and open WhatsApp.\n\n"+preparedWhatsAppMessage;
       summary.classList.remove("hidden");sendButton.classList.remove("hidden");
     },true);
-    $("confirmWhatsAppSent").addEventListener("click",async()=>{
-      const errorEl=$("orderError"),summary=$("orderSummary"),confirmButton=$("confirmWhatsAppSent");
+    $("sendOrder").addEventListener("click",async()=>{
+      const errorEl=$("orderError"),summary=$("orderSummary"),sendButton=$("sendOrder");
       if(!preparedFirebaseOrder||!preparedOrderReference||!preparedWhatsAppMessage){errorEl.textContent="Please prepare your order first.";errorEl.classList.remove("hidden");return}
-      if(orderSaveInProgress)return;orderSaveInProgress=true;confirmButton.disabled=true;confirmButton.textContent="Saving order…";errorEl.classList.add("hidden");
+      if(orderSaveInProgress)return;
+      const shop=selectedShop();
+      if(!shop?.phone){errorEl.textContent="This shop has not provided a valid WhatsApp number yet. Please contact Kota Connect or choose another shop.";errorEl.classList.remove("hidden");return}
+      // Open a blank tab synchronously from the user's tap to avoid popup blocking during Firebase save.
+      const whatsappTab=window.open("about:blank","_blank");
+      if(!whatsappTab){errorEl.textContent="Your browser blocked the WhatsApp tab. Allow pop-ups for this website and tap again. No order was saved.";errorEl.classList.remove("hidden");return}
+      try{whatsappTab.opener=null}catch(_){}
+      orderSaveInProgress=true;sendButton.disabled=true;sendButton.textContent="Saving order…";errorEl.classList.add("hidden");
       try{
+        if(!firebaseReady)throw new Error("Firebase is not ready. Please refresh the page and try again.");
         if(!guestAuth.currentUser)await signInAnonymously(guestAuth);
-        const customerUid=guestAuth.currentUser.uid;const orderRef=doc(collection(guestDb,"orders"));
+        const customerUid=guestAuth.currentUser.uid;
+        const orderRef=doc(collection(guestDb,"orders"));
         const orderPayload={...preparedFirebaseOrder,orderNumber:preparedOrderReference,customerUid,confirmedTotal:null,paymentMethod:"not_selected",paymentStatus:"unpaid",orderStatus:"pending",ownerNote:"",delayMinutes:0,testOrder:false,priceVerification:"shop_confirmation_required",createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
         await setDoc(orderRef,orderPayload);
-        summary.textContent="Order saved in Firebase as PENDING. Reference: "+preparedOrderReference+"\nThe shop must confirm availability and the final price. Keep this reference for your records.";
-        confirmButton.classList.add("hidden");$("sendOrder").classList.add("hidden");preparedFirebaseOrder=null;preparedWhatsAppMessage="";preparedOrderReference="";
-      }catch(err){console.error("Could not save confirmed WhatsApp order:",err);errorEl.textContent="We could not save the order to Firebase ("+(err.code||err.message)+"). Please do not keep tapping; check the connection or contact Kota Connect before retrying.";errorEl.classList.remove("hidden")}
-      finally{orderSaveInProgress=false;confirmButton.disabled=false;confirmButton.textContent="I sent the WhatsApp message — save order"}
+        summary.textContent="Order saved in Firebase as PENDING. Reference: "+preparedOrderReference+"\nOpening WhatsApp now. Please press Send in WhatsApp to message the shop. Saving here does not prove the WhatsApp message was sent.";
+        const waUrl="https://wa.me/"+shop.phone+"?text="+encodeURIComponent(preparedWhatsAppMessage);
+        whatsappTab.location.href=waUrl;
+        preparedFirebaseOrder=null;preparedWhatsAppMessage="";preparedOrderReference="";
+      }catch(err){console.error("Could not save order before opening WhatsApp:",err);try{whatsappTab.close()}catch(_){}errorEl.textContent="The order could not be saved to Firebase, so WhatsApp was not opened. Details: "+(err.code||err.message||"unknown error")+". Check the Firestore orders security rules before retrying.";errorEl.classList.remove("hidden")}
+      finally{orderSaveInProgress=false;sendButton.disabled=false;sendButton.textContent="Send to Shop on WhatsApp"}
     });
     $("ownerSignInForm").addEventListener("submit",async event=>{event.preventDefault();const signInMessage=$("ownerSignInMessage");signInMessage.classList.add("hidden");if(!firebaseReady){showMessage(signInMessage,"Firebase is not ready. Check the Firebase configuration.","error");return}const button=$("ownerSignInButton");button.disabled=true;try{await signInWithEmailAndPassword(auth,$("ownerLoginEmail").value.trim(),$("ownerLoginPassword").value);showMessage(signInMessage,"Signed in successfully. Loading your shop…","success")}catch(error){showMessage(signInMessage,friendlyError(error),"error")}finally{button.disabled=false}});
     $("forgotPasswordButton").addEventListener("click",async()=>{const email=$("ownerLoginEmail").value.trim(),el=$("ownerSignInMessage");if(!email){showMessage(el,"Enter your email address first, then tap Reset Password.","error");return}try{await sendPasswordResetEmail(auth,email);showMessage(el,"If an account exists for that email, Firebase will send a password reset email.","success")}catch(error){showMessage(el,friendlyError(error),"error")}});
