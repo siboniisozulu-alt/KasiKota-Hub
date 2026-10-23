@@ -1,1 +1,209 @@
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#176b45">
+<title>Kota Connect | Owner Orders</title>
+<style>
+:root {
+  --green: #176b45;
+  --light: #edf7f0;
+  --border: #d8e3dc;
+  --text: #202820;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7f5;
+  color: var(--text);
+}
+header {
+  background: var(--green);
+  color: white;
+  padding: 22px 16px;
+  text-align: center;
+}
+header h1 { margin: 0 0 6px; font-size: 24px; }
+header p { margin: 0; }
+main { max-width: 680px; margin: 20px auto; padding: 0 14px; }
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+h2 { font-size: 19px; margin-top: 0; }
+.order-number { font-size: 22px; font-weight: bold; color: var(--green); }
+.status {
+  display: inline-block;
+  background: var(--light);
+  color: var(--green);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+label { display: block; margin: 15px 0 6px; font-weight: bold; }
+select, input, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #b8c9bd;
+  border-radius: 8px;
+  font: inherit;
+  background: white;
+}
+textarea { min-height: 85px; resize: vertical; }
+button, .link-button {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border: 0;
+  border-radius: 9px;
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.primary { background: var(--green); color: white; }
+.secondary { background: var(--light); color: var(--green); }
+.warning {
+  background: #fff5df;
+  border: 1px solid #ead39c;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+#message { margin-top: 12px; font-weight: bold; }
+footer { text-align: center; padding: 20px; color: #59665d; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Kota Connect</h1>
+  <p>Shop Owner — Order Management</p>
+</header>
+
+<main>
+  <div class="warning">
+    <strong>Demo mode:</strong> This page is a prototype only.
+    It is not connected to Firebase and does not update real customer orders.
+  </div>
+
+  <section class="card">
+    <h2>Demo order</h2>
+    <div class="order-number">KC-DEMO-1042</div>
+    <p>Example customer order</p>
+    <p>Current status:</p>
+    <span class="status" id="currentStatus">Order received</span>
+
+    <label for="orderStatus">Update order status</label>
+    <select id="orderStatus">
+      <option value="Order received">Order received</option>
+      <option value="Accepted">Accepted</option>
+      <option value="Preparing">Preparing</option>
+      <option value="Ready for collection">Ready for collection</option>
+      <option value="Out for delivery">Out for delivery</option>
+      <option value="Completed">Completed</option>
+      <option value="Rejected">Rejected</option>
+      <option value="Delayed">Delayed</option>
+    </select>
+
+    <label for="delayTime">Extra waiting time (if delayed)</label>
+    <select id="delayTime">
+      <option value="15">15 minutes</option>
+      <option value="30">30 minutes</option>
+      <option value="45">45 minutes</option>
+    </select>
+
+    <label for="ownerMessage">Customer update or rejection reason</label>
+    <textarea id="ownerMessage" placeholder="Example: Sorry, chicken is out of stock."></textarea>
+
+    <button class="primary" id="saveButton" type="button">
+      Save demo status
+    </button>
+
+    <p id="message" role="status"></p>
+  </section>
+
+  <section class="card">
+    <h2>Customer tracking page</h2>
+    <p>Open the separate tracking page to view its current demo display.</p>
+    <a class="link-button secondary" href="order-tracking.html?demo=KC-DEMO-1042">
+      Open demo tracking page
+    </a>
+  </section>
+
+  <section class="card">
+    <h2>How real order management will work</h2>
+    <ul>
+      <li>Receive an order submitted by a customer.</li>
+      <li>Accept it or reject it with a reason.</li>
+      <li>Tell the customer about delays.</li>
+      <li>Mark the order ready for collection or out for delivery.</li>
+      <li>Mark the order completed when fulfilled.</li>
+    </ul>
+    <p>These real functions require secure order storage, owner access controls, and a connection to the customer tracking page.</p>
+  </section>
+</main>
+
+<footer>Kota Connect · Prototype only</footer>
+
+<script>
+const statusSelect = document.getElementById("orderStatus");
+const delaySelect = document.getElementById("delayTime");
+const messageInput = document.getElementById("ownerMessage");
+const currentStatus = document.getElementById("currentStatus");
+const message = document.getElementById("message");
+
+statusSelect.addEventListener("change", function () {
+  if (statusSelect.value === "Delayed") {
+    messageInput.placeholder =
+      "Example: Your order will take another " +
+      delaySelect.value + " minutes.";
+  } else if (statusSelect.value === "Rejected") {
+    messageInput.placeholder =
+      "Enter the reason the shop cannot fulfil this order.";
+  } else {
+    messageInput.placeholder = "Optional customer update.";
+  }
+});
+
+document.getElementById("saveButton").addEventListener("click", function () {
+  const status = statusSelect.value;
+  const extraMessage = messageInput.value.trim();
+
+  if (status === "Rejected" && !extraMessage) {
+    message.textContent = "Please enter a reason for rejecting this demo order.";
+    return;
+  }
+
+  const demoOrder = {
+    orderNumber: "KC-DEMO-1042",
+    status: status,
+    delayMinutes: status === "Delayed" ? delaySelect.value : null,
+    customerMessage: extraMessage,
+    savedAt: new Date().toISOString()
+  };
+
+  try {
+    localStorage.setItem("kotaConnectDemoOrder", JSON.stringify(demoOrder));
+    currentStatus.textContent = status;
+    message.textContent =
+      "Demo status saved in this browser only. No real customer was notified.";
+  } catch (error) {
+    message.textContent =
+      "The browser could not save the demo status. No real order was changed.";
+  }
+});
+</script>
+
+</body>
+</html>
