@@ -372,11 +372,21 @@ async function loadOwnerShops(user) {
     let querySucceeded = false;
 
     try {
-      const shopQuery = query(
-        collection(db, "shops"),
-        where("ownerUid", "==", user.uid),
-        where("status", "==", "approved")
-      );
+     const shopQuery = query(
+  collection(db, "shops"),
+  where("ownerUid", "==", user.uid)
+);
+
+const snapshot = await getDocs(shopQuery);
+
+shops = snapshot.docs
+  .map(item => ({
+    id: item.id,
+    data: item.data()
+  }))
+  .filter(shop => shop.data.status === "approved");
+
+querySucceeded = true;
 
       const snapshot = await getDocs(shopQuery);
       shops = snapshot.docs.map(item => ({
