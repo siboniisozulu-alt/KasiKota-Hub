@@ -1,0 +1,53 @@
+KOTA CONNECT PWA — SAFE ADD-ON
+
+UPLOAD THESE FOUR FILES TO THE ROOT of the KasiKota-Hub repository (same folder as index.html):
+- manifest.json
+- service-worker.js
+- icon-192.png
+- icon-512.png
+
+Your current index.html already has <link rel="manifest" href="manifest.json">. Do not replace your existing index.html or change Firebase rules.
+
+A) In index.html, inside <head>, add this if it is not already there:
+<link rel="apple-touch-icon" href="icon-192.png">
+
+B) Add this button near the top of the page, just before </header>:
+<button id="installAppButton" class="gold hidden" type="button">Install Kota Connect</button>
+
+C) Add this script immediately before the final </body> tag:
+<script>
+let deferredInstallPrompt = null;
+const installAppButton = document.getElementById("installAppButton");
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  if (installAppButton) installAppButton.classList.remove("hidden");
+});
+if (installAppButton) installAppButton.addEventListener("click", async () => {
+  if (!deferredInstallPrompt) {
+    alert('To install, open the browser menu (⋮) and choose "Install app" or "Add to Home screen".');
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installAppButton.classList.add("hidden");
+});
+window.addEventListener("appinstalled", () => {
+  if (installAppButton) installAppButton.classList.add("hidden");
+});
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .catch(error => console.error("Kota Connect service worker failed:", error));
+  });
+}
+</script>
+
+D) Commit all changes in GitHub. Wait for GitHub Pages to update. Then test:
+https://siboniisozulu-alt.github.io/KasiKota-Hub/manifest.json
+https://siboniisozulu-alt.github.io/KasiKota-Hub/service-worker.js
+
+E) On Android, open the site in Chrome, tap ⋮, then choose Install app (or Add to Home screen). Some browsers only show the install option after requirements are met.
+
+IMPORTANT: The service worker caches the basic app shell only. Firebase live data, registration, ordering and WhatsApp still need internet. This does not publish to Google Play Store.

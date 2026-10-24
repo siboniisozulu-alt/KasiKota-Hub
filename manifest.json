@@ -1,26 +1,26 @@
-
 {
-  "id": "/KasiKota-Hub/",
+  "id": "./",
   "name": "Kota Connect",
   "short_name": "Kota Connect",
-  "description": "Find local kota shops and order your favourite kota.",
-  "start_url": "/KasiKota-Hub/",
-  "scope": "/KasiKota-Hub/",
+  "description": "Discover and order from approved local kota shops in Newcastle, KwaZulu-Natal.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fffaf0",
   "theme_color": "#176b42",
-  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
