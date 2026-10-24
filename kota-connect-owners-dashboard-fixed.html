@@ -25,7 +25,7 @@ body {
   color: var(--ink);
   font: 16px system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 }
-button, input, textarea { font: inherit; }
+button, input, textarea, select { font: inherit; }
 button { cursor: pointer; }
 button:disabled { opacity: .6; cursor: wait; }
 .wrap { max-width: 850px; margin: auto; padding: 16px; }
@@ -48,7 +48,7 @@ button:disabled { opacity: .6; cursor: wait; }
 .card h2 { font-size: 18px; margin: 0 0 12px; }
 .field { display: grid; gap: 6px; margin: 12px 0; }
 .field label { font-size: 13px; font-weight: 700; }
-.field input, .field textarea {
+.field input, .field textarea, .field select {
   width: 100%;
   padding: 11px;
   border: 1px solid #cfd9d1;
@@ -96,6 +96,30 @@ button:disabled { opacity: .6; cursor: wait; }
   font-size: 13px;
   line-height: 1.5;
 }
+.order-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.order-card h3 { margin-top: 0; }
+.order-card label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 12px;
+}
+.order-card select,
+.order-card textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0 12px;
+  border: 1px solid #cfd9d1;
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+}
 .bottom {
   font-size: 12px;
   color: var(--muted);
@@ -116,7 +140,7 @@ button:disabled { opacity: .6; cursor: wait; }
 
 <header class="top">
   <h1>🍔 Kota Connect Owners Dashboard</h1>
-  <p>Manage your approved shop details and menu.</p>
+  <p>Manage your approved shop, menu and customer orders.</p>
 </header>
 
 <section id="login-card" class="card">
@@ -163,14 +187,14 @@ button:disabled { opacity: .6; cursor: wait; }
 
   <div id="shop-picker-card" class="card hidden">
     <h2>Your approved shops</h2>
-    <p class="muted">Choose which shop you want to edit.</p>
+    <p class="muted">Choose which shop you want to manage.</p>
     <div id="shop-picker"></div>
   </div>
 
   <form id="shop-form" class="card hidden">
     <h2 id="selected-shop-heading">Shop details</h2>
     <p class="muted">
-      Edit the details below and save your changes.
+      Edit your shop information and menu below.
     </p>
 
     <div class="field">
@@ -204,9 +228,8 @@ button:disabled { opacity: .6; cursor: wait; }
     </div>
 
     <div class="notice">
-      This dashboard edits shopName, phone, address, description
-      and menu only. It does not change ownership, approval status,
-      orders or payments.
+      You can edit shop details and menu only. You cannot change shop
+      ownership or approval status from this dashboard.
     </div>
 
     <p id="save-message" class="status" role="status"
@@ -222,14 +245,20 @@ button:disabled { opacity: .6; cursor: wait; }
     </div>
   </form>
 
-  <div class="card">
-    <h2>Orders and sales</h2>
+  <section class="card" id="orders-card">
+    <h2>📦 Orders and sales</h2>
     <p class="muted">
-      Order management and sales reports are not connected to this
-      owner dashboard yet. This page does not change your orders
-      or payment settings.
+      Orders assigned to your selected shop will appear here.
+      Totals shown are read-only. Payment collection and commission
+      calculations are not connected yet.
     </p>
-  </div>
+
+    <p id="orders-message" class="status" role="status"
+       aria-live="polite">Waiting for sign in...</p>
+
+    <div id="orders-list"></div>
+  </section>
+
 </section>
 
 <p id="page-error" class="error" role="alert"></p>
@@ -256,7 +285,9 @@ import {
   getDocs,
   doc,
   getDoc,
-  updateDoc
+  updateDoc,
+  onSnapshot,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 /* Existing Kota Connect Firebase project */
@@ -279,6 +310,19 @@ let currentUser = null;
 let shops = [];
 let selectedShop = null;
 let loadingShops = false;
+let unsubscribeOrders = null;
+let orderUpdateInProgress = false;
+
+const allowedOwnerStatuses = [
+  "pending",
+  "accepted",
+  "preparing",
+  "ready_for_collection",
+  "out_for_delivery",
+  "completed",
+  "rejected",
+  "delayed"
+];
 
 function showMessage(id, text, type = "") {
   const element = $(id);
@@ -299,6 +343,27 @@ function shopLabel(data, id) {
     + " · " + id;
 }
 
+function formatRand(value) {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return "Not available";
+  }
+
+  return "R" + value.toFixed(2);
+}
+
+function addOrderText(parent, label, value) {
+  const paragraph = document.createElement("p");
+  const strong = document.createElement("strong");
+
+  strong.textContent = label + ": ";
+  paragraph.appendChild(strong);
+  paragraph.appendChild(document.createTextNode(
+    value == null || value === "" ? "Not provided" : String(value)
+  ));
+
+  parent.appendChild(paragraph);
+}
+
 function fillShop(data) {
   $("shopName").value = safeString(data.shopName || data.name);
   $("phone").value = safeString(data.phone);
@@ -315,6 +380,16 @@ function fillShop(data) {
   );
 }
 
+function stopOrderListener() {
+  if (unsubscribeOrders) {
+    unsubscribeOrders();
+    unsubscribeOrders = null;
+  }
+
+  $("orders-list").replaceChildren();
+  showMessage("orders-message", "Orders are not currently loaded.");
+}
+
 function selectShop(shop) {
   selectedShop = shop;
 
@@ -328,9 +403,10 @@ function selectShop(shop) {
   $("shop-form").classList.remove("hidden");
   fillShop(shop.data);
   showMessage("page-error", "");
+
+  loadOwnerOrders(currentUser, shop);
 }
 
-/* Display the shops returned by Firestore. */
 function renderShopChoices() {
   const picker = $("shop-picker");
   picker.replaceChildren();
@@ -355,14 +431,10 @@ function renderShopChoices() {
     selectedShop = null;
     $("shop-form").classList.add("hidden");
     $("shop-picker-card").classList.add("hidden");
+    stopOrderListener();
   }
 }
 
-/*
- * FIXED SHOP-LOADING FUNCTION
- * Find shops whose ownerUid matches the signed-in Firebase UID.
- * Only shops with status "approved" can be edited.
- */
 async function loadOwnerShops(user) {
   if (loadingShops) return;
   loadingShops = true;
@@ -394,10 +466,8 @@ async function loadOwnerShops(user) {
       showMessage(
         "page-error",
         "No approved shop was found for this account. " +
-        "Check that the shop document has ownerUid matching your " +
-        "Firebase UID and status set to approved. If the shop " +
-        "belongs to another account, ask the administrator to " +
-        "verify the ownership.",
+        "Ask the administrator to check that the shop's ownerUid " +
+        "matches your Firebase UID and its status is approved.",
         "error"
       );
 
@@ -415,8 +485,7 @@ async function loadOwnerShops(user) {
 
     if (error.code === "permission-denied") {
       explanation +=
-        "Firestore denied access. Check the published security " +
-        "rules and confirm they allow this owner to read their shop.";
+        "Firestore denied access. Check the published security rules.";
     } else {
       explanation += error.code || error.message || "Unknown Firebase error";
     }
@@ -426,6 +495,297 @@ async function loadOwnerShops(user) {
   } finally {
     loadingShops = false;
   }
+}
+
+/* Determine whether an order should be treated as a test. */
+function isTestOrder(order) {
+  return order.testOrder === true
+    || order.orderStatus === "test"
+    || String(order.shopName || "")
+      .toLowerCase().includes("test");
+}
+
+/* Display orders without using customer-provided HTML. */
+function renderOrders(snapshot) {
+  const list = $("orders-list");
+  list.replaceChildren();
+
+  if (snapshot.empty) {
+    showMessage(
+      "orders-message",
+      "No orders have been assigned to this shop yet."
+    );
+    return;
+  }
+
+  showMessage(
+    "orders-message",
+    snapshot.size + " order(s) found. Order information updates live."
+  );
+
+  snapshot.forEach(orderDoc => {
+    const order = orderDoc.data();
+    const card = document.createElement("article");
+    card.className = "order-card";
+
+    const heading = document.createElement("h3");
+    heading.textContent =
+      "Order " + (order.orderNumber || orderDoc.id);
+    card.appendChild(heading);
+
+    addOrderText(card, "Shop", order.shopName);
+    addOrderText(card, "Customer", order.customerName);
+    addOrderText(card, "Customer phone", order.customerPhone);
+    addOrderText(card, "Area", order.area);
+    addOrderText(card, "Fulfilment", order.fulfillmentType);
+    addOrderText(card, "Delivery address", order.deliveryAddress);
+    addOrderText(card, "Pickup details", order.pickupDetails);
+
+    const itemsHeading = document.createElement("h4");
+    itemsHeading.textContent = "Items";
+    card.appendChild(itemsHeading);
+
+    if (Array.isArray(order.items) && order.items.length) {
+      const itemsList = document.createElement("ul");
+
+      order.items.forEach(item => {
+        const li = document.createElement("li");
+        const name = item.itemName || item.name ||
+          item.productName || item.kotaName || "Menu item";
+        const quantity = Number(item.quantity) || 1;
+        const price = item.unitPrice ?? item.itemPrice ?? item.price;
+
+        li.textContent = name + " × " + quantity +
+          (typeof price === "number"
+            ? " — " + formatRand(price) + " each"
+            : "");
+
+        itemsList.appendChild(li);
+      });
+
+      card.appendChild(itemsList);
+    } else {
+      addOrderText(card, "Items", "No item details recorded");
+    }
+
+    addOrderText(card, "Food subtotal quoted",
+      formatRand(order.foodSubtotalQuote));
+    addOrderText(card, "Delivery fee quoted",
+      formatRand(order.deliveryFeeQuote));
+    addOrderText(card, "Total quoted",
+      formatRand(order.totalQuote));
+
+    // READ ONLY: never write confirmedTotal from the owner dashboard.
+    addOrderText(card, "Confirmed total (read-only)",
+      formatRand(order.confirmedTotal));
+
+    addOrderText(card, "Payment method", order.paymentMethod);
+    addOrderText(card, "Payment status", order.paymentStatus);
+    addOrderText(card, "Order status", order.orderStatus);
+
+    const testOrder = isTestOrder(order);
+
+    if (testOrder) {
+      const warning = document.createElement("p");
+      warning.className = "notice";
+      warning.textContent =
+        "TEST ORDER: Do not prepare food or treat this as a real sale. " +
+        "The update controls are disabled until the record is verified.";
+      card.appendChild(warning);
+    }
+
+    const statusLabel = document.createElement("label");
+    statusLabel.textContent = "Order status";
+    card.appendChild(statusLabel);
+
+    const statusSelect = document.createElement("select");
+
+    allowedOwnerStatuses.forEach(status => {
+      const option = document.createElement("option");
+      option.value = status;
+      option.textContent = status.replaceAll("_", " ");
+      statusSelect.appendChild(option);
+    });
+
+    if (allowedOwnerStatuses.includes(order.orderStatus)) {
+      statusSelect.value = order.orderStatus;
+    }
+
+    card.appendChild(statusSelect);
+
+    const delayLabel = document.createElement("label");
+    delayLabel.textContent = "Delay";
+    card.appendChild(delayLabel);
+
+    const delaySelect = document.createElement("select");
+
+    [0, 15, 30, 45].forEach(minutes => {
+      const option = document.createElement("option");
+      option.value = String(minutes);
+      option.textContent = minutes === 0
+        ? "No delay"
+        : minutes + " minutes";
+      delaySelect.appendChild(option);
+    });
+
+    delaySelect.value = [0, 15, 30, 45].includes(order.delayMinutes)
+      ? String(order.delayMinutes)
+      : "0";
+
+    card.appendChild(delaySelect);
+
+    const noteLabel = document.createElement("label");
+    noteLabel.textContent = "Owner note";
+    card.appendChild(noteLabel);
+
+    const noteInput = document.createElement("textarea");
+    noteInput.maxLength = 500;
+    noteInput.rows = 3;
+    noteInput.value = typeof order.ownerNote === "string"
+      ? order.ownerNote
+      : "";
+    noteInput.placeholder = "For example: Ready in 20 minutes";
+    card.appendChild(noteInput);
+
+    const saveButton = document.createElement("button");
+    saveButton.type = "button";
+    saveButton.className = "btn primary";
+    saveButton.textContent = "Save order update";
+    saveButton.disabled = testOrder;
+    card.appendChild(saveButton);
+
+    const result = document.createElement("p");
+    result.className = "status";
+    result.setAttribute("role", "status");
+    result.setAttribute("aria-live", "polite");
+    card.appendChild(result);
+
+    saveButton.addEventListener("click", async () => {
+      if (!currentUser || !selectedShop) {
+        result.textContent = "Please sign in and select your shop.";
+        return;
+      }
+
+      if (orderUpdateInProgress) {
+        result.textContent = "Another update is already being saved.";
+        return;
+      }
+
+      if (!allowedOwnerStatuses.includes(statusSelect.value)) {
+        result.textContent = "Please select a valid order status.";
+        return;
+      }
+
+      const delayMinutes = Number(delaySelect.value);
+
+      if (![0, 15, 30, 45].includes(delayMinutes)) {
+        result.textContent = "Please select a valid delay.";
+        return;
+      }
+
+      orderUpdateInProgress = true;
+      saveButton.disabled = true;
+      result.textContent = "Checking ownership and saving...";
+
+      try {
+        const [freshOrder, freshShop] = await Promise.all([
+          getDoc(doc(db, "orders", orderDoc.id)),
+          getDoc(doc(db, "shops", selectedShop.id))
+        ]);
+
+        if (!freshOrder.exists() || !freshShop.exists()) {
+          throw new Error("Order or shop record no longer exists.");
+        }
+
+        const freshOrderData = freshOrder.data();
+        const freshShopData = freshShop.data();
+
+        if (
+          freshOrderData.ownerUid !== currentUser.uid ||
+          freshShopData.ownerUid !== currentUser.uid ||
+          freshShopData.status !== "approved" ||
+          freshOrderData.shopId !== selectedShop.id
+        ) {
+          throw new Error(
+            "Ownership verification failed. No update was saved."
+          );
+        }
+
+        if (isTestOrder(freshOrderData)) {
+          throw new Error(
+            "This appears to be a test order. Ask the administrator " +
+            "to verify it before changing anything."
+          );
+        }
+
+        /*
+         * Only permitted owner fields are sent.
+         * confirmedTotal is deliberately NOT included.
+         */
+        await updateDoc(doc(db, "orders", orderDoc.id), {
+          orderStatus: statusSelect.value,
+          ownerNote: noteInput.value.trim(),
+          delayMinutes: delayMinutes,
+          updatedAt: serverTimestamp()
+        });
+
+        result.textContent = "Order update saved successfully.";
+
+      } catch (error) {
+        console.error("Order update failed:", error);
+
+        result.textContent = "Update failed: " +
+          (error.code || error.message || "Unknown error");
+
+      } finally {
+        orderUpdateInProgress = false;
+        saveButton.disabled = testOrder;
+      }
+    });
+
+    list.appendChild(card);
+  });
+}
+
+/* Subscribe to orders for the currently selected shop. */
+function loadOwnerOrders(user, shop) {
+  stopOrderListener();
+
+  if (!user || !shop) {
+    showMessage("orders-message", "Select an approved shop to view orders.");
+    return;
+  }
+
+  showMessage("orders-message", "Loading your shop orders...");
+
+  const ordersQuery = query(
+    collection(db, "orders"),
+    where("ownerUid", "==", user.uid),
+    where("shopId", "==", shop.id)
+  );
+
+  unsubscribeOrders = onSnapshot(
+    ordersQuery,
+    snapshot => renderOrders(snapshot),
+    error => {
+      console.error("Loading orders failed:", error);
+
+      let message = "Could not load orders: " +
+        (error.code || error.message);
+
+      if (error.code === "permission-denied") {
+        message +=
+          ". Check the Firestore rules and confirm that order ownership " +
+          "matches the signed-in owner.";
+      } else if (error.code === "failed-precondition") {
+        message +=
+          ". Firestore may require a composite index. Follow the index " +
+          "link shown in the browser console, if one is provided.";
+      }
+
+      showMessage("orders-message", message, "error");
+    }
+  );
 }
 
 /* Owner login */
@@ -467,9 +827,9 @@ $("login-form").addEventListener("submit", async event => {
     } else if (error.code === "auth/invalid-email") {
       explanation = "Please enter a valid email address.";
     } else if (error.code === "auth/too-many-requests") {
-      explanation = "Too many attempts. Wait a while before trying again.";
+      explanation = "Too many attempts. Wait before trying again.";
     } else if (error.code === "auth/network-request-failed") {
-      explanation = "Network error. Check your internet connection and retry.";
+      explanation = "Network error. Check your internet connection.";
     }
 
     showMessage(
@@ -501,7 +861,7 @@ $("logout").addEventListener("click", async () => {
   }
 });
 
-/* Reload the selected shop from Firestore */
+/* Reload selected shop details */
 $("reload").addEventListener("click", async () => {
   if (!selectedShop || !currentUser) return;
 
@@ -541,7 +901,7 @@ $("reload").addEventListener("click", async () => {
   }
 });
 
-/* Save editable fields only */
+/* Save editable shop fields only */
 $("shop-form").addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -594,7 +954,6 @@ $("shop-form").addEventListener("submit", async event => {
     await updateDoc(shopRef, changes);
 
     selectedShop.data = { ...current, ...changes };
-
     $("selected-shop-heading").textContent = changes.shopName;
 
     document.querySelectorAll(".shop-choice").forEach(button => {
@@ -608,7 +967,7 @@ $("shop-form").addEventListener("submit", async event => {
 
     showMessage(
       "save-message",
-      "Saved successfully. Refresh the customer website to check the changes.",
+      "Saved successfully. Refresh the customer website to check changes.",
       "success"
     );
 
@@ -619,8 +978,7 @@ $("shop-form").addEventListener("submit", async event => {
 
     if (error.code === "permission-denied") {
       explanation =
-        "Firestore denied the save. Your published security rules " +
-        "must allow the authenticated owner to update these fields.";
+        "Firestore denied the save. Check the published security rules.";
     }
 
     showMessage(
@@ -634,9 +992,11 @@ $("shop-form").addEventListener("submit", async event => {
   }
 });
 
-/* Keep the page in sync with Firebase Authentication */
+/* Track Firebase login state */
 onAuthStateChanged(auth, async user => {
   currentUser = user;
+  stopOrderListener();
+
   shops = [];
   selectedShop = null;
 
@@ -646,7 +1006,6 @@ onAuthStateChanged(auth, async user => {
     $("shop-form").classList.add("hidden");
     $("shop-picker-card").classList.add("hidden");
     $("signed-in-email").textContent = "";
-
     showMessage("page-error", "");
     return;
   }
