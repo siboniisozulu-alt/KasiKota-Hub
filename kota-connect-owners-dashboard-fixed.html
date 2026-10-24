@@ -625,7 +625,7 @@ function renderOrders(snapshot) {
       warning.className = "notice";
       warning.textContent =
         "TEST ORDER: Do not prepare food or treat this as a real sale. " +
-        "The update controls are disabled until the record is verified.";
+        "Save will run a page-only simulation and will NOT write to Firebase.";
       card.appendChild(warning);
     }
 
@@ -686,7 +686,8 @@ function renderOrders(snapshot) {
     saveButton.type = "button";
     saveButton.className = "btn primary";
     saveButton.textContent = "Save order update";
-    saveButton.disabled = testOrder;
+    // Test orders use a clearly labelled local simulation, never a Firestore write.
+    saveButton.disabled = false;
     card.appendChild(saveButton);
 
     const result = document.createElement("p");
@@ -715,6 +716,38 @@ function renderOrders(snapshot) {
 
       if (![0, 15, 30, 45].includes(delayMinutes)) {
         result.textContent = "Please select a valid delay.";
+        return;
+      }
+
+      // A test order can exercise the button without changing Firebase data.
+      // Real orders continue through the normal ownership and approval checks.
+      if (testOrder) {
+        if (
+          !isTestShop(selectedShop.data) ||
+          selectedShop.data.status !== "pending" ||
+          order.testOrder !== true ||
+          order.shopId !== selectedShop.id ||
+          order.ownerUid !== currentUser.uid
+        ) {
+          result.textContent =
+            "Test simulation blocked: this is not the expected owner test order.";
+          return;
+        }
+
+        order.orderStatus = statusSelect.value;
+        order.delayMinutes = delayMinutes;
+        order.ownerNote = noteInput.value.trim();
+        const statusLine = document.createElement("p");
+        statusLine.className = "notice";
+        statusLine.textContent =
+          "Simulated status: " + statusSelect.value.replaceAll("_", " ") +
+          ". This is only a page preview; Firebase was not changed.";
+        const previousSimulation = card.querySelector(".test-simulation-result");
+        if (previousSimulation) previousSimulation.remove();
+        statusLine.classList.add("test-simulation-result");
+        result.before(statusLine);
+        result.textContent =
+          "Test simulation completed. No Firebase data was changed.";
         return;
       }
 
@@ -748,8 +781,7 @@ function renderOrders(snapshot) {
 
         if (isTestOrder(freshOrderData)) {
           throw new Error(
-            "This appears to be a test order. Ask the administrator " +
-            "to verify it before changing anything."
+            "Test order detected. No Firebase update was made."
           );
         }
 
@@ -774,7 +806,7 @@ function renderOrders(snapshot) {
 
       } finally {
         orderUpdateInProgress = false;
-        saveButton.disabled = testOrder;
+        saveButton.disabled = false;
       }
     });
 
