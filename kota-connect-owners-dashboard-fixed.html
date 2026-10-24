@@ -1,18 +1,119 @@
+
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#176b45">
+<meta name="description" content="Kota Connect shop owner dashboard">
 <title>Kota Connect | Owners Dashboard</title>
+
 <style>
-:root{--g:#176b45;--ink:#17221c;--muted:#66736b;--line:#e1e8e2;--bg:#f5f8f5;--white:#fff;--red:#a62d26}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,-apple-system,"Segoe UI",Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}.wrap{max-width:850px;margin:auto;padding:16px}.top{background:#123d2b;color:#fff;padding:18px;border-radius:14px;margin-bottom:16px}.top h1{font-size:23px;margin:0 0 5px}.top p{margin:0;color:#d7e7dc;font-size:13px}.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;margin:13px 0}.card h2{font-size:18px;margin:0 0 13px}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:13px;font-weight:700}.field input,.field textarea,.field select{width:100%;padding:11px;border:1px solid #cfd9d1;border-radius:8px;background:#fff}.field textarea{min-height:190px;resize:vertical}.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:700}.primary{background:var(--g);color:white}.light{background:#edf4ef;color:#17442c}.danger{background:#fff0ef;color:var(--red)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.muted{color:var(--muted);font-size:13px;line-height:1.5}.notice{background:#fff7e6;border:1px solid #eeddb3;padding:12px;border-radius:9px;font-size:13px;line-height:1.5}.error{color:var(--red);white-space:pre-wrap}.hidden{display:none!important}.shop-choice{width:100%;text-align:left;padding:12px;margin:5px 0;border:1px solid var(--line);border-radius:9px;background:#fff}.shop-choice.active{border:2px solid var(--g);background:#eef7f0}.actions{display:flex;gap:8px;flex-wrap:wrap}.status{font-size:12px;color:var(--muted);margin-top:8px}.menu-preview{white-space:pre-wrap;background:#f7faf7;border:1px solid var(--line);padding:12px;border-radius:8px;font-size:14px}.bottom{font-size:12px;color:var(--muted);text-align:center;padding:15px}
-@media(max-width:560px){.wrap{padding:10px}.row{grid-template-columns:1fr}.card{padding:13px}.top h1{font-size:21px}}
+:root {
+  --green: #176b45;
+  --dark: #123d2b;
+  --ink: #17221c;
+  --muted: #66736b;
+  --line: #e1e8e2;
+  --bg: #f5f8f5;
+  --red: #a62d26;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .6; cursor: wait; }
+.wrap { max-width: 850px; margin: auto; padding: 16px; }
+.top {
+  background: var(--dark);
+  color: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+.top h1 { font-size: 23px; margin: 0 0 6px; }
+.top p { color: #d7e7dc; font-size: 13px; margin: 0; }
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 17px;
+  margin: 13px 0;
+}
+.card h2 { font-size: 18px; margin: 0 0 12px; }
+.field { display: grid; gap: 6px; margin: 12px 0; }
+.field label { font-size: 13px; font-weight: 700; }
+.field input, .field textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #cfd9d1;
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+}
+.field textarea { min-height: 100px; resize: vertical; }
+.btn {
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 15px;
+  font-weight: 700;
+}
+.primary { background: var(--green); color: white; }
+.light { background: #edf4ef; color: #17442c; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.muted, .status {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.error { color: var(--red); white-space: pre-wrap; overflow-wrap: anywhere; }
+.success { color: var(--green); }
+.hidden { display: none !important; }
+.shop-choice {
+  width: 100%;
+  text-align: left;
+  padding: 12px;
+  margin: 5px 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: white;
+}
+.shop-choice.active {
+  border: 2px solid var(--green);
+  background: #eef7f0;
+}
+.notice {
+  background: #fff7e6;
+  border: 1px solid #eeddb3;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.bottom {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  padding: 15px;
+}
+@media(max-width:560px) {
+  .wrap { padding: 10px; }
+  .row { grid-template-columns: 1fr; }
+  .card { padding: 13px; }
+  .top h1 { font-size: 21px; }
+}
 </style>
 </head>
+
 <body>
 <div class="wrap">
+
 <header class="top">
   <h1>🍔 Kota Connect Owners Dashboard</h1>
   <p>Manage your approved shop details and menu.</p>
@@ -20,107 +121,217 @@
 
 <section id="login-card" class="card">
   <h2>Owner sign in</h2>
-  <p class="muted">Sign in with the Firebase account used to register your shop.</p>
+  <p class="muted">
+    Sign in using the email and password registered for your shop.
+  </p>
+
   <form id="login-form">
-    <div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required></div>
-    <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
-    <button class="btn primary" type="submit">Sign in</button>
+    <div class="field">
+      <label for="email">Email address</label>
+      <input id="email" type="email" autocomplete="username"
+             required>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password"
+             autocomplete="current-password" required>
+    </div>
+
+    <button id="login-button" class="btn primary" type="submit">
+      Sign in
+    </button>
   </form>
-  <p id="login-message" class="status" role="status"></p>
+
+  <p id="login-message" class="status" role="status"
+     aria-live="polite"></p>
 </section>
 
 <section id="dashboard" class="hidden">
+
   <div class="card">
-    <div class="actions" style="justify-content:space-between;align-items:center">
-      <div><strong id="signed-in-email">Owner</strong><div class="muted">Signed in to Firebase</div></div>
-      <button id="logout" class="btn light" type="button">Sign out</button>
+    <div class="actions"
+         style="justify-content:space-between;align-items:center">
+      <div>
+        <strong id="signed-in-email">Owner</strong>
+        <div class="muted">Signed in to Firebase</div>
+      </div>
+      <button id="logout" class="btn light" type="button">
+        Sign out
+      </button>
     </div>
   </div>
 
   <div id="shop-picker-card" class="card hidden">
     <h2>Your approved shops</h2>
-    <p class="muted">Choose which of your approved shops to edit.</p>
+    <p class="muted">Choose which shop you want to edit.</p>
     <div id="shop-picker"></div>
   </div>
 
   <form id="shop-form" class="card hidden">
     <h2 id="selected-shop-heading">Shop details</h2>
-    <p class="muted">Changes are saved to the selected approved shop in Firestore.</p>
-    <div class="field"><label for="shopName">Shop name</label><input id="shopName" maxlength="80" required></div>
-    <div class="row">
-      <div class="field"><label for="phone">Phone / WhatsApp number</label><input id="phone" type="tel" maxlength="35"></div>
-      <div class="field"><label for="address">Address / location</label><input id="address" maxlength="160"></div>
+    <p class="muted">
+      Edit the details below and save your changes.
+    </p>
+
+    <div class="field">
+      <label for="shopName">Shop name</label>
+      <input id="shopName" maxlength="80" required>
     </div>
-    <div class="field"><label for="description">Shop description</label><textarea id="description" maxlength="700" rows="3"></textarea></div>
+
+    <div class="row">
+      <div class="field">
+        <label for="phone">Phone / WhatsApp number</label>
+        <input id="phone" type="tel" maxlength="35">
+      </div>
+      <div class="field">
+        <label for="address">Address / location</label>
+        <input id="address" maxlength="160">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="description">Shop description</label>
+      <textarea id="description" maxlength="700"
+                rows="3"></textarea>
+    </div>
+
     <div class="field">
       <label for="menu">Menu and prices</label>
-      <textarea id="menu" maxlength="10000" placeholder="Classic Kota — R25&#10;Cheese Kota — R30&#10;Chicken Kota — R35"></textarea>
-      <p class="muted">One item per line is easiest. Example: Classic Kota — R25. Your existing menu text will be loaded here. Keep or edit it, then save.</p>
+      <textarea id="menu" maxlength="10000"
+        placeholder="Classic Kota — R25&#10;Cheese Kota — R30&#10;Chicken Kota — R35"></textarea>
+      <p class="muted">
+        Put each menu item on a separate line. Only enter confirmed prices.
+      </p>
     </div>
-    <div class="notice">For safety, this page only updates shopName, phone, address, description and menu. It does not change the owner, approval status, or create orders.</div>
-    <p id="save-message" class="status" role="status"></p>
-    <div class="actions"><button id="save" class="btn primary" type="submit">Save shop changes</button><button id="reload" class="btn light" type="button">Reload saved details</button></div>
+
+    <div class="notice">
+      This dashboard edits shopName, phone, address, description
+      and menu only. It does not change ownership, approval status,
+      orders or payments.
+    </div>
+
+    <p id="save-message" class="status" role="status"
+       aria-live="polite"></p>
+
+    <div class="actions">
+      <button id="save" class="btn primary" type="submit">
+        Save shop changes
+      </button>
+      <button id="reload" class="btn light" type="button">
+        Reload saved details
+      </button>
+    </div>
   </form>
 
   <div class="card">
     <h2>Orders and sales</h2>
-    <p class="muted">Real orders and sales reports are not connected yet. This dashboard will not show demo orders or invented sales figures.</p>
+    <p class="muted">
+      Order management and sales reports are not connected to this
+      owner dashboard yet. Your existing orders and admin dashboard
+      are not changed by this page.
+    </p>
   </div>
 </section>
+
 <p id="page-error" class="error" role="alert"></p>
+
 <div class="bottom">Kota Connect · Newcastle, KwaZulu-Natal</div>
 </div>
 
 <script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { initializeApp, getApps }
+  from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+/* Existing Kota Connect Firebase project */
 const firebaseConfig = {
   apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
   authDomain: "kasikota-hub.firebaseapp.com",
   projectId: "kasikota-hub",
   appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
 };
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+
+const app = getApps().length
+  ? getApps()[0]
+  : initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 const $ = id => document.getElementById(id);
+
 let currentUser = null;
 let shops = [];
 let selectedShop = null;
-let savedData = null;
+let loadingShops = false;
 
-function message(id, text, error=false) {
-  $(id).textContent = text;
-  $(id).classList.toggle("error", error);
+function showMessage(id, text, type = "") {
+  const el = $(id);
+  el.textContent = text;
+  el.classList.remove("error", "success");
+  if (type) el.classList.add(type);
 }
+
 function safeString(value) {
-  return typeof value === "string" ? value : (value == null ? "" : String(value));
+  return typeof value === "string"
+    ? value
+    : (value == null ? "" : String(value));
 }
+
 function shopLabel(data, id) {
-  return safeString(data.shopName || data.name || "Approved shop") + " · " + id;
+  return safeString(data.shopName || data.name || "Approved shop")
+    + " · " + id;
 }
+
 function fillShop(data) {
-  savedData = {...data};
   $("shopName").value = safeString(data.shopName || data.name);
   $("phone").value = safeString(data.phone);
   $("address").value = safeString(data.address);
   $("description").value = safeString(data.description);
   $("menu").value = safeString(data.menu);
-  $("selected-shop-heading").textContent = safeString(data.shopName || data.name || "Shop details");
-  message("save-message", "Loaded saved details. No changes have been made yet.");
+  $("selected-shop-heading").textContent =
+    safeString(data.shopName || data.name || "Shop details");
+
+  showMessage(
+    "save-message",
+    "Saved details loaded. No changes have been made yet."
+  );
 }
+
 function selectShop(shop) {
   selectedShop = shop;
-  document.querySelectorAll(".shop-choice").forEach(b => b.classList.toggle("active", b.dataset.id === shop.id));
+
+  document.querySelectorAll(".shop-choice").forEach(button => {
+    button.classList.toggle("active", button.dataset.id === shop.id);
+  });
+
   $("shop-form").classList.remove("hidden");
   fillShop(shop.data);
+  showMessage("page-error", "");
 }
+
+/* Render the shops returned by the secure Firestore lookup. */
 function renderShopChoices() {
   const picker = $("shop-picker");
   picker.replaceChildren();
+
   shops.forEach(shop => {
     const button = document.createElement("button");
     button.type = "button";
@@ -130,54 +341,215 @@ function renderShopChoices() {
     button.addEventListener("click", () => selectShop(shop));
     picker.appendChild(button);
   });
+
   $("shop-picker-card").classList.toggle("hidden", shops.length < 2);
-  if (shops.length) selectShop(shops[0]);
-}
-Could not load approved shops: permission-denied. Confirm Firestore rules are published and that ownerUid matches your login UID.
-  const snap = await getDocs(q);
-  shops = snap.docs.map(d => ({id:d.id, data:d.data()}));
-  if (!shops.length) {
-    // Support the known setup where the shop document ID equals the owner's UID.
-    const direct = await getDoc(doc(db, "shops", user.uid));
-    if (direct.exists()) {
-      const data = direct.data();
-      if (data.ownerUid === user.uid && data.status === "approved") shops = [{id:direct.id, data}];
-    }
+
+  if (shops.length > 0) {
+    selectShop(shops[0]);
+  } else {
+    selectedShop = null;
+    $("shop-form").classList.add("hidden");
+    $("shop-picker-card").classList.add("hidden");
   }
-  if (!shops.length) {
-    message("page-error", "No approved shop was found for this signed-in account. Check that the shop has status \"approved\" and ownerUid matches your Firebase Authentication UID, or contact the administrator.", true);
-    return;
-  }
-  renderShopChoices();
 }
-$("login-form").addEventListener("submit", async e => {
-  e.preventDefault();
-  message("login-message", "Signing in…");
+
+/*
+ * Load only shops owned by the signed-in user.
+ * A shop must have ownerUid equal to the Firebase Auth UID
+ * and status exactly equal to "approved".
+ */
+async function loadOwnerShops(user) {
+  if (loadingShops) return;
+  loadingShops = true;
+
+  shops = [];
+  selectedShop = null;
+  $("shop-form").classList.add("hidden");
+  $("shop-picker-card").classList.add("hidden");
+  showMessage("page-error", "Loading your approved shops...");
+
   try {
-    await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value);
-    message("login-message", "");
-  } catch (err) {
-    console.error(err);
-    message("login-message", "Sign-in failed: " + (err.code || err.message) + ". Check your email, password and Firebase Authentication settings.", true);
+    let querySucceeded = false;
+
+    try {
+      const shopQuery = query(
+        collection(db, "shops"),
+        where("ownerUid", "==", user.uid),
+        where("status", "==", "approved")
+      );
+
+      const snapshot = await getDocs(shopQuery);
+      shops = snapshot.docs.map(item => ({
+        id: item.id,
+        data: item.data()
+      }));
+      querySucceeded = true;
+    } catch (queryError) {
+      console.warn("Shop query failed; checking the owner's shop document.",
+                   queryError);
+    }
+
+    /*
+     * Fallback for setups where a shop document ID equals the UID.
+     * This still verifies ownerUid and approval status.
+     */
+    if (shops.length === 0) {
+      try {
+        const directRef = doc(db, "shops", user.uid);
+        const directSnapshot = await getDoc(directRef);
+
+        if (directSnapshot.exists()) {
+          const data = directSnapshot.data();
+
+          if (data.ownerUid === user.uid &&
+              data.status === "approved") {
+            shops = [{ id: directSnapshot.id, data }];
+          }
+        }
+      } catch (directError) {
+        console.warn("Direct shop lookup failed.", directError);
+
+        if (!querySucceeded) {
+          throw directError;
+        }
+      }
+    }
+
+    if (shops.length === 0) {
+      showMessage(
+        "page-error",
+        "No approved shop was found for this account. Check that " +
+        "the shop document has ownerUid matching your Firebase UID " +
+        "and status set to approved. If the shop belongs to another " +
+        "account, ask the administrator to verify the ownership.",
+        "error"
+      );
+      renderShopChoices();
+      return;
+    }
+
+    renderShopChoices();
+    showMessage("page-error", "");
+  } catch (error) {
+    console.error("loadOwnerShops failed:", error);
+
+    let explanation =
+      "Could not load your shop. ";
+
+    if (error.code === "permission-denied") {
+      explanation +=
+        "Firestore denied access. Check the published Firestore rules " +
+        "and confirm they allow this owner to read their approved shop.";
+    } else {
+      explanation +=
+        (error.code || error.message || "Unknown Firebase error");
+    }
+
+    showMessage("page-error", explanation, "error");
+  } finally {
+    loadingShops = false;
+  }
+}
+
+/* Owner login */
+$("login-form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const button = $("login-button");
+  button.disabled = true;
+  showMessage("login-message", "Signing in...");
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      $("email").value.trim(),
+      $("password").value
+    );
+
+    /*
+     * onAuthStateChanged handles showing the dashboard and loading shops.
+     * A successful login does not guarantee the account owns an approved shop.
+     */
+    showMessage("login-message", "Login successful. Loading dashboard...",
+                "success");
+  } catch (error) {
+    console.error("Owner sign-in failed:", error);
+
+    let explanation = error.code || error.message;
+
+    if (error.code === "auth/invalid-credential" ||
+        error.code === "auth/wrong-password" ||
+        error.code === "auth/user-not-found") {
+      explanation =
+        "Email or password is incorrect, or the account does not exist.";
+    } else if (error.code === "auth/invalid-email") {
+      explanation = "Please enter a valid email address.";
+    } else if (error.code === "auth/too-many-requests") {
+      explanation =
+        "Too many attempts. Wait a while before trying again.";
+    }
+
+    showMessage("login-message", "Sign-in failed: " + explanation, "error");
+  } finally {
+    button.disabled = false;
   }
 });
+
+/* Sign out */
 $("logout").addEventListener("click", async () => {
-  try { await signOut(auth); } catch(err) { message("page-error", "Could not sign out: " + err.message, true); }
+  try {
+    await signOut(auth);
+    showMessage("page-error", "");
+    showMessage("login-message", "You have signed out.");
+  } catch (error) {
+    console.error(error);
+    showMessage("page-error", "Could not sign out: " + error.message, "error");
+  }
 });
+
+/* Reload the selected shop from Firestore */
 $("reload").addEventListener("click", async () => {
   if (!selectedShop || !currentUser) return;
+
+  showMessage("save-message", "Reloading saved details...");
+
   try {
-    const snap = await getDoc(doc(db, "shops", selectedShop.id));
-    if (!snap.exists()) throw new Error("This shop record no longer exists.");
-    const data = snap.data();
-    if (data.ownerUid !== currentUser.uid || data.status !== "approved") throw new Error("Shop ownership or approval could not be verified.");
+    const snapshot = await getDoc(doc(db, "shops", selectedShop.id));
+
+    if (!snapshot.exists()) {
+      throw new Error("This shop record no longer exists.");
+    }
+
+    const data = snapshot.data();
+
+    if (data.ownerUid !== currentUser.uid ||
+        data.status !== "approved") {
+      throw new Error(
+        "This account does not own an approved version of this shop."
+      );
+    }
+
     selectedShop.data = data;
     fillShop(data);
-  } catch(err) { message("save-message", "Could not reload: " + err.message, true); }
+  } catch (error) {
+    console.error(error);
+    showMessage(
+      "save-message",
+      "Could not reload: " + (error.code || error.message),
+      "error"
+    );
+  }
 });
-$("shop-form").addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!currentUser || !selectedShop) return;
+
+/* Save editable fields only */
+$("shop-form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!currentUser || !selectedShop) {
+    showMessage("save-message", "Please sign in and select your shop.", "error");
+    return;
+  }
+
   const changes = {
     shopName: $("shopName").value.trim(),
     phone: $("phone").value.trim(),
@@ -185,47 +557,87 @@ $("shop-form").addEventListener("submit", async e => {
     description: $("description").value.trim(),
     menu: $("menu").value.trim()
   };
-  if (!changes.shopName) { message("save-message", "Please enter a shop name.", true); return; }
+
+  if (!changes.shopName) {
+    showMessage("save-message", "Please enter a shop name.", "error");
+    return;
+  }
+
   const saveButton = $("save");
   saveButton.disabled = true;
-  message("save-message", "Saving to Firestore…");
+  showMessage("save-message", "Checking ownership and saving...");
+
   try {
-    const ref = doc(db, "shops", selectedShop.id);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) throw new Error("Shop record not found.");
-    const current = snap.data();
-    if (current.ownerUid !== currentUser.uid || current.status !== "approved") {
-      throw new Error("This account is not allowed to edit this shop, or the shop is not approved.");
+    const shopRef = doc(db, "shops", selectedShop.id);
+    const snapshot = await getDoc(shopRef);
+
+    if (!snapshot.exists()) {
+      throw new Error("Shop record not found.");
     }
-    await updateDoc(ref, changes);
-    selectedShop.data = {...current, ...changes};
-    savedData = {...selectedShop.data};
+
+    const current = snapshot.data();
+
+    if (current.ownerUid !== currentUser.uid ||
+        current.status !== "approved") {
+      throw new Error(
+        "Ownership or approval verification failed. No changes were saved."
+      );
+    }
+
+    await updateDoc(shopRef, changes);
+
+    selectedShop.data = { ...current, ...changes };
     $("selected-shop-heading").textContent = changes.shopName;
-    document.querySelectorAll(".shop-choice").forEach(b => {
-      if (b.dataset.id === selectedShop.id) b.textContent = shopLabel(selectedShop.data, selectedShop.id);
+
+    document.querySelectorAll(".shop-choice").forEach(button => {
+      if (button.dataset.id === selectedShop.id) {
+        button.textContent = shopLabel(selectedShop.data, selectedShop.id);
+      }
     });
-    message("save-message", "Saved successfully to Firestore. Your public website may need a refresh to show the changes.");
-  } catch(err) {
-    console.error(err);
-    message("save-message", "Save failed: " + (err.code || err.message) + ". Check your Firestore rules and shop fields.", true);
-  } finally { saveButton.disabled = false; }
+
+    showMessage(
+      "save-message",
+      "Saved successfully. Refresh the customer website to check the changes.",
+      "success"
+    );
+  } catch (error) {
+    console.error("Saving shop failed:", error);
+
+    let explanation = error.code || error.message;
+
+    if (error.code === "permission-denied") {
+      explanation =
+        "Firestore denied the save. Your published security rules must " +
+        "allow the authenticated owner to update these fields.";
+    }
+
+    showMessage("save-message", "Save failed: " + explanation, "error");
+  } finally {
+    saveButton.disabled = false;
+  }
 });
+
+/* Keep the screen in sync with Firebase Authentication */
 onAuthStateChanged(auth, async user => {
   currentUser = user;
+  shops = [];
+  selectedShop = null;
+
   if (!user) {
     $("login-card").classList.remove("hidden");
     $("dashboard").classList.add("hidden");
+    $("shop-form").classList.add("hidden");
+    $("shop-picker-card").classList.add("hidden");
     $("signed-in-email").textContent = "";
+    showMessage("page-error", "");
     return;
   }
+
   $("login-card").classList.add("hidden");
   $("dashboard").classList.remove("hidden");
   $("signed-in-email").textContent = user.email || "Signed-in owner";
-  try { await loadOwnerShops(user); }
-  catch(err) {
-    console.error(err);
-    message("page-error", "Could not load approved shops: " + (err.code || err.message) + ". Confirm Firestore rules are published and that ownerUid matches your login UID.", true);
-  }
+
+  await loadOwnerShops(user);
 });
 </script>
 </body>
