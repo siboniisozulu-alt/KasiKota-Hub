@@ -228,30 +228,46 @@
       option.textContent=shop.shopName||shop.name||"Local shop";
       option.dataset.phone=normalisePhone(shop.phone);
     }
-    const statusShopDocs=new Map(),booleanShopDocs=new Map();let statusQueryFailed=false,booleanQueryFailed=false;
-    function renderApprovedShops(){
-      const container=$("approvedShopList"),status=$("approvedShopStatus");
+    const statusShopDocs = new Map();
+    let statusQueryFailed = false;
+
+    function renderApprovedShops() {
+      const container = $("approvedShopList");
+      const status = $("approvedShopStatus");
       container.replaceChildren();
-      const all=new Map([...statusShopDocs,...booleanShopDocs]);
-      const select=$("shopSelect");
-      const placeholder=select.options[0];
-      select.replaceChildren();
-      if(placeholder){select.appendChild(placeholder);placeholder.value="";placeholder.textContent="Choose an approved shop first"}
-      let count=0;
-      all.forEach((shop,id)=>{
-        approvedShopData.set(id,shop);
-        if(String(shop.status||"").toLowerCase()!=="approved"&&shop.approved!==true)return;
-        addApprovedShopCard(shop,id);count++;
+
+      const select = $("shopSelect");
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Choose an approved shop first";
+      select.replaceChildren(placeholder);
+
+      // Remove stale entries before rebuilding the public list.
+      approvedShopData.clear();
+
+      let count = 0;
+      statusShopDocs.forEach((shop, id) => {
+        // Public listing requires status === "approved".
+        // The legacy approved:true field is deliberately not accepted.
+        if (String(shop.status || "").toLowerCase() !== "approved") return;
+
+        approvedShopData.set(id, shop);
+        addApprovedShopCard(shop, id);
+        count++;
       });
-      if(!count){
-        const note=document.createElement("p");
-        note.className="message "+(statusQueryFailed&&booleanQueryFailed?"error":"info");
-        note.textContent=statusQueryFailed&&booleanQueryFailed
-          ?"Approved shops could not load. Check your internet connection and Firestore read permissions."
-          :"No approved shops are listed yet. Shops will appear here after an administrator approves and publishes their details.";
-        container.appendChild(note);status.textContent=note.textContent;
-      }else{
-        status.textContent=count+(count===1?" approved shop is available. Tap Browse Approved Shops to view it.":" approved shops are available. Tap Browse Approved Shops to view them.");
+
+      if (count === 0) {
+        const note = document.createElement("p");
+        note.className = "message " + (statusQueryFailed ? "error" : "info");
+        note.textContent = statusQueryFailed
+          ? "Approved shops could not load. Check your internet connection and Firestore read permissions."
+          : "No approved shops are listed yet. Shops will appear here after an administrator approves and publishes their details.";
+        container.appendChild(note);
+        status.textContent = note.textContent;
+      } else {
+        status.textContent = count + (count === 1
+          ? " approved shop is available. Tap Browse Approved Shops to view it."
+          : " approved shops are available. Tap Browse Approved Shops to view them.");
       }
     }
     function closeApprovedShopsModal(){$("approvedShopsModal").classList.add("hidden");document.body.classList.remove("modal-open")}
@@ -259,13 +275,17 @@
     $("closeApprovedShops").addEventListener("click",closeApprovedShopsModal);
     $("approvedShopsModal").addEventListener("click",event=>{if(event.target===$("approvedShopsModal"))closeApprovedShopsModal()});
     document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("approvedShopsModal").classList.contains("hidden"))closeApprovedShopsModal()});
-    function updateShopSnapshot(snapshot,target){target.clear();snapshot.forEach(docSnap=>{target.set(docSnap.id,docSnap.data());approvedShopData.set(docSnap.id,docSnap.data())});renderApprovedShops()}
+    function updateShopSnapshot(snapshot, target) {
+      target.clear();
+      snapshot.forEach(docSnap => target.set(docSnap.id, docSnap.data()));
+      renderApprovedShops();
+    }
     async function loadOwnerShop(){if(!currentOwner)return;const dashMessage=$("ownerDashboardMessage"),shopForm=$("ownerShopForm"),help=$("ownerDashboardHelp");shopForm.classList.add("hidden");help.textContent="";currentShopId=null;currentShopData=null;if(unsubscribeOwnerShop){unsubscribeOwnerShop();unsubscribeOwnerShop=null}showMessage(dashMessage,"Looking for your shop…","info");try{const shopsQuery=query(collection(db,"shops"),where("ownerUid","==",currentOwner.uid));const snapshot=await getDocsCompat(shopsQuery);if(snapshot.empty){const appSnap=await getDoc(doc(db,"shopApplications",currentOwner.uid));if(appSnap.exists()){const app=appSnap.data();showMessage(dashMessage,"Your account is signed in, but no public shop is linked to it yet. Application status: "+(app.status||"unknown")+". An administrator must publish the shop document in the shops collection and set ownerUid to your UID.","info")}else{showMessage(dashMessage,"We could not find a shop linked to this account. Ask the administrator to check the ownerUid field in Firestore.","error")}return}const match=snapshot.docs.find(d=>d.data().ownerUid===currentOwner.uid);if(!match){showMessage(dashMessage,"No shop linked to this account was found.","error");return}currentShopId=match.id;currentShopData=match.data();$("ownerEditShopName").value=currentShopData.shopName||"";$("ownerEditPhone").value=currentShopData.phone||"";$("ownerEditAddress").value=currentShopData.address||"";$("ownerEditDescription").value=currentShopData.description||"";shopForm.classList.remove("hidden");showMessage(dashMessage,"Your shop is connected. Status: "+(currentShopData.status||"unknown")+".","success");help.textContent="For safety, the dashboard does not let you change approval status or owner UID."}catch(error){console.error("Could not load owner's shop:",error);showMessage(dashMessage,friendlyError(error),"error")}}
     // A small wrapper keeps the query/read logic explicit.
     async function getDocsCompat(q){const {getDocs}=await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");return getDocs(q)}
     try{const app=getApps().length?getApp():initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);
       const guestApp=getApps().find(item=>item.name==="KotaConnectGuestOrders")||initializeApp(firebaseConfig,"KotaConnectGuestOrders");
-      guestAuth=getAuth(guestApp);guestDb=getFirestore(guestApp);firebaseReady=true;onSnapshot(query(collection(db,"shops"),where("status","==","approved")),snapshot=>{statusQueryFailed=false;updateShopSnapshot(snapshot,statusShopDocs)},error=>{statusQueryFailed=true;console.error("Could not load shops with status=approved:",error);renderApprovedShops()});onSnapshot(query(collection(db,"shops"),where("approved","==",true)),snapshot=>{booleanQueryFailed=false;updateShopSnapshot(snapshot,booleanShopDocs)},error=>{booleanQueryFailed=true;console.error("Could not load shops with approved=true:",error);renderApprovedShops()});}catch(error){console.error("Firebase initialization error:",error);showMessage(message,"Firebase could not initialize. Check the Firebase configuration and serve this page from a web server.","error")}
+      guestAuth=getAuth(guestApp);guestDb=getFirestore(guestApp);firebaseReady=true;onSnapshot(query(collection(db,"shops"),where("status","==","approved")),snapshot=>{statusQueryFailed=false;updateShopSnapshot(snapshot,statusShopDocs)},error=>{statusQueryFailed=true;console.error("Could not load shops with status=approved:",error);renderApprovedShops()});}catch(error){console.error("Firebase initialization error:",error);showMessage(message,"Firebase could not initialize. Check the Firebase configuration and serve this page from a web server.","error")}
     // Auto-save order integration: tapping Send to Shop saves to Firestore first, then opens WhatsApp.
     $("orderForm").addEventListener("submit",event=>{
       event.preventDefault();event.stopImmediatePropagation();
