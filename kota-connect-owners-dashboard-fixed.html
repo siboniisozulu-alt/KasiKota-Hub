@@ -133,16 +133,7 @@ function renderShopChoices() {
   $("shop-picker-card").classList.toggle("hidden", shops.length < 2);
   if (shops.length) selectShop(shops[0]);
 }
-async function loadOwnerShops(user) {
-  message("page-error", "");
-  $("shop-form").classList.add("hidden");
-  $("shop-picker-card").classList.add("hidden");
-  // Query is restricted to this signed-in owner's approved shops.
-  const q = query(
-    collection(db, "shops"),
-    where("ownerUid", "==", user.uid),
-    where("status", "==", "approved")
-  );
+Could not load approved shops: permission-denied. Confirm Firestore rules are published and that ownerUid matches your login UID.
   const snap = await getDocs(q);
   shops = snap.docs.map(d => ({id:d.id, data:d.data()}));
   if (!shops.length) {
