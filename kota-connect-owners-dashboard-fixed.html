@@ -186,8 +186,8 @@ button:disabled { opacity: .6; cursor: wait; }
   </div>
 
   <div id="shop-picker-card" class="card hidden">
-    <h2>Your approved shops</h2>
-    <p class="muted">Choose which shop you want to manage.</p>
+    <h2>Your shops</h2>
+    <p class="muted">Approved shops can be managed. A pending test shop is view-only.</p>
     <div id="shop-picker"></div>
   </div>
 
@@ -226,6 +226,9 @@ button:disabled { opacity: .6; cursor: wait; }
         Put each menu item on a separate line. Only enter confirmed prices.
       </p>
     </div>
+
+    <div id="shop-mode-notice" class="notice hidden" role="status"
+         aria-live="polite"></div>
 
     <div class="notice">
       You can edit shop details and menu only. You cannot change shop
@@ -402,8 +405,28 @@ function selectShop(shop) {
 
   $("shop-form").classList.remove("hidden");
   fillShop(shop.data);
-  showMessage("page-error", "");
 
+  const pendingTestShop =
+    shop.data.status === "pending" && isTestShop(shop.data);
+
+  const modeNotice = $("shop-mode-notice");
+  if (modeNotice) {
+    modeNotice.classList.toggle("hidden", !pendingTestShop);
+    modeNotice.textContent = pendingTestShop
+      ? "TEST SHOP ONLY: This shop is pending. You can view its test orders, but shop editing and order updates are disabled. Do not treat test orders as real sales."
+      : "";
+  }
+
+  // Pending test shops are view-only. Approved shops retain normal editing.
+  document.querySelectorAll(
+    "#shop-form input, #shop-form textarea"
+  ).forEach(field => {
+    field.disabled = pendingTestShop;
+  });
+  $("save").disabled = pendingTestShop;
+  $("reload").disabled = pendingTestShop;
+
+  showMessage("page-error", "");
   loadOwnerOrders(currentUser, shop);
 }
 
@@ -460,14 +483,19 @@ async function loadOwnerShops(user) {
         id: item.id,
         data: item.data()
       }))
-      .filter(shop => shop.data.status === "approved");
+      // Normal shops must be approved. A pending shop is included only
+      // for a clearly identified test shop owned by this signed-in user.
+      .filter(shop =>
+        shop.data.status === "approved" ||
+        (shop.data.status === "pending" && isTestShop(shop.data))
+      );
 
     if (shops.length === 0) {
       showMessage(
         "page-error",
-        "No approved shop was found for this account. " +
-        "Ask the administrator to check that the shop's ownerUid " +
-        "matches your Firebase UID and its status is approved.",
+        "No eligible shop was found for this account. " +
+        "Approved shops can be managed; clearly identified pending test shops can be viewed for testing. " +
+        "Ask the administrator to verify ownership and approval status.",
         "error"
       );
 
@@ -495,6 +523,13 @@ async function loadOwnerShops(user) {
   } finally {
     loadingShops = false;
   }
+}
+
+/* Identify a test shop for the restricted, view-only test workflow. */
+function isTestShop(shop) {
+  return shop.testShop === true
+    || String(shop.shopName || shop.name || "")
+      .toLowerCase().includes("test");
 }
 
 /* Determine whether an order should be treated as a test. */
@@ -752,7 +787,7 @@ function loadOwnerOrders(user, shop) {
   stopOrderListener();
 
   if (!user || !shop) {
-    showMessage("orders-message", "Select an approved shop to view orders.");
+    showMessage("orders-message", "Select a shop to view orders.");
     return;
   }
 
@@ -909,6 +944,18 @@ $("shop-form").addEventListener("submit", async event => {
     showMessage(
       "save-message",
       "Please sign in and select your shop.",
+      "error"
+    );
+    return;
+  }
+
+  if (
+    selectedShop.data.status === "pending" &&
+    isTestShop(selectedShop.data)
+  ) {
+    showMessage(
+      "save-message",
+      "This pending test shop is view-only. No changes were saved.",
       "error"
     );
     return;
