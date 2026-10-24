@@ -372,7 +372,7 @@ async function loadOwnerShops(user) {
     let querySucceeded = false;
 
     try {
-     const shopQuery = query(
+   const shopQuery = query(
   collection(db, "shops"),
   where("ownerUid", "==", user.uid)
 );
