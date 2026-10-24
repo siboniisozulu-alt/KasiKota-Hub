@@ -346,6 +346,31 @@
     $("ownerShopForm").addEventListener("submit",async event=>{event.preventDefault();if(!currentOwner||!currentShopId||!currentShopData){showMessage($("ownerDashboardMessage"),"Your shop is not loaded. Reload your shop and try again.","error");return}const button=$("ownerSaveShopButton");button.disabled=true;try{const updated={shopName:$("ownerEditShopName").value.trim(),phone:$("ownerEditPhone").value.trim(),address:$("ownerEditAddress").value.trim(),description:$("ownerEditDescription").value.trim()};if(!updated.shopName||!updated.phone||!updated.address||!updated.description)throw new Error("Please complete all shop fields.");await updateDoc(doc(db,"shops",currentShopId),updated);currentShopData={...currentShopData,...updated};showMessage($("ownerDashboardMessage"),"Shop details saved successfully.","success")}catch(error){console.error("Saving shop details failed:",error);showMessage($("ownerDashboardMessage"),friendlyError(error),"error")}finally{button.disabled=false}});
     onAuthStateChanged(auth,user=>{currentOwner=user||null;if(user){$("ownerSignedOut").classList.add("hidden");$("ownerSignedIn").classList.remove("hidden");$("ownerAccountEmail").textContent="Signed in: "+(user.email||"account");loadOwnerShop()}else{$("ownerSignedOut").classList.remove("hidden");$("ownerSignedIn").classList.add("hidden");$("ownerShopForm").classList.add("hidden");if(unsubscribeOwnerShop){unsubscribeOwnerShop();unsubscribeOwnerShop=null}currentShopId=null;currentShopData=null}});
     form.addEventListener("submit",async event=>{event.preventDefault();if(!form.reportValidity())return;if(!firebaseReady){showMessage(message,"Registration is unavailable because Firebase did not initialize.","error");return}const email=$("shopEmail").value.trim().toLowerCase(),ownerName=$("ownerName").value.trim(),shopName=$("shopName").value.trim(),phone=$("shopPhone").value.trim(),address=$("shopAddress").value.trim(),description=$("shopDescription").value.trim(),password=$("shopPassword").value;if(!ownerName||!shopName||!email||!phone||!address||!description||!password){showMessage(message,"Please complete every field before submitting.","error");return}submitButton.disabled=true;showMessage(message,"Creating your account and submitting your application…","info");let createdUid=null;try{const credential=await createUserWithEmailAndPassword(auth,email,password);createdUid=credential.user.uid;await setDoc(doc(db,"shopApplications",createdUid),{ownerName,shopName,email:credential.user.email||email,phone,address,description,status:"pending",createdAt:serverTimestamp()});form.reset();showMessage(message,"Application submitted successfully! Your shop is awaiting administrator approval.","success")}catch(error){console.error("Shop registration error:",error);if(createdUid)showMessage(message,"Your Firebase account was created, but the application could not be saved. Ask the administrator to check Firestore permissions before trying again.","error");else showMessage(message,friendlyError(error),"error")}finally{submitButton.disabled=false}});
+    
+<!-- Kota Connect Administrator Login Button -->
+<a href="admin-dashboard.html"
+   aria-label="Administrator Login"
+   style="
+     position:fixed;
+     right:14px;
+     bottom:14px;
+     z-index:9999;
+     display:flex;
+     align-items:center;
+     gap:8px;
+     padding:12px 16px;
+     background:#176b45;
+     color:#ffffff;
+     text-decoration:none;
+     font-family:Arial,sans-serif;
+     font-size:14px;
+     font-weight:700;
+     border-radius:30px;
+     box-shadow:0 4px 12px rgba(0,0,0,.2);
+   ">
+  🔐 Admin Login
+</a>
+
   </script>
 </body>
 </html>
