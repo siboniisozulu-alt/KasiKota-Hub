@@ -722,15 +722,25 @@ function renderOrders(snapshot) {
       // A test order can exercise the button without changing Firebase data.
       // Real orders continue through the normal ownership and approval checks.
       if (testOrder) {
-        if (
-          !isTestShop(selectedShop.data) ||
-          selectedShop.data.status !== "pending" ||
-          order.testOrder !== true ||
-          order.shopId !== selectedShop.id ||
-          order.ownerUid !== currentUser.uid
-        ) {
-          result.textContent =
-            "Test simulation blocked: this is not the expected owner test order.";
+        const failedChecks = [];
+        if (!isTestShop(selectedShop.data)) failedChecks.push("selected shop name/testShop flag");
+        if (String(selectedShop.data.status || "").toLowerCase() !== "pending") failedChecks.push("shop status is not pending");
+        if (order.testOrder !== true) failedChecks.push("order testOrder field is not boolean true");
+        if (order.shopId !== selectedShop.id) failedChecks.push("order shopId does not match selected shop ID");
+        if (order.ownerUid !== currentUser.uid) failedChecks.push("order ownerUid does not match signed-in account UID");
+        if (failedChecks.length) {
+          result.textContent = "Test simulation blocked. Failed check(s): " + failedChecks.join("; ") + ". No Firebase data was changed.";
+          console.warn("Test simulation checks", {
+            failedChecks,
+            signedInUid: currentUser.uid,
+            orderOwnerUid: order.ownerUid,
+            orderShopId: order.shopId,
+            selectedShopId: selectedShop.id,
+            shopStatus: selectedShop.data.status,
+            orderTestOrder: order.testOrder,
+            shopName: selectedShop.data.shopName || selectedShop.data.name,
+            orderNumber: order.orderNumber || orderDoc.id
+          });
           return;
         }
 
