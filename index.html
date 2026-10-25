@@ -128,11 +128,48 @@ $("shopRegisterForm").addEventListener("submit", async e => {
   }
 });
 </script>
+```html
 <script>
 "use strict";
-let deferredInstallPrompt=null;
-// Keep the existing app-install and service-worker code here.
+
+let deferredInstallPrompt = null;
+const installAppButton = document.getElementById("installAppButton");
+
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  if (installAppButton) {
+    installAppButton.classList.remove("hidden");
+  }
+});
+
+if (installAppButton) {
+  installAppButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) {
+      alert('Open Chrome menu (⋮) and choose "Install app" or "Add to Home screen".');
+      return;
+    }
+
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installAppButton.classList.add("hidden");
+  });
+}
+
+window.addEventListener("appinstalled", () => {
+  if (installAppButton) {
+    installAppButton.classList.add("hidden");
+  }
+});
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .catch(error => console.error("Service worker failed:", error));
+  });
+}
 </script>
-</body>
-</html>
+```
+
 
