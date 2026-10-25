@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,68 +7,297 @@
 <meta name="theme-color" content="#176b45">
 <meta name="description" content="Kota Connect administrator dashboard">
 <title>Kota Connect | Admin Dashboard</title>
+
 <style>
-:root{--g:#176b45;--ink:#17221c;--muted:#66736b;--line:#e1e8e2;--bg:#f5f8f5;--red:#a52a2a;--amber:#855b00;--white:#fff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}header{background:var(--g);color:#fff;padding:20px 16px}header .inner,main{max-width:1100px;margin:auto}h1{margin:0;font-size:1.45rem}header p{margin:5px 0 0;opacity:.9}.wrap{max-width:1100px;margin:20px auto;padding:0 14px}.card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #13261a08}h2{font-size:1.15rem;margin:0 0 10px}h3{font-size:1rem;margin:0 0 8px}.muted{color:var(--muted);font-size:.93rem}.notice{background:#fff7df;border:1px solid #f0d995;padding:11px 13px;border-radius:10px;margin:12px 0;color:#5e480d}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex:1}.field{display:block;margin:10px 0}.field span{display:block;font-size:.9rem;font-weight:650;margin-bottom:5px}input,select{width:100%;padding:11px 12px;border:1px solid #cbd7cd;border-radius:9px;font:inherit;background:white}button,.button{border:0;border-radius:9px;background:var(--g);color:white;font:inherit;font-weight:650;padding:10px 14px;cursor:pointer;text-decoration:none;display:inline-block}button.secondary{background:#e8efe9;color:var(--ink)}button.danger{background:#a52a2a}button:disabled{opacity:.55;cursor:not-allowed}.error{color:var(--red);white-space:pre-wrap}.success{color:var(--g)}.hidden{display:none!important}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button.active{outline:3px solid #a7c9b2}.statgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}.stat{padding:13px;background:#f7faf7;border:1px solid var(--line);border-radius:10px}.stat strong{font-size:1.5rem;display:block}.item{border:1px solid var(--line);border-radius:10px;padding:13px;margin:10px 0;background:#fff}.itemhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.pill{display:inline-block;border-radius:99px;padding:3px 9px;font-size:.78rem;font-weight:700;background:#edf2ed;color:#33443a}.pill.pending{background:#fff1c7;color:#725000}.pill.approved,.pill.completed{background:#e0f4e7;color:#176b45}.pill.rejected{background:#ffe5e5;color:#8b2020}.details{font-size:.92rem;overflow-wrap:anywhere;margin:8px 0}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.empty{padding:18px;color:var(--muted);text-align:center;border:1px dashed var(--line);border-radius:10px}small{color:var(--muted)}footer{text-align:center;color:var(--muted);padding:20px;font-size:.85rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}@media(max-width:600px){.statgrid{grid-template-columns:1fr}.row>*{flex-basis:100%}.card{padding:14px}}
+:root {
+  --g:#176b45;
+  --ink:#17221c;
+  --muted:#66736b;
+  --line:#e1e8e2;
+  --bg:#f5f8f5;
+  --red:#a52a2a;
+  --white:#fff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+header { background:var(--g); color:white; padding:20px 16px; }
+header .inner, main { max-width:1100px; margin:auto; }
+h1 { margin:0; font-size:1.45rem; }
+header p { margin:5px 0 0; opacity:.9; }
+.wrap { max-width:1100px; margin:20px auto; padding:0 14px; }
+.card {
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 3px 12px #13261a08;
+}
+h2 { font-size:1.15rem; margin:0 0 10px; }
+h3 { font-size:1rem; margin:0 0 8px; }
+.muted { color:var(--muted); font-size:.93rem; }
+.notice {
+  background:#fff7df;
+  border:1px solid #f0d995;
+  padding:11px 13px;
+  border-radius:10px;
+  margin:12px 0;
+  color:#5e480d;
+}
+.row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.row > * { flex:1; }
+.field { display:block; margin:10px 0; }
+.field span { display:block; font-size:.9rem; font-weight:650; margin-bottom:5px; }
+input {
+  width:100%;
+  padding:11px 12px;
+  border:1px solid #cbd7cd;
+  border-radius:9px;
+  font:inherit;
+  background:white;
+}
+button,.button {
+  border:0;
+  border-radius:9px;
+  background:var(--g);
+  color:white;
+  font:inherit;
+  font-weight:650;
+  padding:10px 14px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block;
+}
+button.secondary { background:#e8efe9; color:var(--ink); }
+button.danger { background:var(--red); }
+button:disabled { opacity:.55; cursor:not-allowed; }
+.error { color:var(--red); white-space:pre-wrap; }
+.success { color:var(--g); }
+.hidden { display:none!important; }
+.tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.tabs button.active { outline:3px solid #a7c9b2; }
+.statgrid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:16px;
+}
+.stat {
+  padding:13px;
+  background:#f7faf7;
+  border:1px solid var(--line);
+  border-radius:10px;
+}
+.stat strong { font-size:1.5rem; display:block; overflow-wrap:anywhere; }
+.item {
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:13px;
+  margin:10px 0;
+  background:white;
+}
+.itemhead {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pill {
+  display:inline-block;
+  border-radius:99px;
+  padding:3px 9px;
+  font-size:.78rem;
+  font-weight:700;
+  background:#edf2ed;
+  color:#33443a;
+}
+.pill.pending { background:#fff1c7; color:#725000; }
+.pill.approved,.pill.completed { background:#e0f4e7; color:#176b45; }
+.pill.rejected { background:#ffe5e5; color:#8b2020; }
+.details { font-size:.92rem; overflow-wrap:anywhere; margin:8px 0; }
+.actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.empty {
+  padding:18px;
+  color:var(--muted);
+  text-align:center;
+  border:1px dashed var(--line);
+  border-radius:10px;
+}
+small { color:var(--muted); }
+footer { text-align:center; color:var(--muted); padding:20px; font-size:.85rem; }
+@media(max-width:600px) {
+  .statgrid { grid-template-columns:1fr; }
+  .row > * { flex-basis:100%; }
+  .card { padding:14px; }
+}
 </style>
 </head>
+
 <body>
-<header><div class="inner"><h1>Kota Connect — Admin Dashboard</h1><p>Manage shop applications, shop records and customer orders</p></div></header>
+<header>
+  <div class="inner">
+    <h1>Kota Connect — Admin Dashboard</h1>
+    <p>Manage shop applications, shop records and customer orders</p>
+  </div>
+</header>
+
 <main class="wrap">
+
 <section class="card" id="login-card">
-<h2>Administrator sign in</h2><p class="muted">Use the administrator Firebase Authentication account. Only the configured admin UID can use this dashboard.</p>
-<form id="login-form"><label class="field"><span>Email</span><input id="email" type="email" autocomplete="username" required></label><label class="field"><span>Password</span><input id="password" type="password" autocomplete="current-password" required></label><button id="login-button" type="submit">Sign in</button></form><p id="login-message" role="status"></p>
-</section>
-<section id="dashboard" class="hidden">
-<div class="card"><div class="row"><div><h2>Administrator access</h2><p class="muted" id="signed-in-as"></p></div><div style="text-align:right;flex:0 0 auto"><button id="refresh" class="secondary" type="button">Refresh data</button> <button id="logout" class="secondary" type="button">Sign out</button></div></div><div class="notice">Approval makes a shop public. Check the shop name, owner, phone and address before approving. Orders shown here are for monitoring; this dashboard does not collect payments or commissions.</div><p id="page-message" role="status"></p></div>
-<div class="statgrid"><div class="stat"><span class="muted">Applications</span><strong id="count-apps">—</strong></div><div class="stat"><span class="muted">Shop records</span><strong id="count-shops">—</strong></div><div class="stat"><span class="muted">Orders</span><strong id="count-orders">—</strong></div></div>
-
-<nav class="tabs" aria-label="Dashboard sections">
-  <button type="button" class="active" data-tab="applications">Applications</button>
-  <button type="button" data-tab="shops">Shops</button>
-  <button type="button" data-tab="orders">Orders</button>
-  <button type="button" data-tab="commission">Commission</button>
-</nav>
-
-<section class="card tab-panel" id="panel-applications"><h2>Shop applications</h2><p class="muted">Approve only genuine applications. Rejecting changes the application status; it does not delete the application.</p><div id="applications-list" class="empty">Loading applications…</div></section>
-<section class="card tab-panel hidden" id="panel-shops"><h2>Shop records</h2><p class="muted">Includes approved and test/unapproved shop records. Test records stay private unless explicitly approved.</p><div id="shops-list" class="empty">Loading shops…</div></section>
-<section class="card tab-panel hidden" id="panel-orders"><h2>Customer orders</h2><p class="muted">Totals are quotes until the shop confirms them. Payment and commission automation are not enabled here.</p><div id="orders-list" class="empty">Loading orders…</div></section>
-<section class="card tab-panel hidden" id="panel-commission">
-  <h2>Commission overview</h2>
+  <h2>Administrator sign in</h2>
   <p class="muted">
-    Estimated commission is R0.50 per completed, non-test order.
-    This is a calculation from order records, not proof of money collected.
+    Sign in using the administrator Firebase Authentication account.
   </p>
+  <form id="login-form">
+    <label class="field">
+      <span>Email</span>
+      <input id="email" type="email" autocomplete="username" required>
+    </label>
+    <label class="field">
+      <span>Password</span>
+      <input id="password" type="password" autocomplete="current-password" required>
+    </label>
+    <button id="login-button" type="submit">Sign in</button>
+  </form>
+  <p id="login-message" role="status" aria-live="polite"></p>
+</section>
+
+<section id="dashboard" class="hidden">
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <h2>Administrator access</h2>
+        <p class="muted" id="signed-in-as"></p>
+      </div>
+      <div style="text-align:right;flex:0 0 auto">
+        <button id="refresh" class="secondary" type="button">Refresh data</button>
+        <button id="logout" class="secondary" type="button">Sign out</button>
+      </div>
+    </div>
+
+    <div class="notice">
+      Check shop details before approval. Orders and commission figures are
+      for monitoring only. This dashboard does not collect payments or
+      automatically collect commission.
+    </div>
+    <p id="page-message" role="status" aria-live="polite"></p>
+  </div>
 
   <div class="statgrid">
     <div class="stat">
-      <span class="muted">Eligible orders</span>
-      <strong id="commission-orders">0</strong>
+      <span class="muted">Applications</span>
+      <strong id="count-apps">—</strong>
     </div>
     <div class="stat">
-      <span class="muted">Estimated commission</span>
-      <strong id="commission-total">R0.00</strong>
+      <span class="muted">Shop records</span>
+      <strong id="count-shops">—</strong>
     </div>
     <div class="stat">
-      <span class="muted">Remaining to R20</span>
-      <strong id="commission-remaining">R20.00</strong>
+      <span class="muted">Orders</span>
+      <strong id="count-orders">—</strong>
     </div>
   </div>
 
-  <h3>Commission by shop</h3>
-  <div id="commission-list" class="empty">
-    Commission data will appear after refreshing.
-  </div>
-</section>
+  <nav class="tabs" aria-label="Dashboard sections">
+    <button type="button" class="active" data-tab="applications">Applications</button>
+    <button type="button" data-tab="shops">Shops</button>
+    <button type="button" data-tab="orders">Orders</button>
+    <button type="button" data-tab="commission">Commission</button>
+  </nav>
+
+  <section class="card tab-panel" id="panel-applications">
+    <h2>Shop applications</h2>
+    <p class="muted">
+      Approve genuine applications only. Rejected applications remain saved.
+    </p>
+    <div id="applications-list" class="empty">Loading applications…</div>
+  </section>
+
+  <section class="card tab-panel hidden" id="panel-shops">
+    <h2>Shop records</h2>
+    <p class="muted">
+      Includes approved and unapproved shop records.
+    </p>
+    <div id="shops-list" class="empty">Loading shops…</div>
+  </section>
+
+  <section class="card tab-panel hidden" id="panel-orders">
+    <h2>Customer orders</h2>
+    <p class="muted">
+      Quoted totals are not necessarily final totals. Check payment and
+      fulfilment status before treating an order as financially settled.
+    </p>
+    <div id="orders-list" class="empty">Loading orders…</div>
+  </section>
+
+  <section class="card tab-panel hidden" id="panel-commission">
+    <h2>Commission overview</h2>
+    <p class="muted">
+      Planning estimate: R0.50 per completed order that is not marked as a
+      test order. These figures are calculated from current order records;
+      they are not a permanent ledger, proof of payment, or confirmation
+      that commission is owed.
+    </p>
+
+    <div class="statgrid">
+      <div class="stat">
+        <span class="muted">Estimated eligible orders</span>
+        <strong id="commission-orders">0</strong>
+      </div>
+      <div class="stat">
+        <span class="muted">Estimated commission</span>
+        <strong id="commission-total">R0.00</strong>
+      </div>
+      <div class="stat">
+        <span class="muted">Remaining to R20</span>
+        <strong id="commission-remaining">R20.00</strong>
+      </div>
+    </div>
+
+    <h3>Estimated commission by shop</h3>
+    <div id="commission-list" class="empty">
+      Commission estimates will appear after refreshing.
+    </div>
+  </section>
 
 </section>
-</main><footer>Kota Connect · Newcastle, KwaZulu-Natal</footer>
+</main>
+
+<footer>Kota Connect · Newcastle, KwaZulu-Natal</footer>
+
 <script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc, updateDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {
+  initializeApp,
+  getApps
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  addDoc,
+  updateDoc,
+  query,
+  where,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const ADMIN_UID = "4menEfIBN2XqMMi8dZPSrv73HlQ2";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
   authDomain: "kasikota-hub.firebaseapp.com",
@@ -78,31 +308,257 @@ const firebaseConfig = {
   appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86",
   measurementId: "G-WKH542B38C"
 };
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+
+const app = getApps().length
+  ? getApps()[0]
+  : initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 const $ = id => document.getElementById(id);
-let appsData = [], shopsData = [], ordersData = [], busy = false;
-const text = v => v == null || v === "" ? "—" : String(v);
-const money = v => typeof v === "number" ? "R" + v.toFixed(2) : text(v);
-const dateText = v => { try { if (v?.toDate) return v.toDate().toLocaleString(); if (v instanceof Date) return v.toLocaleString(); return v ? String(v) : "—"; } catch { return "—"; } };
-function message(id, msg, type="") { const el=$(id); el.textContent=msg; el.className=type; }
-function errorText(e) { const c=e?.code||""; if(c.includes("permission-denied")) return "Firestore denied access. Confirm the published rules contain the matching admin UID and allow admin list/read/update/create operations."; if(c.includes("invalid-credential")||c.includes("wrong-password")||c.includes("user-not-found")) return "Email or password is incorrect."; if(c.includes("api-key-not-valid")||c.includes("invalid-api-key")) return "Firebase rejected the API key. Confirm the Firebase project configuration."; return e?.message || "Something went wrong."; }
-function el(tag, cls, value) { const n=document.createElement(tag); if(cls)n.className=cls; if(value!==undefined)n.textContent=value; return n; }
-function addLine(parent, label, value) { const p=el("p","details"); const b=el("strong","",label+": "); p.append(b,document.createTextNode(text(value))); parent.append(p); }
-function safePill(value) { const s=text(value); return el("span","pill "+s.toLowerCase().replace(/[^a-z0-9_-]/g,"-"),s); }
-function renderApplications() {
- const root=$("applications-list"); root.replaceChildren();
- if(!appsData.length){root.className="empty";root.textContent="No shop applications found.";return;} root.className="";
- appsData.sort((a,b)=>String(b.data.createdAt?.seconds||0).localeCompare(String(a.data.createdAt?.seconds||0)));
- for(const item of appsData){const d=item.data, card=el("article","item"), head=el("div","itemhead"), left=el("div");left.append(el("h3","",text(d.shopName)));left.append(el("small","","Application ID / owner UID: "+item.id));head.append(left,safePill(d.status||"pending"));card.append(head);addLine(card,"Owner",d.ownerName);addLine(card,"Email",d.email);addLine(card,"Phone",d.phone);addLine(card,"Address",d.address);addLine(card,"Description",d.description);addLine(card,"Submitted",dateText(d.createdAt));
- const actions=el("div","actions"); if((d.status||"pending")==="pending") { const approve=el("button","","Approve shop");approve.type="button";approve.addEventListener("click",()=>approveApplication(item));const reject=el("button","danger","Reject application");reject.type="button";reject.addEventListener("click",()=>rejectApplication(item));actions.append(approve,reject); } else { const note=el("small","","No action for this status.");actions.append(note); } card.append(actions);root.append(card); }
+
+let appsData = [];
+let shopsData = [];
+let ordersData = [];
+let busy = false;
+
+const text = value =>
+  value == null || value === "" ? "—" : String(value);
+
+const money = value =>
+  typeof value === "number" && Number.isFinite(value)
+    ? "R" + value.toFixed(2)
+    : text(value);
+
+function dateText(value) {
+  try {
+    if (value?.toDate) return value.toDate().toLocaleString();
+    if (value instanceof Date) return value.toLocaleString();
+    return value ? String(value) : "—";
+  } catch {
+    return "—";
+  }
 }
-function renderShops(){const root=$("shops-list");root.replaceChildren();if(!shopsData.length){root.className="empty";root.textContent="No shop records found.";return;}root.className="";for(const item of shopsData){const d=item.data,card=el("article","item"),head=el("div","itemhead"),left=el("div");left.append(el("h3","",text(d.shopName||d.name)));left.append(el("small","","Shop ID: "+item.id));head.append(left,safePill(d.status||"no status"));card.append(head);addLine(card,"Owner UID",d.ownerUid);addLine(card,"Owner",d.ownerName);addLine(card,"Phone",d.phone);addLine(card,"Address",d.address);addLine(card,"Public approved flag",d.approved);addLine(card,"Menu",typeof d.menu==="string"?d.menu:JSON.stringify(d.menu||[]));root.append(card);}}
-function renderOrders(){const root=$("orders-list");root.replaceChildren();if(!ordersData.length){root.className="empty";root.textContent="No orders found.";return;}root.className="";ordersData.sort((a,b)=>String(b.data.createdAt?.seconds||0).localeCompare(String(a.data.createdAt?.seconds||0)));for(const item of ordersData){const d=item.data,card=el("article","item"),head=el("div","itemhead"),left=el("div");left.append(el("h3","","Order "+text(d.orderNumber||item.id)));left.append(el("small","","Document ID: "+item.id));head.append(left,safePill(d.orderStatus||"unknown"));card.append(head);addLine(card,"Shop",d.shopName);addLine(card,"Shop ID",d.shopId);addLine(card,"Customer",d.customerName);addLine(card,"Customer phone",d.customerPhone);addLine(card,"Pickup / delivery",d.fulfillmentType);addLine(card,"Area",d.area);addLine(card,"Items",Array.isArray(d.items)?d.items.map(x=>(x.name||x.itemName||"Item")+" × "+text(x.quantity)).join(", "):JSON.stringify(d.items));addLine(card,"Quoted total",money(d.totalQuote));addLine(card,"Confirmed total",money(d.confirmedTotal));addLine(card,"Payment status",d.paymentStatus);addLine(card,"Test order",d.testOrder);addLine(card,"Created",dateText(d.createdAt));root.append(card);}}
+
+function message(id, msg, type = "") {
+  const target = $(id);
+  target.textContent = msg;
+  target.className = type;
+}
+
+function errorText(error) {
+  const code = error?.code || "";
+
+  if (code.includes("permission-denied")) {
+    return "Firestore denied access. Check the published Firestore rules and confirm that the administrator UID is allowed to read and update the required collections.";
+  }
+
+  if (
+    code.includes("invalid-credential") ||
+    code.includes("wrong-password") ||
+    code.includes("user-not-found") ||
+    code.includes("invalid-login-credentials")
+  ) {
+    return "Email or password is incorrect.";
+  }
+
+  if (
+    code.includes("api-key-not-valid") ||
+    code.includes("invalid-api-key")
+  ) {
+    return "Firebase rejected the API key. Check the Firebase project configuration.";
+  }
+
+  if (code.includes("network-request-failed")) {
+    return "Network error. Check your internet connection and try again.";
+  }
+
+  return error?.message || "Something went wrong.";
+}
+
+function el(tag, cls, value) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (value !== undefined) node.textContent = value;
+  return node;
+}
+
+function addLine(parent, label, value) {
+  const p = el("p", "details");
+  const b = el("strong", "", label + ": ");
+  p.append(b, document.createTextNode(text(value)));
+  parent.append(p);
+}
+
+function safePill(value) {
+  const label = text(value);
+  const cssClass = label.toLowerCase().replace(/[^a-z0-9_-]/g, "-");
+  return el("span", "pill " + cssClass, label);
+}
+
+/* SHOP APPLICATIONS */
+
+function renderApplications() {
+  const root = $("applications-list");
+  root.replaceChildren();
+
+  if (!appsData.length) {
+    root.className = "empty";
+    root.textContent = "No shop applications found.";
+    return;
+  }
+
+  root.className = "";
+
+  const sorted = [...appsData].sort(
+    (a, b) =>
+      (b.data.createdAt?.seconds || 0) -
+      (a.data.createdAt?.seconds || 0)
+  );
+
+  for (const item of sorted) {
+    const d = item.data;
+    const card = el("article", "item");
+    const head = el("div", "itemhead");
+    const left = el("div");
+
+    left.append(el("h3", "", text(d.shopName)));
+    left.append(el("small", "", "Application ID: " + item.id));
+    head.append(left, safePill(d.status || "pending"));
+    card.append(head);
+
+    addLine(card, "Owner", d.ownerName);
+    addLine(card, "Email", d.email);
+    addLine(card, "Phone", d.phone);
+    addLine(card, "Address", d.address);
+    addLine(card, "Description", d.description);
+    addLine(card, "Submitted", dateText(d.createdAt));
+
+    const actions = el("div", "actions");
+
+    if ((d.status || "pending").toLowerCase() === "pending") {
+      const approve = el("button", "", "Approve shop");
+      approve.type = "button";
+      approve.addEventListener("click", () => approveApplication(item));
+
+      const reject = el("button", "danger", "Reject application");
+      reject.type = "button";
+      reject.addEventListener("click", () => rejectApplication(item));
+
+      actions.append(approve, reject);
+    } else {
+      actions.append(el("small", "", "No action for this status."));
+    }
+
+    card.append(actions);
+    root.append(card);
+  }
+}
+
+/* SHOP RECORDS */
+
+function renderShops() {
+  const root = $("shops-list");
+  root.replaceChildren();
+
+  if (!shopsData.length) {
+    root.className = "empty";
+    root.textContent = "No shop records found.";
+    return;
+  }
+
+  root.className = "";
+
+  for (const item of shopsData) {
+    const d = item.data;
+    const card = el("article", "item");
+    const head = el("div", "itemhead");
+    const left = el("div");
+
+    left.append(el("h3", "", text(d.shopName || d.name)));
+    left.append(el("small", "", "Shop ID: " + item.id));
+    head.append(left, safePill(d.status || "no status"));
+    card.append(head);
+
+    addLine(card, "Owner UID", d.ownerUid);
+    addLine(card, "Owner", d.ownerName);
+    addLine(card, "Phone", d.phone);
+    addLine(card, "Address", d.address);
+    addLine(card, "Public approved flag", d.approved);
+
+    const menuText = typeof d.menu === "string"
+      ? d.menu
+      : JSON.stringify(d.menu || []);
+
+    addLine(card, "Menu", menuText);
+    root.append(card);
+  }
+}
+
+/* CUSTOMER ORDERS */
+
+function renderOrders() {
+  const root = $("orders-list");
+  root.replaceChildren();
+
+  if (!ordersData.length) {
+    root.className = "empty";
+    root.textContent = "No orders found.";
+    return;
+  }
+
+  root.className = "";
+
+  const sorted = [...ordersData].sort(
+    (a, b) =>
+      (b.data.createdAt?.seconds || 0) -
+      (a.data.createdAt?.seconds || 0)
+  );
+
+  for (const item of sorted) {
+    const d = item.data;
+    const card = el("article", "item");
+    const head = el("div", "itemhead");
+    const left = el("div");
+
+    left.append(el("h3", "", "Order " + text(d.orderNumber || item.id)));
+    left.append(el("small", "", "Document ID: " + item.id));
+    head.append(left, safePill(d.orderStatus || "unknown"));
+    card.append(head);
+
+    addLine(card, "Shop", d.shopName);
+    addLine(card, "Shop ID", d.shopId);
+    addLine(card, "Customer", d.customerName);
+    addLine(card, "Customer phone", d.customerPhone);
+    addLine(card, "Pickup / delivery", d.fulfillmentType);
+    addLine(card, "Area", d.area);
+
+    const itemsText = Array.isArray(d.items)
+      ? d.items.map(item =>
+          (item.name || item.itemName || "Item") +
+          " × " + text(item.quantity)
+        ).join(", ")
+      : JSON.stringify(d.items || []);
+
+    addLine(card, "Items", itemsText);
+    addLine(card, "Quoted total", money(d.totalQuote));
+    addLine(card, "Confirmed total", money(d.confirmedTotal));
+    addLine(card, "Payment status", d.paymentStatus);
+    addLine(card, "Test order", d.testOrder);
+    addLine(card, "Created", dateText(d.createdAt));
+
+    root.append(card);
+  }
+}
+
+/* COMMISSION ESTIMATE ONLY
+   This does not write commission records to Firestore or collect payments.
+*/
+
 function renderCommission() {
   const eligible = ordersData.filter(item => {
     const d = item.data;
+
     return String(d.orderStatus || "").toLowerCase() === "completed"
       && d.testOrder !== true;
   });
@@ -128,7 +584,7 @@ function renderCommission() {
 
   const total = eligible.length * 0.50;
 
-  $("commission-orders").textContent = eligible.length;
+  $("commission-orders").textContent = String(eligible.length);
   $("commission-total").textContent = money(total);
   $("commission-remaining").textContent =
     money(Math.max(0, 20 - total));
@@ -136,7 +592,7 @@ function renderCommission() {
   const root = $("commission-list");
   root.replaceChildren();
 
-  if (shopTotals.size === 0) {
+  if (!shopTotals.size) {
     root.className = "empty";
     root.textContent = "No eligible completed orders found.";
     return;
@@ -146,27 +602,274 @@ function renderCommission() {
 
   for (const shop of shopTotals.values()) {
     const card = el("article", "item");
+
     card.append(el("h3", "", shop.shopName));
-    addLine(card, "Eligible completed orders", shop.count);
+    addLine(card, "Completed non-test orders", shop.count);
     addLine(card, "Estimated commission", money(shop.commission));
     addLine(
       card,
       "Remaining to R20",
       money(Math.max(0, 20 - shop.commission))
     );
+
     root.append(card);
   }
 }
 
-async function loadData(renderApplications();
-renderShops();
-renderOrders();){if(!auth.currentUser||auth.currentUser.uid!==ADMIN_UID)return;message("page-message","Loading data…");["applications-list","shops-list","orders-list"].forEach(id=>{ $(id).className="empty";$(id).textContent="Loading…"; });try{const [a,s,o]=await Promise.all([getDocs(collection(db,"shopApplications")),getDocs(collection(db,"shops")),getDocs(collection(db,"orders"))]);appsData=a.docs.map(x=>({id:x.id,data:x.data()}));shopsData=s.docs.map(x=>({id:x.id,data:x.data()}));ordersData=o.docs.map(x=>({id:x.id,data:x.data()}));$("count-apps").textContent=appsData.length;$("count-shops").textContent=shopsData.length;$("count-orders").textContent=ordersData.length;renderApplications();renderShops();renderOrders();message("page-message","Data refreshed.","success");}catch(e){message("page-message",errorText(e),"error");}}
-async function approveApplication(item){if(busy)return;const d=item.data;if(!confirm("Approve “"+text(d.shopName)+"” and make it eligible to appear publicly? Check the details first."))return;busy=true;try{const existing=await getDocs(query(collection(db,"shops"),where("ownerUid","==",item.id)));const shopFields={shopName:text(d.shopName)==="—"?"":d.shopName,ownerUid:item.id,ownerName:d.ownerName||"",email:d.email||"",phone:d.phone||"",address:d.address||"",description:d.description||"",menu:"",status:"approved",approved:true,updatedAt:serverTimestamp()};if(existing.empty){shopFields.createdAt=serverTimestamp();await addDoc(collection(db,"shops"),shopFields);}else{const linked=existing.docs[0];const existingData=linked.data();const update={...shopFields};if(existingData.menu!==undefined)update.menu=existingData.menu;await updateDoc(doc(db,"shops",linked.id),update);}await updateDoc(doc(db,"shopApplications",item.id),{status:"approved"});message("page-message","Shop approved. Refreshing dashboard…","success");await loadData();}catch(e){message("page-message","Approval failed: "+errorText(e)+" If a shop record was created before the error, check the Shops tab before trying again.","error");}finally{busy=false;}}
-async function rejectApplication(item){if(busy)return;if(!confirm("Reject the application for “"+text(item.data.shopName)+"”? The application will remain saved."))return;busy=true;try{await updateDoc(doc(db,"shopApplications",item.id),{status:"rejected"});message("page-message","Application rejected.","success");await loadData();}catch(e){message("page-message","Could not reject application: "+errorText(e),"error");}finally{busy=false;}}
-$("login-form").addEventListener("submit",async e=>{e.preventDefault();message("login-message","Signing in…");$("login-button").disabled=true;try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);}catch(err){message("login-message",errorText(err),"error");}finally{$("login-button").disabled=false;}});
-$("logout").addEventListener("click",()=>signOut(auth));$("refresh").addEventListener("click",loadData);
-document.querySelectorAll("[data-tab]").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b===btn));document.querySelectorAll(".tab-panel").forEach(p=>p.classList.toggle("hidden",p.id!=="panel-"+btn.dataset.tab));}));
-onAuthStateChanged(auth,user=>{if(!user){$("login-card").classList.remove("hidden");$("dashboard").classList.add("hidden");message("login-message","");return;}if(user.uid!==ADMIN_UID){$("login-card").classList.remove("hidden");$("dashboard").classList.add("hidden");message("login-message","This account is signed in, but it is not the configured administrator account. Sign out and use the correct admin account.","error");signOut(auth).catch(()=>{});return;}$("login-card").classList.add("hidden");$("dashboard").classList.remove("hidden");$("signed-in-as").textContent="Signed in as "+(user.email||"administrator")+" · UID verified in this page";loadData();});
+/* LOAD FIRESTORE DATA */
+
+async function loadData() {
+  if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+    return;
+  }
+
+  message("page-message", "Loading data…");
+
+  [
+    "applications-list",
+    "shops-list",
+    "orders-list",
+    "commission-list"
+  ].forEach(id => {
+    $(id).className = "empty";
+    $(id).textContent = "Loading…";
+  });
+
+  try {
+    const [applicationsSnapshot, shopsSnapshot, ordersSnapshot] =
+      await Promise.all([
+        getDocs(collection(db, "shopApplications")),
+        getDocs(collection(db, "shops")),
+        getDocs(collection(db, "orders"))
+      ]);
+
+    appsData = applicationsSnapshot.docs.map(snapshot => ({
+      id: snapshot.id,
+      data: snapshot.data()
+    }));
+
+    shopsData = shopsSnapshot.docs.map(snapshot => ({
+      id: snapshot.id,
+      data: snapshot.data()
+    }));
+
+    ordersData = ordersSnapshot.docs.map(snapshot => ({
+      id: snapshot.id,
+      data: snapshot.data()
+    }));
+
+    $("count-apps").textContent = String(appsData.length);
+    $("count-shops").textContent = String(shopsData.length);
+    $("count-orders").textContent = String(ordersData.length);
+
+    renderApplications();
+    renderShops();
+    renderOrders();
+    renderCommission();
+
+    message("page-message", "Data refreshed successfully.", "success");
+  } catch (error) {
+    message("page-message", errorText(error), "error");
+  }
+}
+
+/* APPROVE SHOP APPLICATION */
+
+async function approveApplication(item) {
+  if (busy) return;
+
+  const d = item.data;
+
+  if (!confirm(
+    "Approve “" + text(d.shopName) +
+    "” and make it eligible to appear publicly? Check the details first."
+  )) {
+    return;
+  }
+
+  busy = true;
+
+  try {
+    /* Use the saved owner UID if the application contains one.
+       Fall back to the application document ID for older records. */
+    const ownerUid = d.ownerUid || d.uid || d.userId || item.id;
+
+    const existing = await getDocs(
+      query(
+        collection(db, "shops"),
+        where("ownerUid", "==", ownerUid)
+      )
+    );
+
+    const shopFields = {
+      shopName: d.shopName || "",
+      ownerUid: ownerUid,
+      ownerName: d.ownerName || "",
+      email: d.email || "",
+      phone: d.phone || "",
+      address: d.address || "",
+      description: d.description || "",
+      status: "approved",
+      approved: true,
+      updatedAt: serverTimestamp()
+    };
+
+    if (existing.empty) {
+      shopFields.menu = "";
+      shopFields.createdAt = serverTimestamp();
+
+      await addDoc(collection(db, "shops"), shopFields);
+    } else {
+      const linked = existing.docs[0];
+      const existingData = linked.data();
+
+      /* Preserve an existing menu instead of overwriting it. */
+      if (existingData.menu === undefined) {
+        shopFields.menu = "";
+      }
+
+      await updateDoc(doc(db, "shops", linked.id), shopFields);
+    }
+
+    await updateDoc(
+      doc(db, "shopApplications", item.id),
+      {
+        status: "approved",
+        ownerUid: ownerUid
+      }
+    );
+
+    message("page-message", "Shop approved. Refreshing dashboard…", "success");
+    await loadData();
+
+  } catch (error) {
+    message(
+      "page-message",
+      "Approval failed: " + errorText(error) +
+      " If a shop record was created before the error, check the Shops tab before trying again.",
+      "error"
+    );
+  } finally {
+    busy = false;
+  }
+}
+
+/* REJECT SHOP APPLICATION */
+
+async function rejectApplication(item) {
+  if (busy) return;
+
+  if (!confirm(
+    "Reject the application for “" +
+    text(item.data.shopName) +
+    "”? The application will remain saved."
+  )) {
+    return;
+  }
+
+  busy = true;
+
+  try {
+    await updateDoc(
+      doc(db, "shopApplications", item.id),
+      { status: "rejected" }
+    );
+
+    message("page-message", "Application rejected.", "success");
+    await loadData();
+
+  } catch (error) {
+    message(
+      "page-message",
+      "Could not reject application: " + errorText(error),
+      "error"
+    );
+  } finally {
+    busy = false;
+  }
+}
+
+/* ADMIN LOGIN */
+
+$("login-form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  message("login-message", "Signing in…");
+  $("login-button").disabled = true;
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      $("email").value.trim(),
+      $("password").value
+    );
+  } catch (error) {
+    message("login-message", errorText(error), "error");
+  } finally {
+    $("login-button").disabled = false;
+  }
+});
+
+/* DASHBOARD CONTROLS */
+
+$("logout").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    message("page-message", errorText(error), "error");
+  }
+});
+
+$("refresh").addEventListener("click", loadData);
+
+document.querySelectorAll("[data-tab]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-tab]").forEach(tab => {
+      tab.classList.toggle("active", tab === button);
+    });
+
+    document.querySelectorAll(".tab-panel").forEach(panel => {
+      panel.classList.toggle(
+        "hidden",
+        panel.id !== "panel-" + button.dataset.tab
+      );
+    });
+  });
+});
+
+/* VERIFY AUTHENTICATED ADMIN */
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    $("login-card").classList.remove("hidden");
+    $("dashboard").classList.add("hidden");
+    message("login-message", "");
+    return;
+  }
+
+  if (user.uid !== ADMIN_UID) {
+    $("login-card").classList.remove("hidden");
+    $("dashboard").classList.add("hidden");
+
+    message(
+      "login-message",
+      "This account is not the configured administrator account. Sign out and use the correct admin account.",
+      "error"
+    );
+
+    signOut(auth).catch(() => {});
+    return;
+  }
+
+  $("login-card").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+
+  $("signed-in-as").textContent =
+    "Signed in as " + (user.email || "administrator") +
+    " · UID verified in this page";
+
+  loadData();
+});
 </script>
 </body>
 </html>
