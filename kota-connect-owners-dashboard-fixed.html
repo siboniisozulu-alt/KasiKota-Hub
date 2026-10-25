@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,37 +7,24 @@
 <title>Kota Connect | Owners Dashboard</title>
 <style>
 :root{--green:#176b45;--dark:#123d2b;--ink:#17221c;--muted:#66736b;--line:#e1e8e2;--bg:#f5f8f5;--red:#a62d26}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,Arial,sans-serif}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-.wrap{max-width:850px;margin:auto;padding:12px}
-header{background:var(--dark);color:white;padding:18px;border-radius:13px}
-header h1{font-size:23px;margin:0 0 5px}
-header p{margin:0;color:#d7e7dc;font-size:13px}
-.card{background:white;border:1px solid var(--line);border-radius:12px;padding:15px;margin:13px 0}
-h2{font-size:18px;margin:0 0 10px}
-.field{display:grid;gap:6px;margin:10px 0}
-label{font-size:13px;font-weight:700}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,Arial,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0;border-radius:8px;padding:11px 14px;font-weight:700}
+.wrap{max-width:850px;margin:auto;padding:12px}header{background:var(--dark);color:white;padding:18px;border-radius:13px}
+header h1{font-size:23px;margin:0 0 5px}header p{margin:0;color:#d7e7dc;font-size:13px}
+.card{background:white;border:1px solid var(--line);border-radius:12px;padding:15px;margin:13px 0}h2{font-size:18px;margin:0 0 10px}
+.field{display:grid;gap:6px;margin:10px 0}label{font-size:13px;font-weight:700}
 input,textarea,select{width:100%;padding:10px;border:1px solid #cfd9d1;border-radius:8px;background:white}
-textarea{resize:vertical}
-button{border:0;border-radius:8px;padding:11px 14px;font-weight:700}
-.primary{background:var(--green);color:white}
-.light{background:#edf4ef;color:#17442c}
-button:disabled{opacity:.55;cursor:not-allowed}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.muted,.status{color:var(--muted);font-size:13px;line-height:1.5}
-.error{color:var(--red);white-space:pre-wrap}
-.hidden{display:none!important}
+textarea{resize:vertical}.primary{background:var(--green);color:white}.light{background:#edf4ef;color:#17442c}
+.whatsapp{background:#d9f7e3;color:#075e36}.danger{background:#fff0ef;color:var(--red)}
+button:disabled{opacity:.55;cursor:not-allowed}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.muted,.status{color:var(--muted);font-size:13px;line-height:1.5}
+.error{color:var(--red);white-space:pre-wrap}.hidden{display:none!important}
 .notice{background:#fff7e6;border:1px solid #eeddb3;border-radius:8px;padding:11px;font-size:13px;line-height:1.5}
 .shop-choice{display:block;width:100%;text-align:left;margin:7px 0;background:white;border:1px solid var(--line)}
 .shop-choice.active{border:2px solid var(--green);background:#eef7f0}
 .order{border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0;background:#fbfdfb}
-.order h3{font-size:16px;margin:0 0 8px}
-.order p{font-size:14px;margin:6px 0;overflow-wrap:anywhere}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.stat{border:1px solid var(--line);border-radius:9px;padding:11px}
+.order h3{font-size:16px;margin:0 0 8px}.order p{font-size:14px;margin:6px 0;overflow-wrap:anywhere}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.stat{border:1px solid var(--line);border-radius:9px;padding:11px}
 .stat strong{display:block;font-size:20px;margin-top:5px;overflow-wrap:anywhere}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
 @media(max-width:560px){.row,.stats{grid-template-columns:1fr}.wrap{padding:8px}.card{padding:12px}}
@@ -46,134 +32,43 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
 </head>
 <body>
 <div class="wrap">
-
-<header>
-  <h1>🍔 Kota Connect Owners Dashboard</h1>
-  <p>Manage your approved shop, customer orders and commission balance.</p>
-</header>
+<header><h1>🍔 Kota Connect Owners Dashboard</h1><p>Manage your approved shop, customer orders and commission balance.</p></header>
 
 <section id="login-card" class="card">
-  <h2>Owner sign in</h2>
-  <p class="muted">Use the email and password for your shop-owner Firebase account.</p>
-  <form id="login-form">
-    <div class="field">
-      <label for="email">Email address</label>
-      <input id="email" type="email" autocomplete="username" required>
-    </div>
-    <div class="field">
-      <label for="password">Password</label>
-      <input id="password" type="password" autocomplete="current-password" required>
-    </div>
-    <button id="login-button" class="primary" type="submit">Sign in</button>
-  </form>
-  <p id="login-message" class="status" role="status"></p>
-</section>
+<h2>Owner sign in</h2><p class="muted">Use the email and password for your shop-owner Firebase account.</p>
+<form id="login-form">
+<div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required></div>
+<div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
+<button id="login-button" class="primary" type="submit">Sign in</button></form>
+<p id="login-message" class="status" role="status"></p></section>
 
 <main id="dashboard" class="hidden">
-  <section class="card">
-    <div class="actions" style="justify-content:space-between">
-      <div>
-        <strong id="signed-in-email">Owner</strong>
-        <div class="muted">Signed in to Firebase</div>
-      </div>
-      <button id="logout" class="light" type="button">Sign out</button>
-    </div>
-  </section>
+<section class="card"><div class="actions" style="justify-content:space-between"><div><strong id="signed-in-email">Owner</strong><div class="muted">Signed in to Firebase</div></div><button id="logout" class="light" type="button">Sign out</button></div></section>
+<section id="shop-picker-card" class="card hidden"><h2>Your approved shops</h2><p class="muted">Choose a shop to manage its details and orders.</p><div id="shop-picker"></div></section>
 
-  <section id="shop-picker-card" class="card hidden">
-    <h2>Your approved shops</h2>
-    <p class="muted">Choose a shop to manage its details and orders.</p>
-    <div id="shop-picker"></div>
-  </section>
+<form id="shop-form" class="card hidden">
+<h2 id="selected-shop-heading">Shop details</h2><p class="muted">Only public shop details can be changed here.</p>
+<div class="field"><label for="shopName">Shop name</label><input id="shopName" maxlength="80" required></div>
+<div class="row"><div class="field"><label for="phone">Phone / WhatsApp</label><input id="phone" type="tel" maxlength="35"></div><div class="field"><label for="address">Shop address</label><input id="address" maxlength="160"></div></div>
+<div class="field"><label for="description">Description</label><textarea id="description" maxlength="700" rows="3"></textarea></div>
+<div class="field"><label for="menu">Menu and prices</label><textarea id="menu" maxlength="10000" rows="5" placeholder="Classic Kota — R25&#10;Cheese Kota — R30&#10;Chicken Kota — R35"></textarea><p class="muted">Use one item per line. Only publish prices confirmed by your shop.</p></div>
+<div class="actions"><button id="save-shop" class="primary" type="submit">Save shop details</button><button id="reload-shop" class="light" type="button">Reload saved details</button></div><p id="save-message" class="status" role="status"></p>
+</form>
 
-  <form id="shop-form" class="card hidden">
-    <h2 id="selected-shop-heading">Shop details</h2>
-    <p class="muted">Only public shop details can be changed here.</p>
-    <div class="field">
-      <label for="shopName">Shop name</label>
-      <input id="shopName" maxlength="80" required>
-    </div>
-    <div class="row">
-      <div class="field">
-        <label for="phone">Phone / WhatsApp</label>
-        <input id="phone" type="tel" maxlength="35">
-      </div>
-      <div class="field">
-        <label for="address">Shop address</label>
-        <input id="address" maxlength="160">
-      </div>
-    </div>
-    <div class="field">
-      <label for="description">Description</label>
-      <textarea id="description" maxlength="700" rows="3"></textarea>
-    </div>
-    <div class="field">
-      <label for="menu">Menu and prices</label>
-      <textarea id="menu" maxlength="10000" rows="5"
-        placeholder="Classic Kota — R25&#10;Cheese Kota — R30&#10;Chicken Kota — R35"></textarea>
-      <p class="muted">Use one item per line. Only publish prices confirmed by your shop.</p>
-    </div>
-    <div class="actions">
-      <button id="save-shop" class="primary" type="submit">Save shop details</button>
-      <button id="reload-shop" class="light" type="button">Reload saved details</button>
-    </div>
-    <p id="save-message" class="status" role="status"></p>
-  </form>
+<section class="card"><h2>Commission balance</h2><p class="muted">The planned commission is R0.50 for each eligible real order completed. Test orders do not count. This is a record of commission owed, not an automatic payment or bank transfer.</p>
+<div class="stats"><div class="stat"><span class="muted">Ledger entries</span><strong id="commission-count">0</strong></div><div class="stat"><span class="muted">Commission recorded</span><strong id="commission-total">R0.00</strong></div><div class="stat"><span class="muted">Remaining to R20</span><strong id="commission-remaining">R20.00</strong></div></div>
+<p id="commission-message" class="notice">Loading commission ledger…</p><button id="refresh-orders" class="light" type="button">Refresh orders and balance</button></section>
 
-  <section class="card">
-    <h2>Commission balance</h2>
-    <p class="muted">
-      The planned commission is R0.50 for each eligible real order completed.
-      Test orders do not count. This is a record of commission owed, not an
-      automatic payment or bank transfer.
-    </p>
-    <div class="stats">
-      <div class="stat">
-        <span class="muted">Ledger entries</span>
-        <strong id="commission-count">0</strong>
-      </div>
-      <div class="stat">
-        <span class="muted">Commission recorded</span>
-        <strong id="commission-total">R0.00</strong>
-      </div>
-      <div class="stat">
-        <span class="muted">Remaining to R20</span>
-        <strong id="commission-remaining">R20.00</strong>
-      </div>
-    </div>
-    <p id="commission-message" class="notice">Loading commission ledger…</p>
-    <button id="refresh-orders" class="light" type="button">Refresh orders and balance</button>
-  </section>
-
-  <section class="card">
-    <h2>Customer orders</h2>
-    <p class="muted">
-      Update orders as you handle them. Only mark an order Completed after
-      it has actually been fulfilled. Completion and commission recording
-      happen together in a Firebase transaction.
-    </p>
-    <p id="orders-message" class="status" role="status">Loading orders…</p>
-    <div id="orders-list"></div>
-  </section>
+<section class="card"><h2>Customer orders</h2><p class="muted">Save the status first, then use the WhatsApp button to prepare an update for the customer. WhatsApp requires the owner to tap Send. Only mark an order Completed after it has actually been fulfilled. Completion and commission recording happen together in a Firebase transaction.</p>
+<p id="orders-message" class="status" role="status">Loading orders…</p><div id="orders-list"></div></section>
 </main>
-
-<p id="page-error" class="error" role="alert"></p>
-<footer>Kota Connect · Newcastle, KwaZulu-Natal</footer>
+<p id="page-error" class="error" role="alert"></p><footer>Kota Connect · Newcastle, KwaZulu-Natal</footer>
 </div>
 
 <script type="module">
-import { initializeApp, getApps }
-  from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-  getAuth, onAuthStateChanged,
-  signInWithEmailAndPassword, signOut
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-import {
-  getFirestore, collection, query, where, getDocs,
-  doc, getDoc, updateDoc, serverTimestamp, runTransaction
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCxaY076gfNUfE3OzxkDJZ5xAdmLEuJzgs",
@@ -181,558 +76,217 @@ const firebaseConfig = {
   projectId: "kasikota-hub",
   appId: "1:470531130099:web:1bf117b7adf7a3a3d7ed86"
 };
-
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const $ = id => document.getElementById(id);
+const auth = getAuth(app), db = getFirestore(app), $ = id => document.getElementById(id);
+let currentUser = null, shops = [], selectedShop = null, loading = false;
 
-let currentUser = null;
-let shops = [];
-let selectedShop = null;
-let loading = false;
-
-function message(id, value, error = false) {
-  const el = $(id);
-  el.textContent = value;
-  el.classList.toggle("error", error);
+function message(id, value, error=false) {
+  const el=$(id); el.textContent=value; el.classList.toggle("error",error);
+}
+function str(value){return value==null?"":String(value);}
+function zar(value){const n=Number(value);return "R"+(Number.isFinite(n)?n:0).toFixed(2);}
+function isTestOrder(data){
+  return !data || data.testOrder !== false || data.orderStatus==="test" ||
+    (typeof data.ownerNote==="string" && data.ownerNote.includes("TEST ONLY"));
+}
+function renderMenu(menu){
+  if(typeof menu==="string")return menu;
+  if(!Array.isArray(menu))return "";
+  return menu.map(item=>typeof item==="string"?item:str(item.name||"Item")+(item.price!=null?" — R"+item.price:"")).join("\n");
+}
+function fillShop(data){
+  $("shopName").value=str(data.shopName||data.name); $("phone").value=str(data.phone);
+  $("address").value=str(data.address); $("description").value=str(data.description);
+  $("menu").value=renderMenu(data.menu); $("selected-shop-heading").textContent=str(data.shopName||data.name||"Shop details");
+  message("save-message","Saved details loaded.");
+}
+async function loadShops(user){
+  selectedShop=null; shops=[]; $("shop-form").classList.add("hidden"); $("shop-picker-card").classList.add("hidden");
+  const snap=await getDocs(query(collection(db,"shops"),where("ownerUid","==",user.uid)));
+  shops=snap.docs.map(d=>({id:d.id,data:d.data()})).filter(s=>s.data.status==="approved"&&s.data.ownerUid===user.uid);
+  if(!shops.length){message("page-error","No approved shop was found for this account. In Firestore, check that the shop status is approved and ownerUid matches the UID of the account you used to sign in.",true);return;}
+  message("page-error",""); const picker=$("shop-picker"); picker.replaceChildren();
+  shops.forEach(shop=>{const b=document.createElement("button");b.type="button";b.className="shop-choice";b.dataset.id=shop.id;b.textContent=str(shop.data.shopName||shop.data.name||"Approved shop")+" · "+shop.id;b.addEventListener("click",()=>chooseShop(shop));picker.appendChild(b);});
+  $("shop-picker-card").classList.toggle("hidden",shops.length<2); await chooseShop(shops[0]);
+}
+async function chooseShop(shop){
+  selectedShop=shop; document.querySelectorAll(".shop-choice").forEach(b=>b.classList.toggle("active",b.dataset.id===shop.id));
+  $("shop-form").classList.remove("hidden");fillShop(shop.data);await loadOrdersAndLedger();
+}
+$("login-form").addEventListener("submit",async e=>{
+  e.preventDefault();$("login-button").disabled=true;message("login-message","Signing in…");
+  try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);message("login-message","");}
+  catch(error){console.error(error);message("login-message","Sign-in failed: "+(error.code||error.message)+". Check your email, password and Firebase Authentication settings.",true);}
+  finally{$("login-button").disabled=false;}
+});
+$("logout").addEventListener("click",async()=>{try{await signOut(auth);}catch(error){message("page-error","Sign-out failed: "+error.message,true);}});
+$("shop-form").addEventListener("submit",async e=>{
+  e.preventDefault();if(!currentUser||!selectedShop)return;const b=$("save-shop");b.disabled=true;message("save-message","Saving…");
+  try{
+    const changes={shopName:$("shopName").value.trim(),phone:$("phone").value.trim(),address:$("address").value.trim(),description:$("description").value.trim(),menu:$("menu").value.trim()};
+    if(!changes.shopName)throw new Error("Enter your shop name.");
+    await updateDoc(doc(db,"shops",selectedShop.id),changes);selectedShop.data={...selectedShop.data,...changes};
+    $("selected-shop-heading").textContent=changes.shopName;message("save-message","Shop details saved successfully.");
+  }catch(error){console.error(error);message("save-message","Save failed: "+(error.code||error.message)+". Check the /shops rules.",true);}
+  finally{b.disabled=false;}
+});
+$("reload-shop").addEventListener("click",async()=>{
+  if(!currentUser||!selectedShop)return;
+  try{const snap=await getDoc(doc(db,"shops",selectedShop.id));if(!snap.exists())throw new Error("Shop record not found.");selectedShop.data=snap.data();fillShop(selectedShop.data);}
+  catch(error){message("save-message","Reload failed: "+(error.code||error.message),true);}
+});
+function showCommission(entries){
+  const amount=entries.reduce((sum,e)=>sum+Number(e.data.amount||0),0);
+  $("commission-count").textContent=String(entries.length);$("commission-total").textContent=zar(amount);
+  const remaining=Math.max(0,20-amount);$("commission-remaining").textContent=zar(remaining);
+  message("commission-message",amount>=20?"The planned R20 threshold has been reached. This balance records commission owed; it does not confirm payment or collect money automatically.":zar(remaining)+" more is needed to reach the planned R20 threshold. No money has been collected automatically.");
+}
+function orderItems(order){
+  if(!Array.isArray(order.items))return "Item details unavailable";
+  return order.items.map(item=>str(item.name||item.itemName||"Item")+" × "+(Number(item.quantity)||0)).join(", ");
 }
 
-function str(value) {
-  return value == null ? "" : String(value);
+/* Convert common South African phone formats to WhatsApp's international format. */
+function whatsappPhone(raw){
+  let digits=str(raw).replace(/\D/g,"");
+  if(digits.startsWith("00"))digits=digits.slice(2);
+  if(digits.startsWith("0"))digits="27"+digits.slice(1);
+  // Accept only South African mobile numbers or numbers already written with country code.
+  if(!digits.startsWith("27")||digits.length<11||digits.length>12)return "";
+  return digits;
 }
-
-function zar(value) {
-  const n = Number(value);
-  return "R" + (Number.isFinite(n) ? n : 0).toFixed(2);
+function statusMessageFor(order,nextStatus,note,delayMinutes){
+  const ref=str(order.orderNumber||order.id||"your order");
+  const itemText=orderItems(order);
+  const shopName=str(selectedShop?.data?.shopName||selectedShop?.data?.name||"the shop");
+  const greetings=str(order.customerName).trim()?`Hi ${str(order.customerName).trim()}!`:"Hi there!";
+  const messages={
+    pending:"Your order has been received and is awaiting confirmation.",
+    accepted:"Good news! The shop has accepted your order.",
+    preparing:"The shop is preparing your order now.",
+    ready_for_collection:"Your order is ready for collection.",
+    out_for_delivery:"Your order is on its way for delivery.",
+    delayed:`Your order has been delayed${delayMinutes?` by about ${delayMinutes} minutes`:""}.`,
+    rejected:"Unfortunately, the shop cannot fulfil your order.",
+    completed:"Your order has been marked completed. Thank you for supporting a local business!"
+  };
+  let body=messages[nextStatus]||"Your order status has been updated.";
+  if(nextStatus==="rejected"&&note)body+=" Reason: "+note;
+  else if(nextStatus==="delayed"&&note)body+=" "+note;
+  else if(note)body+=" Shop note: "+note;
+  return `${greetings}\n\nKota Connect order ${ref}\n${itemText}\nShop: ${shopName}\n\n${body}\n\nThank you for supporting local Newcastle businesses! 🍔`;
 }
-
-function isTestOrder(data) {
-  return !data
-    || data.testOrder !== false
-    || data.orderStatus === "test"
-    || (typeof data.ownerNote === "string"
-        && data.ownerNote.includes("TEST ONLY"));
-}
-
-function renderMenu(menu) {
-  if (typeof menu === "string") return menu;
-  if (!Array.isArray(menu)) return "";
-  return menu.map(item => {
-    if (typeof item === "string") return item;
-    return str(item.name || "Item")
-      + (item.price != null ? " — R" + item.price : "");
-  }).join("\n");
-}
-
-function fillShop(data) {
-  $("shopName").value = str(data.shopName || data.name);
-  $("phone").value = str(data.phone);
-  $("address").value = str(data.address);
-  $("description").value = str(data.description);
-  $("menu").value = renderMenu(data.menu);
-  $("selected-shop-heading").textContent =
-    str(data.shopName || data.name || "Shop details");
-  message("save-message", "Saved details loaded.");
-}
-
-async function loadShops(user) {
-  selectedShop = null;
-  shops = [];
-  $("shop-form").classList.add("hidden");
-  $("shop-picker-card").classList.add("hidden");
-
-  // Query by ownerUid, then filter locally. This avoids needing a
-  // compound index for ownerUid + status.
-  const q = query(
-    collection(db, "shops"),
-    where("ownerUid", "==", user.uid)
-  );
-  const snap = await getDocs(q);
-
-  shops = snap.docs
-    .map(d => ({id: d.id, data: d.data()}))
-    .filter(s => s.data.status === "approved"
-      && s.data.ownerUid === user.uid);
-
-  if (!shops.length) {
-    message(
-      "page-error",
-      "No approved shop was found for this account. In Firestore, check that the shop status is approved and ownerUid matches the UID of the account you used to sign in.",
-      true
-    );
+function openWhatsAppForOrder(order, statusValue, noteValue, delayValue, statusEl){
+  const phone=whatsappPhone(order.customerPhone);
+  if(!phone){
+    statusEl.textContent="WhatsApp was not opened: the customer phone number is missing or not a valid South African number. Check the number on the order before contacting the customer.";
     return;
   }
-
-  message("page-error", "");
-  const picker = $("shop-picker");
-  picker.replaceChildren();
-
-  shops.forEach(shop => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "shop-choice";
-    button.dataset.id = shop.id;
-    button.textContent =
-      str(shop.data.shopName || shop.data.name || "Approved shop")
-      + " · " + shop.id;
-    button.addEventListener("click", () => chooseShop(shop));
-    picker.appendChild(button);
-  });
-
-  $("shop-picker-card").classList.toggle("hidden", shops.length < 2);
-  await chooseShop(shops[0]);
+  const msg=statusMessageFor(order,statusValue,noteValue,delayValue);
+  const url="https://wa.me/"+phone+"?text="+encodeURIComponent(msg);
+  // A real button click opens WhatsApp. The owner must review and tap Send.
+  window.open(url,"_blank","noopener,noreferrer");
+  statusEl.textContent="WhatsApp opened with the update prepared. Check the recipient and message, then tap Send in WhatsApp. The message has not been sent automatically.";
 }
-
-async function chooseShop(shop) {
-  selectedShop = shop;
-  document.querySelectorAll(".shop-choice").forEach(button => {
-    button.classList.toggle("active", button.dataset.id === shop.id);
+function createOrderCard(orderDoc){
+  const order={...orderDoc.data,id:orderDoc.id},id=orderDoc.id,test=isTestOrder(order);
+  const card=document.createElement("article");card.className="order";
+  if(test){const n=document.createElement("p");n.className="notice";n.textContent="TEST / INELIGIBLE ORDER — view only. It cannot earn commission.";card.appendChild(n);}
+  const title=document.createElement("h3");title.textContent=str(order.orderNumber||id);
+  const summary=document.createElement("p");summary.textContent=orderItems(order)+" · "+str(order.fulfillmentType||"pickup");
+  const customer=document.createElement("p");customer.textContent="Customer: "+str(order.customerName)+" · Phone: "+str(order.customerPhone);
+  const destination=document.createElement("p");destination.textContent=(order.fulfillmentType==="delivery"?"Delivery: "+str(order.deliveryAddress):"Pickup details: "+str(order.pickupDetails))+" · Area: "+str(order.area);
+  const quote=document.createElement("p");quote.textContent="Original customer quote: "+zar(order.totalQuote)+" · Payment: "+str(order.paymentMethod||"not specified")+" ("+str(order.paymentStatus||"unknown")+")";
+  const statusWrap=document.createElement("div");statusWrap.className="field";const statusLabel=document.createElement("label");statusLabel.textContent="Order status";const status=document.createElement("select");
+  const statuses=[["pending","Pending"],["accepted","Accepted"],["preparing","Preparing"],["ready_for_collection","Ready for collection"],["out_for_delivery","Out for delivery"],["delayed","Delayed"],["rejected","Rejected"],["completed","Completed"]];
+  statuses.forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;status.appendChild(o);});
+  status.value=statuses.some(([v])=>v===order.orderStatus)?order.orderStatus:"pending";statusWrap.append(statusLabel,status);
+  const noteWrap=document.createElement("div");noteWrap.className="field";const noteLabel=document.createElement("label");noteLabel.textContent="Customer update / rejection reason";const note=document.createElement("textarea");note.rows=2;note.maxLength=500;note.value=str(order.ownerNote);note.placeholder="Example: Ready in 15 minutes, or reason for rejection";noteWrap.append(noteLabel,note);
+  const delayWrap=document.createElement("div");delayWrap.className="field";const delayLabel=document.createElement("label");delayLabel.textContent="Extra minutes if delayed";const delay=document.createElement("select");
+  [["0","No delay"],["15","15 minutes"],["30","30 minutes"],["45","45 minutes"]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;delay.appendChild(o);});
+  delay.value=String([0,15,30,45].includes(Number(order.delayMinutes))?Number(order.delayMinutes):0);delayWrap.append(delayLabel,delay);
+  const actions=document.createElement("div");actions.className="actions";
+  const save=document.createElement("button");save.type="button";save.className="primary";save.textContent="Save order update";
+  const wa=document.createElement("button");wa.type="button";wa.className="whatsapp";wa.textContent="Message customer on WhatsApp";
+  const statusEl=document.createElement("p");statusEl.className="status";statusEl.setAttribute("role","status");
+  if(test||order.orderStatus==="completed"){
+    status.disabled=true;note.disabled=true;delay.disabled=true;save.disabled=true;
+    save.textContent=test?"Test order locked":"Order completed";
+  }
+  wa.disabled=test;
+  wa.addEventListener("click",()=>{
+    // Use the saved status in the card until a successful status save occurs.
+    openWhatsAppForOrder(order,status.value,note.value.trim(),status.value==="delayed"?Number(delay.value):0,statusEl);
   });
-  $("shop-form").classList.remove("hidden");
-  fillShop(shop.data);
-  await loadOrdersAndLedger();
-}
-
-$("login-form").addEventListener("submit", async event => {
-  event.preventDefault();
-  $("login-button").disabled = true;
-  message("login-message", "Signing in…");
-  try {
-    await signInWithEmailAndPassword(
-      auth,
-      $("email").value.trim(),
-      $("password").value
-    );
-    message("login-message", "");
-  } catch (error) {
-    console.error(error);
-    message(
-      "login-message",
-      "Sign-in failed: " + (error.code || error.message)
-        + ". Check your email, password and Firebase Authentication settings.",
-      true
-    );
-  } finally {
-    $("login-button").disabled = false;
-  }
-});
-
-$("logout").addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-  } catch (error) {
-    message("page-error", "Sign-out failed: " + error.message, true);
-  }
-});
-
-$("shop-form").addEventListener("submit", async event => {
-  event.preventDefault();
-  if (!currentUser || !selectedShop) return;
-
-  const button = $("save-shop");
-  button.disabled = true;
-  message("save-message", "Saving…");
-
-  try {
-    const changes = {
-      shopName: $("shopName").value.trim(),
-      phone: $("phone").value.trim(),
-      address: $("address").value.trim(),
-      description: $("description").value.trim(),
-      menu: $("menu").value.trim()
-    };
-
-    if (!changes.shopName) throw new Error("Enter your shop name.");
-
-    await updateDoc(doc(db, "shops", selectedShop.id), changes);
-    selectedShop.data = {...selectedShop.data, ...changes};
-    $("selected-shop-heading").textContent = changes.shopName;
-    message("save-message", "Shop details saved successfully.");
-  } catch (error) {
-    console.error(error);
-    message(
-      "save-message",
-      "Save failed: " + (error.code || error.message)
-        + ". Check the /shops rules.",
-      true
-    );
-  } finally {
-    button.disabled = false;
-  }
-});
-
-$("reload-shop").addEventListener("click", async () => {
-  if (!currentUser || !selectedShop) return;
-  try {
-    const snap = await getDoc(doc(db, "shops", selectedShop.id));
-    if (!snap.exists()) throw new Error("Shop record not found.");
-    selectedShop.data = snap.data();
-    fillShop(selectedShop.data);
-  } catch (error) {
-    message("save-message", "Reload failed: " + (error.code || error.message), true);
-  }
-});
-
-function showCommission(ledgerEntries) {
-  // Only actual ledger documents are counted. Orders are not used
-  // to recalculate the balance.
-  const amount = ledgerEntries.reduce(
-    (sum, entry) => sum + Number(entry.data.amount || 0), 0
-  );
-  $("commission-count").textContent = String(ledgerEntries.length);
-  $("commission-total").textContent = zar(amount);
-  const remaining = Math.max(0, 20 - amount);
-  $("commission-remaining").textContent = zar(remaining);
-
-  message(
-    "commission-message",
-    amount >= 20
-      ? "The planned R20 threshold has been reached. This balance records commission owed; it does not confirm payment or collect money automatically."
-      : zar(remaining) + " more is needed to reach the planned R20 threshold. No money has been collected automatically."
-  );
-}
-
-function orderItems(order) {
-  if (!Array.isArray(order.items)) return "Item details unavailable";
-  return order.items.map(item =>
-    str(item.name || item.itemName || "Item")
-      + " × " + (Number(item.quantity) || 0)
-  ).join(", ");
-}
-
-function createOrderCard(orderDoc) {
-  const order = orderDoc.data;
-  const id = orderDoc.id;
-  const test = isTestOrder(order);
-  const card = document.createElement("article");
-  card.className = "order";
-
-  if (test) {
-    const notice = document.createElement("p");
-    notice.className = "notice";
-    notice.textContent =
-      "TEST / INELIGIBLE ORDER — view only. It cannot earn commission.";
-    card.appendChild(notice);
-  }
-
-  const title = document.createElement("h3");
-  title.textContent = str(order.orderNumber || id);
-
-  const summary = document.createElement("p");
-  summary.textContent = orderItems(order)
-    + " · " + str(order.fulfillmentType || "pickup");
-
-  const customer = document.createElement("p");
-  customer.textContent = "Customer: " + str(order.customerName)
-    + " · Phone: " + str(order.customerPhone);
-
-  const destination = document.createElement("p");
-  destination.textContent =
-    (order.fulfillmentType === "delivery"
-      ? "Delivery: " + str(order.deliveryAddress)
-      : "Pickup details: " + str(order.pickupDetails))
-    + " · Area: " + str(order.area);
-
-  const quote = document.createElement("p");
-  quote.textContent = "Original customer quote: " + zar(order.totalQuote)
-    + " · Payment: " + str(order.paymentMethod || "not specified")
-    + " (" + str(order.paymentStatus || "unknown") + ")";
-
-  const statusWrap = document.createElement("div");
-  statusWrap.className = "field";
-  const statusLabel = document.createElement("label");
-  statusLabel.textContent = "Order status";
-  const status = document.createElement("select");
-
-  const statuses = [
-    ["pending", "Pending"],
-    ["accepted", "Accepted"],
-    ["preparing", "Preparing"],
-    ["ready_for_collection", "Ready for collection"],
-    ["out_for_delivery", "Out for delivery"],
-    ["delayed", "Delayed"],
-    ["rejected", "Rejected"],
-    ["completed", "Completed"]
-  ];
-
-  statuses.forEach(([value, label]) => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = label;
-    status.appendChild(option);
-  });
-  status.value = statuses.some(([value]) => value === order.orderStatus)
-    ? order.orderStatus : "pending";
-  statusWrap.append(statusLabel, status);
-
-  const noteWrap = document.createElement("div");
-  noteWrap.className = "field";
-  const noteLabel = document.createElement("label");
-  noteLabel.textContent = "Customer update / rejection reason";
-  const note = document.createElement("textarea");
-  note.rows = 2;
-  note.maxLength = 500;
-  note.value = str(order.ownerNote);
-  note.placeholder = "Example: Ready in 15 minutes, or reason for rejection";
-  noteWrap.append(noteLabel, note);
-
-  const delayWrap = document.createElement("div");
-  delayWrap.className = "field";
-  const delayLabel = document.createElement("label");
-  delayLabel.textContent = "Extra minutes if delayed";
-  const delay = document.createElement("select");
-
-  [["0", "No delay"], ["15", "15 minutes"],
-   ["30", "30 minutes"], ["45", "45 minutes"]].forEach(([value, label]) => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = label;
-    delay.appendChild(option);
-  });
-  delay.value = String([0, 15, 30, 45].includes(Number(order.delayMinutes))
-    ? Number(order.delayMinutes) : 0);
-  delayWrap.append(delayLabel, delay);
-
-  const save = document.createElement("button");
-  save.type = "button";
-  save.className = "primary";
-  save.textContent = "Save order update";
-
-  const statusMessage = document.createElement("p");
-  statusMessage.className = "status";
-  statusMessage.setAttribute("role", "status");
-
-  if (test || order.orderStatus === "completed") {
-    status.disabled = true;
-    note.disabled = true;
-    delay.disabled = true;
-    save.disabled = true;
-    save.textContent = test ? "Test order locked" : "Order completed";
-  }
-
-  save.addEventListener("click", async () => {
-    if (!currentUser || !selectedShop) {
-      statusMessage.textContent = "Please sign in and select a shop.";
-      return;
-    }
-    if (test) {
-      statusMessage.textContent = "Test orders cannot be processed.";
-      return;
-    }
-    if (order.orderStatus === "completed") {
-      statusMessage.textContent = "This order is already completed.";
-      return;
-    }
-
-    const nextStatus = status.value;
-    const ownerNote = note.value.trim();
-    const delayMinutes = nextStatus === "delayed"
-      ? Number(delay.value) : 0;
-
-    if (nextStatus === "rejected" && !ownerNote) {
-      statusMessage.textContent = "Add a rejection reason before saving.";
-      return;
-    }
-    if (nextStatus === "delayed" && ![15, 30, 45].includes(delayMinutes)) {
-      statusMessage.textContent = "Choose a delay of 15, 30 or 45 minutes.";
-      return;
-    }
-
-    save.disabled = true;
-    statusMessage.textContent = nextStatus === "completed"
-      ? "Completing order and recording R0.50 commission…"
-      : "Saving order update…";
-
-    try {
-      const orderRef = doc(db, "orders", id);
-
-      if (nextStatus === "completed") {
-        const ledgerRef = doc(db, "commissionLedger", id);
-
-        // These writes succeed or fail together.
-        // The ledger document ID is the order ID, so the same order
-        // cannot generate a second commission document.
-        await runTransaction(db, async transaction => {
-          const freshSnap = await transaction.get(orderRef);
-
-          if (!freshSnap.exists()) {
-            throw new Error("Order no longer exists.");
-          }
-
-          const fresh = freshSnap.data();
-
-          if (fresh.ownerUid !== currentUser.uid
-              || fresh.shopId !== selectedShop.id) {
-            throw new Error("This order does not belong to your selected shop.");
-          }
-          if (isTestOrder(fresh)) {
-            throw new Error("Test orders cannot earn commission.");
-          }
-          if (fresh.orderStatus === "completed") {
-            throw new Error("This order has already been completed.");
-          }
-          if (fresh.orderStatus === "rejected") {
-            throw new Error("A rejected order cannot be completed.");
-          }
-
-          // Keep this transaction aligned with the Firestore rules:
-          // order status update + ledger create in one atomic operation.
-          transaction.update(orderRef, {
-            orderStatus: "completed",
-            ownerNote: ownerNote,
-            delayMinutes: 0,
-            updatedAt: serverTimestamp()
-          });
-
-          transaction.set(ledgerRef, {
-            orderId: id,
-            ownerUid: currentUser.uid,
-            shopId: selectedShop.id,
-            amount: 0.50,
-            createdAt: serverTimestamp()
-          });
+  save.addEventListener("click",async()=>{
+    if(!currentUser||!selectedShop){statusEl.textContent="Please sign in and select a shop.";return;}
+    if(test){statusEl.textContent="Test orders cannot be processed.";return;}
+    if(order.orderStatus==="completed"){statusEl.textContent="This order is already completed.";return;}
+    const nextStatus=status.value,ownerNote=note.value.trim(),delayMinutes=nextStatus==="delayed"?Number(delay.value):0;
+    if(nextStatus==="rejected"&&!ownerNote){statusEl.textContent="Add a rejection reason before saving.";return;}
+    if(nextStatus==="delayed"&&![15,30,45].includes(delayMinutes)){statusEl.textContent="Choose a delay of 15, 30 or 45 minutes.";return;}
+    save.disabled=true;wa.disabled=true;
+    statusEl.textContent=nextStatus==="completed"?"Completing order and recording R0.50 commission…":"Saving order update…";
+    try{
+      const orderRef=doc(db,"orders",id);
+      if(nextStatus==="completed"){
+        const ledgerRef=doc(db,"commissionLedger",id);
+        await runTransaction(db,async transaction=>{
+          const freshSnap=await transaction.get(orderRef);
+          if(!freshSnap.exists())throw new Error("Order no longer exists.");
+          const fresh=freshSnap.data();
+          if(fresh.ownerUid!==currentUser.uid||fresh.shopId!==selectedShop.id)throw new Error("This order does not belong to your selected shop.");
+          if(isTestOrder(fresh))throw new Error("Test orders cannot earn commission.");
+          if(fresh.orderStatus==="completed")throw new Error("This order has already been completed.");
+          if(fresh.orderStatus==="rejected")throw new Error("A rejected order cannot be completed.");
+          transaction.update(orderRef,{orderStatus:"completed",ownerNote,delayMinutes:0,updatedAt:serverTimestamp()});
+          transaction.set(ledgerRef,{orderId:id,ownerUid:currentUser.uid,shopId:selectedShop.id,amount:0.50,createdAt:serverTimestamp()});
         });
-
-        statusMessage.textContent =
-          "Completed successfully. R0.50 commission was recorded as owed; no payment was collected automatically.";
-      } else {
-        await updateDoc(orderRef, {
-          orderStatus: nextStatus,
-          ownerNote: ownerNote,
-          delayMinutes: delayMinutes,
-          updatedAt: serverTimestamp()
-        });
-
-        statusMessage.textContent =
-          "Order update saved. Contact the customer directly if needed.";
+        order.orderStatus="completed";order.ownerNote=ownerNote;order.delayMinutes=0;
+        statusEl.textContent="Completed successfully. R0.50 commission was recorded as owed; no payment was collected automatically. You can now prepare the customer WhatsApp update.";
+        // Keep completed order locked, but allow its WhatsApp update.
+        status.disabled=true;note.disabled=true;delay.disabled=true;save.disabled=true;save.textContent="Order completed";
+        wa.disabled=false;
+      }else{
+        await updateDoc(orderRef,{orderStatus:nextStatus,ownerNote,delayMinutes,updatedAt:serverTimestamp()});
+        order.orderStatus=nextStatus;order.ownerNote=ownerNote;order.delayMinutes=delayMinutes;
+        statusEl.textContent="Order update saved. Tap “Message customer on WhatsApp” to prepare the customer update; WhatsApp will require you to tap Send.";
+        wa.disabled=false;
       }
-
+      // Refresh the dashboard data/ledger. Do not remove the current card immediately,
+      // so the owner can still tap the WhatsApp button for this status.
       await loadOrdersAndLedger();
-    } catch (error) {
-      console.error(error);
-      statusMessage.textContent =
-        "Save failed: " + (error.code || error.message)
-        + ". Confirm that the matching Firestore rules are published.";
-    } finally {
-      save.disabled = false;
+    }catch(error){
+      console.error(error);statusEl.textContent="Save failed: "+(error.code||error.message)+". Confirm that the matching Firestore rules are published.";
+      save.disabled=false;wa.disabled=false;
     }
   });
-
-  card.append(
-    title, summary, customer, destination, quote,
-    statusWrap, noteWrap, delayWrap, save, statusMessage
-  );
+  actions.append(save,wa);
+  card.append(title,summary,customer,destination,quote,statusWrap,noteWrap,delayWrap,actions,statusEl);
   return card;
 }
-
-async function loadOrdersAndLedger() {
-  if (!currentUser || loading) return;
-  loading = true;
-
-  const list = $("orders-list");
-  list.replaceChildren();
-  message("orders-message", "Loading orders and commission ledger…");
-
-  try {
-    if (!selectedShop) {
-      showCommission([]);
-      message("orders-message", "Select an approved shop first.");
-      return;
-    }
-
-    const ordersQuery = query(
-      collection(db, "orders"),
-      where("ownerUid", "==", currentUser.uid)
-    );
-    const ledgerQuery = query(
-      collection(db, "commissionLedger"),
-      where("ownerUid", "==", currentUser.uid)
-    );
-
-    const [ordersSnap, ledgerSnap] = await Promise.all([
-      getDocs(ordersQuery),
-      getDocs(ledgerQuery)
-    ]);
-
-    const orders = ordersSnap.docs
-      .map(d => ({id: d.id, data: d.data()}))
-      .filter(item =>
-        item.data.ownerUid === currentUser.uid
-        && item.data.shopId === selectedShop.id
-      );
-
-    orders.sort((a, b) =>
-      (b.data.createdAt?.toMillis?.() || 0)
-      - (a.data.createdAt?.toMillis?.() || 0)
-    );
-
-    const ledger = ledgerSnap.docs
-      .map(d => ({id: d.id, data: d.data()}))
-      .filter(item =>
-        item.data.ownerUid === currentUser.uid
-        && item.data.shopId === selectedShop.id
-        && item.data.orderId === item.id
-        && item.data.amount === 0.50
-      );
-
+async function loadOrdersAndLedger(){
+  if(!currentUser||loading)return;loading=true;const list=$("orders-list");list.replaceChildren();message("orders-message","Loading orders and commission ledger…");
+  try{
+    if(!selectedShop){showCommission([]);message("orders-message","Select an approved shop first.");return;}
+    const ordersQuery=query(collection(db,"orders"),where("ownerUid","==",currentUser.uid));
+    const ledgerQuery=query(collection(db,"commissionLedger"),where("ownerUid","==",currentUser.uid));
+    const [ordersSnap,ledgerSnap]=await Promise.all([getDocs(ordersQuery),getDocs(ledgerQuery)]);
+    const orders=ordersSnap.docs.map(d=>({id:d.id,data:d.data()})).filter(x=>x.data.ownerUid===currentUser.uid&&x.data.shopId===selectedShop.id);
+    orders.sort((a,b)=>(b.data.createdAt?.toMillis?.()||0)-(a.data.createdAt?.toMillis?.()||0));
+    const ledger=ledgerSnap.docs.map(d=>({id:d.id,data:d.data()})).filter(x=>x.data.ownerUid===currentUser.uid&&x.data.shopId===selectedShop.id&&x.data.orderId===x.id&&x.data.amount===0.50);
     showCommission(ledger);
-
-    if (!orders.length) {
-      message(
-        "orders-message",
-        "No orders found for this shop yet. Check that orders have the correct ownerUid and shopId."
-      );
-      return;
-    }
-
-    message("orders-message", orders.length + " order(s) found.");
-    orders.forEach(item => list.appendChild(createOrderCard(item)));
-  } catch (error) {
-    console.error(error);
-    message(
-      "orders-message",
-      "Could not load orders or commission ledger: "
-      + (error.code || error.message)
-      + ". Check the Firestore read rules.",
-      true
-    );
-  } finally {
-    loading = false;
-  }
+    if(!orders.length){message("orders-message","No orders found for this shop yet. Check that orders have the correct ownerUid and shopId.");return;}
+    message("orders-message",orders.length+" order(s) found.");orders.forEach(item=>list.appendChild(createOrderCard(item)));
+  }catch(error){console.error(error);message("orders-message","Could not load orders or commission ledger: "+(error.code||error.message)+". Check the Firestore read rules.",true);}
+  finally{loading=false;}
 }
-
-$("refresh-orders").addEventListener("click", loadOrdersAndLedger);
-
-onAuthStateChanged(auth, async user => {
-  currentUser = user;
-
-  if (!user) {
-    $("login-card").classList.remove("hidden");
-    $("dashboard").classList.add("hidden");
-    $("orders-list").replaceChildren();
-    selectedShop = null;
-    shops = [];
-    showCommission([]);
-    message("orders-message", "Sign in to load orders.");
-    return;
-  }
-
-  $("login-card").classList.add("hidden");
-  $("dashboard").classList.remove("hidden");
-  $("signed-in-email").textContent = user.email || "Signed-in owner";
-
-  try {
-    await loadShops(user);
-  } catch (error) {
-    console.error(error);
-    message(
-      "page-error",
-      "Could not load approved shops: " + (error.code || error.message)
-      + ". Check your Firestore rules and shop ownerUid.",
-      true
-    );
-  }
+$("refresh-orders").addEventListener("click",loadOrdersAndLedger);
+onAuthStateChanged(auth,async user=>{
+  currentUser=user;
+  if(!user){$("login-card").classList.remove("hidden");$("dashboard").classList.add("hidden");$("orders-list").replaceChildren();selectedShop=null;shops=[];showCommission([]);message("orders-message","Sign in to load orders.");return;}
+  $("login-card").classList.add("hidden");$("dashboard").classList.remove("hidden");$("signed-in-email").textContent=user.email||"Signed-in owner";
+  try{await loadShops(user);}catch(error){console.error(error);message("page-error","Could not load approved shops: "+(error.code||error.message)+". Check your Firestore rules and shop ownerUid.",true);}
 });
 </script>
 </body>
