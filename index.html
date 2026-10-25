@@ -140,10 +140,13 @@ $("shopRegisterForm").addEventListener("submit", async e => {
       : friendlyError(err),
     "error"
   );
+
 } finally {
   button.disabled = false;
-}
+  }
+});
 </script>
-<script>
+
+
 "use strict";let deferredInstallPrompt=null;const installAppButton=document.getElementById("installAppButton");window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;if(installAppButton)installAppButton.classList.remove("hidden")});if(installAppButton)installAppButton.addEventListener("click",async()=>{if(!deferredInstallPrompt){alert('To install Kota Connect, open Chrome menu (⋮) and choose "Install app" or "Add to Home screen".');return}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;installAppButton.classList.add("hidden")});window.addEventListener("appinstalled",()=>installAppButton?.classList.add("hidden"));if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(e=>console.error("Service worker failed:",e)));
 </script></body></html>
