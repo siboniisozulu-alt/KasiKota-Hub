@@ -53,8 +53,81 @@ function openModal(id){$(id).classList.remove("hidden");document.body.classList.
 try{const app=getApps().length?getApp():initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);const guestApp=getApps().find(a=>a.name==="KotaConnectGuestOrders")||initializeApp(firebaseConfig,"KotaConnectGuestOrders");guestAuth=getAuth(guestApp);guestDb=getFirestore(guestApp);firebaseReady=true;onSnapshot(query(collection(db,"shops"),where("status","==","approved")),snap=>{approvedShopData.clear();snap.forEach(d=>approvedShopData.set(d.id,d.data()));renderShops()},e=>{console.error(e);showMessage($("approvedShopStatus"),"Could not load shops. Check internet and Firestore read permissions.","error")})}catch(e){console.error(e);showMessage($("approvedShopStatus"),"Firebase could not initialize. Check Firebase configuration.","error")}
 $("orderForm").addEventListener("submit",e=>{e.preventDefault();window.kcClearPreparedOrder();const shopId=$("shopSelect").value,shop=approvedShopData.get(shopId),item=selectedItem(),calc=window.kcCalculateTotal(),qty=Number($("quantity").value),area=$("area").value.trim(),extra=$("otherArea").value.trim(),name=$("customerName").value.trim(),phone=$("customerPhone").value.trim(),address=$("orderAddress").value.trim(),service=$("service").value;let error="";if(!firebaseReady)error="Firebase is not connected. Refresh and try again.";else if(!shop||shop.status!=="approved")error="Choose an approved shop.";else if(!item.name||!item.price)error="Choose a priced menu item.";else if(!Number.isInteger(qty)||qty<1||qty>50)error="Quantity must be a whole number from 1 to 50.";else if(!area)error="Choose your location.";else if(!name||!phone)error="Enter your name and phone number.";else if(service==="Delivery"&&!address)error="Enter your delivery address.";else if(!shop.ownerUid)error="This approved shop is missing ownerUid. Ask the administrator to check its record.";if(error){showMessage($("orderError"),error,"error");return}const location=area+(extra?" — "+extra:"");preparedOrderReference="KC-"+Date.now().toString(36).toUpperCase();const delivery=service==="Delivery"?15:0;preparedFirebaseOrder={shopId,shopName:shop.shopName||shop.name||"Approved shop",ownerUid:shop.ownerUid,customerName:name,customerPhone:phone,area:location,fulfillmentType:service.toLowerCase(),deliveryAddress:service==="Delivery"?address:"",pickupDetails:service==="Pickup"?address:"",items:[{itemId:item.itemId,name:item.name,quantity:qty,unitPriceQuote:item.price,lineTotalQuote:item.price*qty}],foodSubtotalQuote:calc.foodSubtotal,deliveryFeeQuote:delivery,totalQuote:calc.total};preparedWhatsAppMessage=["KOTA CONNECT ORDER "+preparedOrderReference,"Shop: "+preparedFirebaseOrder.shopName,"Item: "+item.name,"Quantity: "+qty,"Customer: "+name,"Customer phone: "+phone,"Area: "+location,"Pickup/delivery: "+service,"Address/details: "+(address||"Not supplied"),"Food subtotal quote: "+money(calc.foodSubtotal),"Delivery fee quote: "+money(delivery),"TOTAL QUOTE: "+money(calc.total),"Please confirm availability, delivery coverage and final price."].join("\n");$("orderSummary").textContent="Order prepared. Save it in Firebase before opening WhatsApp.\n\n"+preparedWhatsAppMessage;$("orderSummary").classList.remove("hidden");$("sendOrder").classList.remove("hidden")});
 $("sendOrder").addEventListener("click",async()=>{if(orderSaving)return;if(!preparedFirebaseOrder||!preparedWhatsAppMessage){showMessage($("orderError"),"Prepare the order again first.","error");return}const shop=approvedShopData.get(preparedFirebaseOrder.shopId),phone=normalisePhone(shop?.phone);if(!phone){showMessage($("orderError"),"Shop has no valid South African WhatsApp number.","error");return}const tab=window.open("about:blank","_blank");if(!tab){showMessage($("orderError"),"Browser blocked the WhatsApp tab. Allow pop-ups and retry. No order saved.","error");return}orderSaving=true;$("sendOrder").disabled=true;$("sendOrder").textContent="Saving order…";try{if(!guestAuth.currentUser)await signInAnonymously(guestAuth);const ref=doc(collection(guestDb,"orders"));await setDoc(ref,{...preparedFirebaseOrder,orderNumber:preparedOrderReference,customerUid:guestAuth.currentUser.uid,confirmedTotal:null,paymentMethod:"not_selected",paymentStatus:"unpaid",orderStatus:"pending",ownerNote:"",delayMinutes:0,testOrder:false,priceVerification:"shop_confirmation_required",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});$("orderSummary").textContent="Order saved as PENDING. Reference: "+preparedOrderReference+"\nWhatsApp is opening. Press Send in WhatsApp to notify the shop.";tab.location.href="https://wa.me/"+phone+"?text="+encodeURIComponent(preparedWhatsAppMessage);preparedFirebaseOrder=null;preparedWhatsAppMessage="";preparedOrderReference="";$("sendOrder").classList.add("hidden")}catch(err){console.error(err);try{tab.close()}catch(_){}showMessage($("orderError"),"Order could not be saved; WhatsApp was not opened. "+friendlyError(err),"error")}finally{orderSaving=false;$("sendOrder").disabled=false;$("sendOrder").textContent="Save Order & Open WhatsApp"}});
-$("shopRegisterForm").addEventListener("submit",async e=>{e.preventDefault();const form=$("shopRegisterForm"),button=$("registerSubmit"),msg=$("shopRegisterMessage");if(!form.reportValidity())return;if(!firebaseReady){showMessage(msg,"Firebase is unavailable. Try again later.","error");return}const ownerName=$("ownerName").value.trim(),shopName=$("shopName").value.trim(),email=$("shopEmail").value.trim().toLowerCase(),password=$("shopPassword").value,phone=$("shopPhone").value.trim(),address=$("shopAddress").value.trim(),description=$("shopDescription").value.trim();button.disabled=true;showMessage(msg,"Creating account and submitting application…","info");let uid=null;try{const cred=await createUserWithEmailAndPassword(auth,email,password);uid=cred.user.uid;await setDoc(doc(db,"shopApplications",uid),{ownerUid:uid,ownerName,shopName,email:cred.user.email||email,phone,address,description,status:"pending",createdAt:serverTimestamp()});form.reset();showMessage(msg,"Application submitted. Your shop is awaiting administrator approval.","success")}catch(err){console.error(err);catch(err){
-  console.error("Kota Connect registration error:", err);
+
+$("shopRegisterForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const form = $("shopRegisterForm");
+  const button = $("registerSubmit");
+  const msg = $("shopRegisterMessage");
+
+  if (!form.reportValidity()) return;
+
+  if (!firebaseReady) {
+    showMessage(msg, "Firebase is unavailable. Try again later.", "error");
+    return;
+  }
+
+  const ownerName = $("ownerName").value.trim();
+  const shopName = $("shopName").value.trim();
+  const email = $("shopEmail").value.trim().toLowerCase();
+  const password = $("shopPassword").value;
+  const phone = $("shopPhone").value.trim();
+  const address = $("shopAddress").value.trim();
+  const description = $("shopDescription").value.trim();
+
+  button.disabled = true;
+  showMessage(
+    msg,
+    "Creating account and submitting application…",
+    "info"
+  );
+
+  let uid = null;
+
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    uid = cred.user.uid;
+
+    await setDoc(doc(db, "shopApplications", uid), {
+      ownerUid: uid,
+      ownerName,
+      shopName,
+      email: cred.user.email || email,
+      phone,
+      address,
+      description,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    form.reset();
+    showMessage(
+      msg,
+      "Application submitted. Your shop is awaiting administrator approval.",
+      "success"
+    );
+
+  } catch (err) {
+    console.error("Kota Connect registration error:", err);
+
+    const detail = err?.code
+      ? `${err.code}: ${err.message || ""}`
+      : String(err);
+
+    showMessage(
+      msg,
+      uid
+        ? `Account created, but application saving failed. Error: ${detail}`
+        : friendlyError(err),
+      "error"
+    );
+
+  } finally {
+    button.disabled = false;
+  }
+});
+
 
   const detail = err?.code
     ? `${err.code}: ${err.message || ""}`
