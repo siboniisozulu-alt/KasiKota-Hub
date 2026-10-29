@@ -45,7 +45,10 @@ function getQuantity(){const n=Number($("quantity").value);return Number.isInteg
 function selectedItem(){const o=$("itemName").selectedOptions[0];if(!o||!o.value)return{name:"",price:null,itemId:""};const p=Number(o.dataset.price);return{name:o.dataset.name||o.textContent,price:Number.isFinite(p)&&p>0?p:null,itemId:o.value}}
 function calculateTotal(){const item=selectedItem(),quantity=getQuantity(),delivery=$("service").value==="Delivery"?DELIVERY_FEE:0;$("deliveryTotal").textContent=money(delivery);if(!item.price||!quantity){$("foodSubtotal").textContent="—";$("orderTotal").textContent="—";$("itemPrice").value=item.price||"";return null}const subtotal=item.price*quantity;$("itemPrice").value=item.price.toFixed(2);$("foodSubtotal").textContent=money(subtotal);$("orderTotal").textContent=money(subtotal+delivery);return{foodSubtotal:subtotal,delivery,total:subtotal+delivery,quantity,item}}
 function clearPreparedOrder(){$("orderSummary").classList.add("hidden");$("sendOrder").classList.add("hidden");$("orderError").classList.add("hidden");preparedWhatsAppMessage="";preparedFirebaseOrder=null;preparedOrderReference=""}
-["shopSelect","itemName","quantity","service"].forEach(id=>{ $(id).addEventListener("change",()=>{clearPreparedOrder();if(id==="shopSelect"&&typeof window.fillOrderMenu==="function")window.fillOrderMenu($("shopSelect").value);calculateTotal()});$(id).addEventListener("input",()=>{if(id!=="shopSelect"){clearPreparedOrder();calculateTotal()}})});
+["shopSelect","itemName","quantity","service"].forEach(id=>{ $(id).addEventListener("change",()=>{clearPreparedOrder();if(id==="shopSelect"&&typeof window.fillOrderMenu==="function")window.fillOrderMenu($("shopSelect").value);calculateTotal()});$(id).addEventListener("input",()=>{if(id!=="shopSelect"){clearPreparedOrder();calculateTotal()}})});$("area").addEventListener("change", () => {
+  renderShops();
+  window.kcClearPreparedOrder();
+});
 </script>
 <script type="module">
 import {initializeApp,getApp,getApps} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -59,7 +62,120 @@ function parseShopMenu(source){const out=[];const add=(name,price,id)=>{name=Str
 function menuForShop(shop){const m=parseShopMenu(shop?.menu);return m.length?m:parseShopMenu(shop?.description||"")}
 function fillOrderMenu(shopId){const sel=$("itemName");sel.replaceChildren();const p=document.createElement("option");p.value="";p.textContent=shopId?"Choose a menu item":"Choose a shop first";sel.appendChild(p);const shop=approvedShopData.get(shopId);if(shop)menuForShop(shop).forEach(item=>{const o=document.createElement("option");o.value=item.itemId;o.textContent=item.name+" — "+money(item.price);o.dataset.name=item.name;o.dataset.price=String(item.price);sel.appendChild(o)});$("itemPrice").value="";window.kcCalculateTotal?.()}
 window.fillOrderMenu=fillOrderMenu;
-function renderShops(){const list=$("approvedShopList"),sel=$("shopSelect");list.replaceChildren();sel.replaceChildren();const ph=document.createElement("option");ph.value="";ph.textContent="Choose an approved shop first";sel.appendChild(ph);let count=0;approvedShopData.forEach((shop,id)=>{if(String(shop.status||"").toLowerCase()!=="approved")return;count++;const name=shop.shopName||shop.name||"Local shop",o=document.createElement("option");o.value=id;o.textContent=name;sel.appendChild(o);const b=document.createElement("button");b.type="button";b.className="shop-option";const strong=document.createElement("strong");strong.textContent=name;const address=document.createElement("span");address.textContent="📍 "+(shop.address||"Address not provided");b.append(strong,address);b.addEventListener("click",()=>{sel.value=id;fillOrderMenu(id);openShopMenu(shop,id);closeModal("approvedShopsModal")});list.appendChild(b)});if(!count){const p=document.createElement("p");p.className="message info";p.textContent="No approved shops are available. Check that the shop document has status set to approved.";list.appendChild(p);showMessage($("approvedShopStatus"),p.textContent,"info")}else showMessage($("approvedShopStatus"),count+" approved shop(s) available.","success")}
+function renderShops() {
+  const list = $("approvedShopList");
+  const sel = $("shopSelect");
+  const selectedArea = $("area").value.trim().toLowerCase();
+
+  list.replaceChildren();
+  sel.replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Choose an approved shop first";
+  sel.appendChild(placeholder);
+
+  let count = 0;
+  let approvedCount = 0;
+
+  approvedShopData.forEach((shop, id) => {
+    // Never display shops that are not approved.
+    if (String(shop.status || "").toLowerCase() !== "approved") {
+      return;
+    }
+
+    approvedCount++;
+
+    // Use the saved shop location fields for filtering.
+    const locationText = [
+      shop.address,
+      shop.area,
+      shop.shopArea,
+      shop.location
+    ]
+      .filter(value => typeof value === "string")
+      .join(" ")
+      .toLowerCase()
+      .replace(/\bsec(?:tion)?\.?\s*(\d+)\b/g, "section $1")
+      .replace(/[.,]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    let matchesArea = true;
+
+    if (selectedArea) {
+      if (selectedArea === "madadeni section 1") {
+        matchesArea =
+          locationText.includes("madadeni section 1") ||
+          locationText.includes("section 1 madadeni");
+      } else {
+        matchesArea = locationText.includes(selectedArea);
+      }
+    }
+
+    if (!matchesArea) return;
+
+    count++;
+
+    const name = shop.shopName || shop.name || "Local shop";
+
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = name;
+    sel.appendChild(option);
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "shop-option";
+
+    const strong = document.createElement("strong");
+    strong.textContent = name;
+
+    const address = document.createElement("span");
+    address.textContent =
+      "📍 " + (shop.address || "Address not provided");
+
+    button.append(strong, address);
+
+    button.addEventListener("click", () => {
+      sel.value = id;
+      fillOrderMenu(id);
+      openShopMenu(shop, id);
+      closeModal("approvedShopsModal");
+    });
+
+    list.appendChild(button);
+  });
+
+  if (count === 0) {
+    const message = document.createElement("p");
+    message.className = "message info";
+
+    message.textContent = selectedArea
+      ? "No approved shops were found for " +
+        $("area").selectedOptions[0].textContent +
+        ". Check that approved shop addresses include the correct area."
+      : "No approved shops are available yet.";
+
+    list.appendChild(message);
+
+    showMessage(
+      $("approvedShopStatus"),
+      message.textContent,
+      "info"
+    );
+  } else {
+    showMessage(
+      $("approvedShopStatus"),
+      count + " approved shop(s)" +
+        (selectedArea
+          ? " found for " + $("area").selectedOptions[0].textContent
+          : " available") +
+        ".",
+      "success"
+    );
+  }
+}
 function openShopMenu(shop,id){const list=$("shopMenuList");list.replaceChildren();$("shopMenuTitle").textContent=shop.shopName||shop.name||"Shop Menu";$("shopMenuSubtitle").textContent=(shop.address||"Address not provided")+" · "+(shop.phone||"WhatsApp number not provided");activeMenuShop={...shop,id};const menu=menuForShop(shop);if(!menu.length){const p=document.createElement("p");p.className="message info";p.textContent="No priced menu items found. Add menu text like Classic Kota — R25.";list.appendChild(p)}else menu.forEach(item=>{const row=document.createElement("div");row.className="menu-row";const info=document.createElement("div"),name=document.createElement("strong"),small=document.createElement("small");name.textContent=item.name;small.textContent="Select the price to order";info.append(name,small);const b=document.createElement("button");b.className="price-button";b.type="button";b.textContent=money(item.price);b.addEventListener("click",()=>{ $("shopSelect").value=id;fillOrderMenu(id);const o=Array.from($("itemName").options).find(x=>x.dataset.name===item.name);if(o){$("itemName").value=o.value;$("itemPrice").value=item.price}$("quantity").value="1";window.kcCalculateTotal();window.kcClearPreparedOrder();closeModal("shopMenuModal");$("order").scrollIntoView({behavior:"smooth"})});row.append(info,b);list.appendChild(row)});openModal("shopMenuModal")}
 function openModal(id){$(id).classList.remove("hidden");document.body.classList.add("modal-open")}function closeModal(id){$(id).classList.add("hidden");if(!document.querySelector(".modal:not(.hidden)"))document.body.classList.remove("modal-open")}
 try{const app=getApps().length?getApp():initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);const guestApp=getApps().find(a=>a.name==="KotaConnectGuestOrders")||initializeApp(firebaseConfig,"KotaConnectGuestOrders");guestAuth=getAuth(guestApp);guestDb=getFirestore(guestApp);firebaseReady=true;onSnapshot(query(collection(db,"shops"),where("status","==","approved")),snap=>{approvedShopData.clear();snap.forEach(d=>approvedShopData.set(d.id,d.data()));renderShops()},e=>{console.error(e);showMessage($("approvedShopStatus"),"Could not load shops. Check internet and Firestore read permissions.","error")})}catch(e){console.error(e);showMessage($("approvedShopStatus"),"Firebase could not initialize. Check Firebase configuration.","error")}
